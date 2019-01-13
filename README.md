@@ -4,7 +4,7 @@
 
 </div>
 
-This project containes a minimal setup for a performant web extension. The extension contains a demonstration counter that is displayed on the popup and options pages as well as any open tab. 
+This project containes a minimal setup for developing a performant and well structured web extension. The extension contains a demonstration counter that is displayed on the popup and options pages as well as any open tab. 
 
 ## Good to know before using:
 * [Typescript](https://www.typescriptlang.org/)
@@ -15,25 +15,31 @@ This project containes a minimal setup for a performant web extension. The exten
 
 
 ## Requirements:
-* [NodeJS](https://nodejs.org/en/)
-* Editor - [VSCode](https://code.visualstudio.com/) recomended
-* Web browser - ([Chrome](https://www.google.com/chrome/) or [Firefox](https://www.mozilla.org/en-US/firefox/))
+* [NodeJS](https://nodejs.org/en/) - Javascript runtime
+* [VSCode](https://code.visualstudio.com/) - Recomended editor
+* [Chrome](https://www.google.com/chrome/) or [Firefox](https://www.mozilla.org/en-US/firefox/) - Web browser
 
 ## How to run:
-### In terminal
+### In terminal or command prompt
 ```
 npm install
 npm run dev 
 	or npm run watch (to watch code changes)
 ```
 
-### In Chrome web browser```
-1. Go to: [chrome://extensions](chrome://extensions)
-2. Toggle developer mode on.
-3. Load unpacked
-4. Select the newly created folder "dist" from the project folder.
+### In Chrome web browser - v71.0
+1. Go to: [**chrome://extensions**](chrome://extensions)
+2. Toggle: "**developer mode**" on.
+3. Click on: "**Load unpacked**"
+4. Select the newly created folder "**dist**" from the project folder.
 5. Thats it.
 
+### In Firefox web browser - v64.0
+1. Go to: [**about:debugging**](about:debugging)
+2. Select: "**Enable add-on debugging**"
+3. Click on: "**Load Temporary Add-on…**"
+4. Open the newly created folder "**dist**" from the project folder, and choose the "**manifest.json**" file.
+5. Thats it.
 
 ## License
 MIT
