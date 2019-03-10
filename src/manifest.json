@@ -39,14 +39,7 @@
     "content_scripts": [
         {
             "js": ["counter.js"],
-            "matches": ["*://*/*"],
-            "all_frames": true
-        },
-        {
-            "js": ["counter.js"],
-            "matches": ["*://www.nowhere.com/*"],
-            "run_at": "document_start",
-            "all_frames": true
+            "matches": ["*://*/*"]
         }
     ]
 }
