@@ -4,12 +4,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { CheckerPlugin } = require('awesome-typescript-loader');
-const ChromeExtensionReloader  = require('webpack-chrome-extension-reloader');
+const ChromeExtensionReloader = require('webpack-chrome-extension-reloader');
 
 const sourceRootPath = path.join(__dirname, 'src');
 const distRootPath = path.join(__dirname, 'dist');
-const nodeEnv = process.env.NODE_ENV | 'development';
-const webBrowser = process.env.WEB_BROWSER | 'chrome';
+const nodeEnv = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
+const webBrowser = process.env.WEB_BROWSER ? process.env.WEB_BROWSER : 'chrome';
 
 module.exports = {
     entry: {
@@ -69,16 +69,16 @@ module.exports = {
 if (nodeEnv === 'watch') {
     module.exports.watch = true;
     module.exports.plugins.push(
-        new ChromeExtensionReloader({
-            port: 9128, 
-            reloadPage: true,
-            entries: { 
-                background: 'background',
-                options: 'options',
-                popup: 'popup',
-                contentScripts: 'counter',
-            }
-        })
+    new ChromeExtensionReloader({
+        port: 9128,
+        reloadPage: true,
+        entries: {
+            background: 'background',
+            options: 'options',
+            popup: 'popup',
+            contentScript: ['counter'],
+        }
+    })
     );
 }
 
