@@ -5,8 +5,10 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { CheckerPlugin } = require('awesome-typescript-loader');
 const ChromeExtensionReloader = require('webpack-chrome-extension-reloader');
+const locateContentScripts = require('./utils/locateContentScripts');
 
 const sourceRootPath = path.join(__dirname, 'src');
+const contentScriptsPath = path.join(sourceRootPath, 'ts', 'contentScripts');
 const distRootPath = path.join(__dirname, 'dist');
 const nodeEnv = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
 const webBrowser = process.env.WEB_BROWSER ? process.env.WEB_BROWSER : 'chrome';
@@ -16,8 +18,7 @@ module.exports = {
         background: path.join(sourceRootPath, 'ts', 'background', 'index.ts'),
         options: path.join(sourceRootPath, 'ts', 'options', 'index.tsx'),
         popup: path.join(sourceRootPath, 'ts', 'popup', 'index.tsx'),
-        // Content Scripts
-        counter: path.join(sourceRootPath, 'ts', 'contentScripts', 'counter', 'index.tsx'),
+        ...locateContentScripts(contentScriptsPath)
     },
     output: {
         path: distRootPath,
