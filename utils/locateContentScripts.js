@@ -1,5 +1,6 @@
 const path = require('path');
 const { readdirSync, lstatSync } = require('fs');
+const { red, yellow, reset, bold, blink, dim} = require('./consoleColors');
 
 const isDirectory = (source) => {
     return lstatSync(source).isDirectory();
@@ -15,11 +16,15 @@ const isDirectory = (source) => {
 const findContentEntryFile = (contentPath) => {
     const files = readdirSync(contentPath).filter((name) => /index.(js|ts|tsx)/.test(name));
     if (!files || files.length < 1) {
-        console.log(`Could not find any index files in path:\n${contentPath}`);
+        console.log(`${yellow}Could not find any index files in path:${reset}\n${contentPath}\n`);
         return undefined;
     }
-    else if (files.length == 1) return files.pop();
-    else if (files.length > 1) throw `Found ${files.length} index files ${files} in path:\n${contentPath}.\nOnly one should be set.`;
+    else if (files.length == 1) {
+        return files.pop();
+    }
+    else {
+        throw `${red}Found ${files.length} index files, ${files}, in path:${reset}\n${contentPath}\nOnly one should be set.\n`;
+    }
 }
 
 /**
@@ -37,15 +42,17 @@ const getDirectories = (rootPath) => {
                 folderName: name
             }
         })
-        .filter((dir) => isDirectory(dir.path))
+        .filter((dir) => isDirectory(dir.path));
 }
 
-module.exports = (rootPath) => {
-    const entries = {}
-    const directories = getDirectories(rootPath)
+const locateContentScripts = (rootPath) => {
+    const entries = {};
+    const directories = getDirectories(rootPath);
     directories.forEach((dir) => {
-        const entryFile = findContentEntryFile(dir.path)
+        const entryFile = findContentEntryFile(dir.path);
         if (entryFile) { entries[dir.folderName] = path.join(dir.path, entryFile) }
     })
     return entries;
 }
+
+module.exports = locateContentScripts;
