@@ -3,34 +3,33 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import styled, { ThemeProvider } from 'styled-components';
 import { IAppState } from '../../../background/store';
-import Counter from '../../../containers/Counter';
 import { themes, ThemeTypes } from '../../../components/styles/themes';
-
+import Counter from '../../../containers/Counter';
 
 interface ICounterApp {
-    theme: ThemeTypes;
-    dispatch: Dispatch;
+	theme: ThemeTypes;
+	dispatch: Dispatch;
 }
 
 class CounterApp extends React.Component<ICounterApp> {
 
-    render() {
-        return (
-            <ThemeProvider theme={themes[this.props.theme]}>
-                <React.Fragment>
-                    <CounterAppContainer >
-                        <Counter />
-                    </CounterAppContainer>
-                </React.Fragment>
-            </ThemeProvider>
-        );
-    }
+	render() {
+		return (
+			<ThemeProvider theme={themes[this.props.theme]}>
+				<React.Fragment>
+					<CounterAppContainer >
+						<Counter />
+					</CounterAppContainer>
+				</React.Fragment>
+			</ThemeProvider>
+		);
+	}
 }
 
 const mapStateToProps = (state: IAppState) => {
-    return {
-        theme: state.settings.theme
-    };
+	return {
+		theme: state.settings.theme
+	};
 };
 
 export default connect(mapStateToProps)(CounterApp);

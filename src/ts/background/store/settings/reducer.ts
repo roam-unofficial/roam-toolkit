@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
-import { SettingsActions } from './actions';
 import { ThemeTypes } from './../../../components/styles/themes';
+import { SettingsActions } from './actions';
 
 export interface IAppSettings {
 	theme: ThemeTypes;
@@ -14,7 +14,7 @@ const settings: Reducer<IAppSettings, SettingsActions> = (state = initialState, 
 	switch (action.type) {
 		case 'DARK_THEME':
 			return { ...state, theme: 'dark' };
-		
+
 		case 'LIGHT_THEME':
 			return { ...state, theme: 'light' };
 

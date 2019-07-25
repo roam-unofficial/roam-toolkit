@@ -1,23 +1,26 @@
-import settings, { IAppSettings } from './settings/reducer';
-import { combineReducers } from "redux";
+import { combineReducers } from 'redux';
 import counter, { ICounter } from './counter/reducer';
+import settings, { IAppSettings } from './settings/reducer';
 
-import "redux";
-// Enhance the Action interface with the option of a payload. 
+import 'redux';
+// Enhance the Action interface with the option of a payload.
 // While still importing the Action interface from redux.
-declare module "redux" {
+declare module 'redux' {
 	export interface Action<T = any, P = any> {
 		type: T;
 		payload?: P;
 	}
 }
 
+type OnSuccess = () => void;
+type OnError = (e: Error) => void;
+
 export interface IAppState {
 	counter: ICounter;
 	settings: IAppSettings;
 }
 
-export const loadState = ():IAppState | undefined => {
+export const loadState = (): IAppState | undefined => {
 	try {
 		const serializedState = localStorage.getItem('appstate');
 		if (serializedState === null) {
@@ -29,15 +32,13 @@ export const loadState = ():IAppState | undefined => {
 	}
 };
 
-export const saveState = (appstate: IAppState, 
-						  success: () => void = () => {}, 
-						  error: (e: Error) => void = () => {}) => {
+export const saveState = (appstate: IAppState, success: OnSuccess = () => {}, error: OnError = () => {}) => {
 	try {
 		const serializedState = JSON.stringify(appstate);
 		localStorage.setItem('appstate', serializedState);
-		success()
-	} catch(e) {
-		error(e)
+		success();
+	} catch (e) {
+		error(e);
 	}
 };
 

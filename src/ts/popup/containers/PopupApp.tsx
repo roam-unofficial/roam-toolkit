@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import styled, { ThemeProvider } from 'styled-components';
 import { IAppState } from '../../background/store';
-import Counter from '../../containers/Counter';
 import GlobalStyle from '../../components/styles/GlobalStyle';
 import { themes, ThemeTypes } from '../../components/styles/themes';
+import Counter from '../../containers/Counter';
 
 interface IPopupApp {
 	theme: ThemeTypes;
@@ -41,7 +41,7 @@ const PopupAppContainer = styled('div')`
     flex-direction: row;
     justify-content: center;
     justify-items: center;
-    align-items: center;  
+    align-items: center;
     height: 200px;
     width: 300px;
     margin: 10px;
