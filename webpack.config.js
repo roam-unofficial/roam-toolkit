@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { CheckerPlugin } = require('awesome-typescript-loader');
-const ChromeExtensionReloader = require('webpack-chrome-extension-reloader');
+const ExtensionReloader = require('webpack-extension-reloader');
 const locateContentScripts = require('./utils/locateContentScripts');
 
 const sourceRootPath = path.join(__dirname, 'src');
@@ -13,12 +13,25 @@ const distRootPath = path.join(__dirname, 'dist');
 const nodeEnv = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
 const webBrowser = process.env.WEB_BROWSER ? process.env.WEB_BROWSER : 'chrome';
 
+const contentScripts = locateContentScripts(contentScriptsPath);
+
+const extensionReloader = nodeEnv === "watch" ? new ExtensionReloader({
+	port: 9128,
+	reloadPage: true,
+	entries: {
+		background: 'background',
+		extensionPage: ['popup', 'options'],
+		contentScript: Object.keys(contentScripts),
+	}
+}) : undefined;
+
 module.exports = {
+	watch: nodeEnv === 'watch',
     entry: {
         background: path.join(sourceRootPath, 'ts', 'background', 'index.ts'),
         options: path.join(sourceRootPath, 'ts', 'options', 'index.tsx'),
         popup: path.join(sourceRootPath, 'ts', 'popup', 'index.tsx'),
-        ...locateContentScripts(contentScriptsPath)
+        ...contentScripts,
     },
     output: {
         path: distRootPath,
@@ -63,24 +76,9 @@ module.exports = {
         new webpack.DefinePlugin({
             'NODE_ENV': JSON.stringify(nodeEnv),
             'WEB_BROWSER': JSON.stringify(webBrowser),
-        }),
+		}),
+		extensionReloader,
     ],
-}
-
-if (nodeEnv === 'watch') {
-    module.exports.watch = true;
-    module.exports.plugins.push(
-    new ChromeExtensionReloader({
-        port: 9128,
-        reloadPage: true,
-        entries: {
-            background: 'background',
-            options: 'options',
-            popup: 'popup',
-            contentScript: ['counter'],
-        }
-    })
-    );
 }
 
 if (nodeEnv === 'production') {
