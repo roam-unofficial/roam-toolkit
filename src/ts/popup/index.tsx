@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Store } from 'react-chrome-redux';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { Store } from 'webext-redux';
 import PopupApp from './containers/PopupApp';
 
 const store = new Store({

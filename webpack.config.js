@@ -23,7 +23,7 @@ const extensionReloader = nodeEnv === "watch" ? new ExtensionReloader({
 		extensionPage: ['popup', 'options'],
 		contentScript: Object.keys(contentScripts),
 	}
-}) : undefined;
+}) : () => {this.apply = () => {}};
 
 module.exports = {
 	watch: nodeEnv === 'watch',
