@@ -4,9 +4,7 @@ import { Provider } from 'react-redux';
 import { Store } from 'webext-redux';
 import PopupApp from './containers/PopupApp';
 
-const store = new Store({
-	portName: 'ExPort' // Communication port between the background component and views such as browser tabs.
-});
+const store = new Store();
 
 store.ready().then(() => {
 	ReactDOM.render(
