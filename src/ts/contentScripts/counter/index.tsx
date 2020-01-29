@@ -1,18 +1,31 @@
-import * as React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { Store } from 'webext-redux';
-import CounterApp from './containers/CounterApp';
+import {browser} from 'webextension-polyfill-ts';
 
-import { createDomAnchor } from '../../scripts/dom';
+import {createDomAnchor} from '../../scripts/dom';
 
 createDomAnchor('counter-root');
-const store = new Store();
 
-store.ready().then(() => {
-	ReactDOM.render(
-		<Provider store={store}>
-			<CounterApp />
-		</Provider>
-		, document.getElementById('counter-root'));
+const inputEvent = new Event('input', {
+    bubbles: true,
+    cancelable: true,
+});
+
+const bucketExpr = /\[\[Bucket (\d+)]]/;
+
+const nextBucket = (nodeStr: string) => `[[Bucket ${parseInt(nodeStr) + 1}]]`;
+
+function triggerNextBucket() {
+    const element = document.activeElement!;
+    if (element.tagName.toLocaleLowerCase() !== 'textarea') {
+        return
+    }
+
+    element.nodeValue = element.nodeValue!.replace(bucketExpr, (_, numStr: string) => nextBucket(numStr));
+    element.dispatchEvent(inputEvent);
+}
+
+browser.runtime.onMessage.addListener((command) => {
+    if (command === 'srs-next-bucket') {
+        console.log('Toggling the feature!');
+        triggerNextBucket();
+    }
 });

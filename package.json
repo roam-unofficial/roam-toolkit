@@ -41,6 +41,7 @@
 		"ts-jest": "^25.0.0",
 		"tslint": "^6.0.0",
 		"typescript": "^3.7.5",
+		"webextension-polyfill-ts": "^0.12.0",
 		"webpack": "^4.41.5",
 		"webpack-cli": "^3.3.10",
 		"webpack-extension-reloader": "^1.1.4"
