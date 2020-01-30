@@ -36,7 +36,7 @@
     },
     "content_scripts": [{
         "js": [
-            "counter.js",
+            "srs.js",
             "inc-dec-value.js"
         ],
         "matches": [
@@ -51,15 +51,9 @@
             "description": "Next SRS bucket"
         },
         "increase-value": {
-            "suggested_key": {
-                "default": "MacCtrl+Alt+Up"
-            },
             "description": "Increase value"
         },
         "decrease-value": {
-            "suggested_key": {
-                "default": "MacCtrl+Alt+Down"
-            },
             "description": "Decrease value"
         }
     }
