@@ -36,7 +36,7 @@
     },
     "content_scripts": [{
         "js": [
-            "counter.js",
+            "srs.js",
             "inc-dec-value.js"
         ],
         "matches": [
