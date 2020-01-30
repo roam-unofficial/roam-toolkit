@@ -1,6 +1,6 @@
-import { browser } from 'webextension-polyfill-ts';
+import {browser} from 'webextension-polyfill-ts';
+import {getActiveEditElement} from '../../utils/dom';
 
-type ValueElement = HTMLTextAreaElement | HTMLInputElement | HTMLSelectElement;
 
 const inputEvent = new Event('input', {
     bubbles: true,
@@ -55,7 +55,7 @@ const dateStrFormatted = (d: Date): string => {
     return `[[${month} ${date}${nthStr}, ${year}]]`;
 };
 
-const saveChanges = (el: HTMLInputElement, cursor: number, value: string): void => {
+const saveChanges = (el: HTMLTextAreaElement, cursor: number, value: string): void => {
     el.value = value;
     el.selectionStart = cursor;
     el.selectionEnd = cursor;
@@ -98,23 +98,23 @@ const dateModified = (date: Date, modType: string): Date => {
 }
 
 const modify = (modType: string) => {
-    const el = getRealEdit() as any;
+    const element = getActiveEditElement() as HTMLTextAreaElement;
 
-    if (el.nodeName === 'TEXTAREA') {
-        const itemContent = el.value;
-        const cursor = el.selectionStart;
+    if (element.nodeName === 'TEXTAREA') {
+        const itemContent = element.value;
+        const cursor = element.selectionStart;
         const datesInContent = itemContent.match(dateRegex);
 
         if (cursorPlacedOnDate(itemContent, cursor)) { // e.g. Lorem ipsum [[Janu|ary 3rd, 2020]] 123
             const newValue = itemContent.substring(0, openBracketsLeftIndex(itemContent, cursor))
                 + dateStrFormatted(dateModified(dateFromPageName(nameInsideBrackets(itemContent, cursor)), modType))
                 + itemContent.substring(closingBracketsRightIndex(itemContent, cursor) + 2);
-            saveChanges(el, cursor, newValue);
+            saveChanges(element, cursor, newValue);
         } else if (cursorPlacedOnNumber(itemContent, cursor)) { // e.g. Lorem ipsum [[January 3rd, 2020]] 12|3
-            const left = itemContent.substring(0, cursor).match(/[0-9]*$/)[0];
-            const right = itemContent.substring(cursor).match(/^[0-9]*/)[0];
+            const left = itemContent.substring(0, cursor)?.match(/[0-9]*$/)![0];
+            const right = itemContent.substring(cursor)?.match(/^[0-9]*/)![0];
             const numberStr = left + right;
-            const numberStartedAt = itemContent.substring(0, cursor).match(/[0-9]*$/).index;
+            const numberStartedAt = itemContent.substring(0, cursor)?.match(/[0-9]*$/)?.index!;
             let nr = parseInt(numberStr);
             if (modType === 'increase') {
                 nr++;
@@ -124,10 +124,11 @@ const modify = (modType: string) => {
             const newValue = itemContent.substring(0, numberStartedAt)
                 + nr
                 + itemContent.substring(numberStartedAt + numberStr.length);
-            saveChanges(el, cursor, newValue);
+            saveChanges(element, cursor, newValue);
         } else if (datesInContent && datesInContent.length === 1) { // e.g. Lor|em ipsum [[January 3rd, 2020]] 123
-            const newValue = itemContent.replace(datesInContent[0], dateStrFormatted(dateModified(dateFromPageName(datesInContent[0]), modType)))
-            saveChanges(el, cursor, newValue);
+            const newValue = itemContent.replace(datesInContent[0],
+                dateStrFormatted(dateModified(dateFromPageName(datesInContent[0]), modType)));
+            saveChanges(element, cursor, newValue);
         }
     }
 }
@@ -140,26 +141,3 @@ browser.runtime.onMessage.addListener((command) => {
         modify('decrease');
     }
 });
-
-
-
-function getRealEdit(): ValueElement {
-    // stolen from Surfingkeys. Needs work.
-
-    let rt = document.activeElement;
-    // on some pages like chrome://history/, input is in shadowRoot of several other recursive shadowRoots.
-    while (rt && rt.shadowRoot) {
-        if (rt.shadowRoot.activeElement) {
-            rt = rt.shadowRoot.activeElement;
-        } else if (rt.shadowRoot.querySelector('input, textarea, select')) {
-            rt = rt.shadowRoot.querySelector('input, textarea, select');
-            break;
-        } else {
-            break;
-        }
-    }
-    // if (rt === window) {
-    //     rt = document.body;
-    // }
-    return rt as ValueElement;
-}
