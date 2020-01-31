@@ -16,8 +16,6 @@
         "tabs",
         "webRequest",
         "webRequestBlocking",
-        "clipboardRead",
-        "clipboardWrite",
         "*://roamresearch.com/*"
     ],
     "manifest_version": 2,
@@ -40,7 +38,8 @@
         "js": [
             "srs.js",
             "inc-dec-value.js",
-            "dispatcher.js"
+            "dispatcher.js",
+            "duplicate-block-content.js"
         ],
         "matches": [
             "*://*/*"
@@ -49,7 +48,8 @@
     "commands": {
         "srs-next-bucket": {
             "suggested_key": {
-                "default": "MacCtrl+S"
+                "default": "Ctrl+S",
+                "mac": "MacCtrl+S"
             },
             "description": "Next SRS bucket"
         },
