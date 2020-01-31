@@ -82,8 +82,6 @@ module.exports = {
 			'WEB_BROWSER': JSON.stringify(webBrowser),
 		}),
 		extensionReloader,
-		new CleanWebpackPlugin({
-			// cleanStaleWebpackAssets: false, // another way to resolve conflict with `CopyWebpackPlugin`
-		}),
+		new CleanWebpackPlugin(),
 	],
 }
