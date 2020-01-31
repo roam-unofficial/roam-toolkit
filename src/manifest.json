@@ -61,11 +61,7 @@
             "description": "Decrease value"
         },
         "duplicate-content": {
-            "suggested_key": {
-                "default": "Ctrl+Shift+D",
-                "mac": "MacCtrl+Alt+D"
-            },
-            "description": "Duplicate block content or content selection"
+            "description": "Duplicate block content or selection"
         }
     }
 }
