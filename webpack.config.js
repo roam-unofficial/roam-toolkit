@@ -74,7 +74,9 @@ module.exports = {
 				to: path.join(distRootPath, 'manifest.json'),
 				toType: 'file',
 			}
-		]),
+		],{
+			copyUnmodified: true // resolve conflict with `CleanWebpackPlugin`
+		}),
 		new webpack.DefinePlugin({
 			'NODE_ENV': JSON.stringify(nodeEnv),
 			'WEB_BROWSER': JSON.stringify(webBrowser),
