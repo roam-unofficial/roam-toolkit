@@ -41,17 +41,16 @@
             "srs.js",
             "inc-dec-value.js",
             "dispatcher.js",
-            "fuzzy_date.js"
+            "fuzzy_date.js",
+            "duplicate-block-content.js",
+            "create-block.js"
         ],
         "matches": [
-            "*://*/*"
+            "*://roamresearch.com/*"
         ]
     }],
     "commands": {
         "srs-next-bucket": {
-            "suggested_key": {
-                "default": "MacCtrl+S"
-            },
             "description": "Next SRS bucket"
         },
         "increase-value": {
@@ -68,6 +67,15 @@
         },
         "replace-fuzzy-date": {
             "description": "Replace FuzzyDate with computer date"
+        },
+        "duplicate-content": {
+            "description": "Duplicate block content or selection"
+        },
+        "create-block": {
+            "suggested_key": {
+                "default": "Ctrl+Down"
+            },
+            "description": "Create new empty block at the bottom of the page"
         }
     }
 }
