@@ -16,6 +16,8 @@
         "tabs",
         "webRequest",
         "webRequestBlocking",
+        "clipboardRead",
+        "clipboardWrite",
         "*://*/*"
     ],
     "manifest_version": 2,
@@ -38,7 +40,9 @@
         "js": [
             "srs.js",
             "inc-dec-value.js",
-            "dispatcher.js"
+            "dispatcher.js",
+            "duplicate-block-content.js",
+            "create-block.js"
         ],
         "matches": [
             "*://*/*"
@@ -46,9 +50,6 @@
     }],
     "commands": {
         "srs-next-bucket": {
-            "suggested_key": {
-                "default": "MacCtrl+S"
-            },
             "description": "Next SRS bucket"
         },
         "increase-value": {
@@ -56,6 +57,15 @@
         },
         "decrease-value": {
             "description": "Decrease value"
+        },
+        "duplicate-content": {
+            "description": "Duplicate block content or selection"
+        },
+        "create-block": {
+            "suggested_key": {
+                "default": "Ctrl+Down"
+            },
+            "description": "Create new empty block at the bottom of the page"
         }
     }
 }
