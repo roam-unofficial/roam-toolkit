@@ -32,24 +32,21 @@ export const Roam = {
         const element = this.getActiveRoamElement();
         if (!element) return null;
 
-        return new RoamNode(element.value, window.getSelection()!)
+        return new RoamNode(element.value)
+    },
+
+    applyToCurrent(action: (node: RoamNode) => RoamNode) {
+        const node = this.getActiveRoamNode();
+        if (!node) return;
+
+        this.save(action(node));
     }
 };
 
 export class RoamNode {
-    selection: Selection;
-    private _text: string;
-    set text(value: string) {
-        this._text = value;
-        Roam.save(this)
-    }
+    readonly text: string;
 
-    get text(): string {
-        return this._text;
-    }
-
-    constructor(text: string, selection: Selection) {
-        this._text = text;
-        this.selection = selection;
+    constructor(text: string) {
+        this.text = text;
     }
 }
