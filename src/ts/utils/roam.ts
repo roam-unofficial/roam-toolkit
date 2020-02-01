@@ -13,14 +13,14 @@ export const Roam = {
 
     save(roamNode: RoamNode) {
         console.log(`Saving, ${roamNode}`);
-        const roamElement = this.getActiveRoamElement();
+        const roamElement = this.getRoamBlockInput();
         if (roamElement) {
             roamElement.value = roamNode.text;
             roamElement.dispatchEvent(getInputEvent());
         }
     },
 
-    getActiveRoamElement(): ValueElement | null {
+    getRoamBlockInput(): ValueElement | null {
         const element = getActiveEditElement();
         if (element.tagName.toLocaleLowerCase() !== 'textarea') {
             return null
@@ -29,7 +29,7 @@ export const Roam = {
     },
 
     getActiveRoamNode(): RoamNode | null {
-        const element = this.getActiveRoamElement();
+        const element = this.getRoamBlockInput();
         if (!element) return null;
 
         return new RoamNode(element.value)
