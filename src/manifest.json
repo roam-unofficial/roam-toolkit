@@ -37,7 +37,8 @@
     "content_scripts": [{
         "js": [
             "srs.js",
-            "inc-dec-value.js"
+            "inc-dec-value.js",
+            "dispatcher.js"
         ],
         "matches": [
             "*://*/*"

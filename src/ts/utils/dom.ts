@@ -18,3 +18,10 @@ export function getActiveEditElement(): ValueElement {
     }
     return element as ValueElement;
 }
+
+export function getInputEvent() {
+    return new Event('input', {
+        bubbles: true,
+        cancelable: true,
+    });
+}
