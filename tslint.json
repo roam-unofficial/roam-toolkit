@@ -41,7 +41,9 @@
         "singleline": "never"
       }
     ],
-    "no-console": []
+    "no-console": {
+      "severity": "off"
+    }
   },
   "rulesDirectory": []
 }

@@ -1,33 +1,11 @@
-import {browser} from 'webextension-polyfill-ts';
-
-import {createDomAnchor} from '../../scripts/dom';
-import {getActiveEditElement} from '../../utils/dom';
-
-createDomAnchor('counter-root');
-
-const inputEvent = new Event('input', {
-    bubbles: true,
-    cancelable: true,
-});
+import {Roam} from '../../utils/roam';
 
 const bucketExpr = /\[\[Bucket (\d+)]]/;
-
 const nextBucket = (nodeStr: string) => `[[Bucket ${parseInt(nodeStr) + 1}]]`;
 
-function triggerNextBucket() {
-    const element = getActiveEditElement()!;
-    console.log(element);
-    if (element.tagName.toLocaleLowerCase() !== 'textarea') {
-        return
-    }
+export function triggerNextBucket() {
+    const roamElement = Roam.getActiveRoamNode();
+    if (!roamElement) return;
 
-    element.value = element.value!.replace(bucketExpr, (_, numStr: string) => nextBucket(numStr));
-    element.dispatchEvent(inputEvent);
+    roamElement.text = roamElement.text.replace(bucketExpr, (_, numStr: string) => nextBucket(numStr));
 }
-
-browser.runtime.onMessage.addListener((command) => {
-    if (command === 'srs-next-bucket') {
-        console.log('Toggling the feature!');
-        triggerNextBucket();
-    }
-});
