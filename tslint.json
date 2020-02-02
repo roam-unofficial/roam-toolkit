@@ -43,6 +43,9 @@
     ],
     "no-console": {
       "severity": "off"
+    },
+    "max-classes-per-file": {
+      "options": [5]
     }
   },
   "rulesDirectory": []
