@@ -1,4 +1,4 @@
-import {getActiveEditElement, getInputEvent, ValueElement} from './dom';
+import {getActiveEditElement, getInputEvent} from './dom';
 
 export const Roam = {
     pressEnter() {
@@ -16,23 +16,26 @@ export const Roam = {
         const roamElement = this.getRoamBlockInput();
         if (roamElement) {
             roamElement.value = roamNode.text;
+            roamElement.selectionStart = roamNode.selection.start;
+            roamElement.selectionEnd = roamNode.selection.end;
+
             roamElement.dispatchEvent(getInputEvent());
         }
     },
 
-    getRoamBlockInput(): ValueElement | null {
+    getRoamBlockInput(): HTMLTextAreaElement | null {
         const element = getActiveEditElement();
         if (element.tagName.toLocaleLowerCase() !== 'textarea') {
             return null
         }
-        return element
+        return element as HTMLTextAreaElement
     },
 
     getActiveRoamNode(): RoamNode | null {
         const element = this.getRoamBlockInput();
         if (!element) return null;
 
-        return new RoamNode(element.value)
+        return new RoamNode(element.value, new Selection(element.selectionStart, element.selectionEnd))
     },
 
     applyToCurrent(action: (node: RoamNode) => RoamNode) {
@@ -44,9 +47,15 @@ export const Roam = {
 };
 
 export class RoamNode {
-    readonly text: string;
+    constructor(readonly text: string, readonly selection: Selection) {
+    }
 
-    constructor(text: string) {
-        this.text = text;
+    selectedText(): string {
+        return this.text.substring(this.selection.start, this.selection.end)
+    }
+}
+
+export class Selection {
+    constructor(readonly start: number, readonly end: number) {
     }
 }
