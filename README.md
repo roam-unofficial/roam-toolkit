@@ -1,23 +1,14 @@
 <div align="center">
 
-# Web Extension Starter
+# Roam Toolkit - [Roam](https://roamresearch.com) force multiplier
 
 </div>
 
-This project containes a minimal setup for developing a performant and well structured web extension. The extension contains a demonstration counter that is displayed on the popup and options pages as well as any open tab. 
+## Currently supported functionality
+1. SRS
+1. Date inc/dec
+1. Delete action
 
-## Good to know before using:
-* [Typescript](https://www.typescriptlang.org/)
-* [React](https://reactjs.org/)
-* [redux](https://redux.js.org/)
-* [styled-components](https://www.styled-components.com/)
-
-
-
-## Requirements:
-* [NodeJS](https://nodejs.org/en/) - Javascript runtime
-* [VSCode](https://code.visualstudio.com/) - Recomended editor
-* [Chrome](https://www.google.com/chrome/) or [Firefox](https://www.mozilla.org/en-US/firefox/) - Web browser
 
 ## How to run:
 ### In terminal or command prompt
