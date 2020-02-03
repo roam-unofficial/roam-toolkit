@@ -1,15 +1,9 @@
 import {getActiveEditElement, getInputEvent} from './dom';
+import {Keyboard} from './keyboard';
+import {delay} from './async';
 
 export const Roam = {
-    pressEnter() {
-        const event = new KeyboardEvent('keydown', {
-            bubbles: true,
-            cancelable: true,
-            // @ts-ignore
-            keyCode: 13
-        });
-        document?.activeElement?.dispatchEvent(event);
-    },
+    uiSimulationDelay: 5,
 
     save(roamNode: RoamNode) {
         console.log(`Saving, ${roamNode}`);
@@ -43,6 +37,20 @@ export const Roam = {
         if (!node) return;
 
         this.save(action(node));
+    },
+
+    async selectBlock(): Promise<void> {
+        if (this.getRoamBlockInput()) {
+            Keyboard.pressEsc();
+            await delay(this.uiSimulationDelay);
+            return Promise.resolve()
+        }
+        return Promise.reject('We\'re currently not inside roam block');
+    },
+
+    async deleteBlock(): Promise<void> {
+        return this.selectBlock().then(
+            () => Keyboard.pressBackspace());
     }
 };
 
