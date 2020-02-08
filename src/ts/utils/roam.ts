@@ -1,10 +1,7 @@
 import {getActiveEditElement, getInputEvent} from './dom';
 import {Keyboard} from './keyboard';
-import {delay} from './async';
 
 export const Roam = {
-    uiSimulationDelay: 5,
-
     save(roamNode: RoamNode) {
         console.log(`Saving, ${roamNode}`);
         const roamElement = this.getRoamBlockInput();
@@ -39,18 +36,28 @@ export const Roam = {
         this.save(action(node));
     },
 
-    async selectBlock(): Promise<void> {
+    async selectBlock() {
         if (this.getRoamBlockInput()) {
-            Keyboard.pressEsc();
-            await delay(this.uiSimulationDelay);
-            return Promise.resolve()
+            return Keyboard.pressEsc(20);
         }
         return Promise.reject('We\'re currently not inside roam block');
     },
 
-    async deleteBlock(): Promise<void> {
+    async deleteBlock() {
         return this.selectBlock().then(
             () => Keyboard.pressBackspace());
+    },
+
+    async copyBlock() {
+        await this.selectBlock();
+        document.execCommand('copy');
+    },
+
+    async duplicateBlock() {
+        await this.copyBlock();
+        await Keyboard.pressEnter(15);
+        await Keyboard.pressEnter();
+        document.execCommand('paste')
     }
 };
 

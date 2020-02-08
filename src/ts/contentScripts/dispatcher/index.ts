@@ -8,6 +8,8 @@ import {Roam} from '../../utils/roam';
  */
 const dispatchMap = new Map([
     ['srs-next-bucket', triggerNextBucket],
-    ['delete-current-block', () => Roam.deleteBlock()]]);
+    ['delete-current-block', () => Roam.deleteBlock()],
+    ['duplicate-current-block', () => Roam.duplicateBlock()],
+]);
 
 browser.runtime.onMessage.addListener((command) => dispatchMap.get(command)?.());
