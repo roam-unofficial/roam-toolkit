@@ -14,6 +14,8 @@
 	},
 	"license": "MIT",
 	"dependencies": {
+		"chrono-node": "^1.4.2",
+		"dateformat": "^3.0.3",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
 		"react-redux": "^7.1.3",
@@ -23,6 +25,7 @@
 	},
 	"devDependencies": {
 		"@types/chrome": "^0.0.92",
+		"@types/dateformat": "^3.0.1",
 		"@types/jest": "^24.9.1",
 		"@types/node": "^13.5.0",
 		"@types/react": "^16.9.11",

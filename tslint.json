@@ -32,7 +32,8 @@
     "quotemark": [
       true,
       "single",
-      "jsx-double"
+      "jsx-double",
+      "avoid-escape"
     ],
     "trailing-comma": [
       true,
