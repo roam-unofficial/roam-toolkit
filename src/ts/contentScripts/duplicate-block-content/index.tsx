@@ -22,10 +22,7 @@ const duplicate = () => {
         const newText = node.text.substring(0, selectionEnd)
             + selectedText
             + node.text.substring(selectionEnd);
-
-        Roam.applyToCurrent((() => {
-            return new RoamNode(newText, new Selection(selectionEnd, selectionEnd + selectionLength));
-        }));
+        Roam.save(new RoamNode(newText, new Selection(selectionEnd, selectionEnd + selectionLength)));
     } else {
         Roam.duplicateBlock()
     }
