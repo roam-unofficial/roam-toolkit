@@ -1,5 +1,10 @@
+import {delay} from './async';
+
 export const Keyboard = {
-    simulateKey(code: number) {
+    // Todo come up with a way to autogenerate the methods from the interface and the code
+    standardDelay: 0,
+
+    async simulateKey(code: number, additionalDelay: number = 0) {
         const event = new KeyboardEvent('keydown', {
             bubbles: true,
             cancelable: true,
@@ -7,14 +12,15 @@ export const Keyboard = {
             keyCode: code
         });
         document?.activeElement?.dispatchEvent(event);
+        return delay(this.standardDelay + additionalDelay);
     },
-    pressEnter() {
-        this.simulateKey(13)
+    async pressEnter(additionalDelay: number = 0) {
+        return this.simulateKey(13, additionalDelay)
     },
-    pressEsc() {
-        this.simulateKey(27)
+    async pressEsc(additionalDelay: number = 0) {
+        return this.simulateKey(27, additionalDelay)
     },
-    pressBackspace() {
-        this.simulateKey(8)
+    async pressBackspace(additionalDelay: number = 0) {
+        return this.simulateKey(8, additionalDelay)
     }
 };

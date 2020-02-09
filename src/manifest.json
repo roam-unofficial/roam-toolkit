@@ -16,7 +16,9 @@
         "tabs",
         "webRequest",
         "webRequestBlocking",
-        "*://*/*"
+        "clipboardRead",
+        "clipboardWrite",
+        "*://roamresearch.com/*"
     ],
     "manifest_version": 2,
     "background": {
@@ -59,6 +61,9 @@
         },
         "delete-current-block": {
             "description": "Delete block you're editing"
+        },
+        "duplicate-current-block": {
+            "description": "Duplicate current block"
         }
     }
 }
