@@ -1,5 +1,5 @@
 import { browser } from 'webextension-polyfill-ts';
-import { getSetting, isActive, Feature, Setting } from '../../utils/settings';
+import { getSetting, isActive, Feature, Shortcut } from '../../utils/settings';
 import { features } from '../features'
 
 
@@ -42,14 +42,12 @@ export const onShortcutPress = (shortcut: string, action: () => void) => {
     })
 }
 
-
-
 features.map((feature: Feature) => {
-    feature.settings.map(async (setting: Setting) => {
-        if (setting.type === 'shortcut' && await isActive(feature.id)) {
-            getSetting(feature.id, setting.id).then((shortcut: any) => {
-                if (shortcut !== '') {
-                    onShortcutPress(shortcut, setting.onPress);
+    feature.shortcuts?.map(async (shortcut: Shortcut) => {
+        if (await isActive(feature.id)) {
+            getSetting(feature.id, shortcut.id).then((s: any) => {
+                if (s !== '') {
+                    onShortcutPress(s, shortcut.onPress);
                 }
             })
         }
@@ -57,13 +55,11 @@ features.map((feature: Feature) => {
 })
 
 browser.runtime.onMessage.addListener(async (message) => {
-    if (message.shortcut !== '') {
+    if (message.shortcut) {
         const feature = features.find((f: Feature) => f.id === message.featureId)
-        const setting = feature?.settings.find((s: Setting) => s.id === message.settingId)
-        if (feature && setting?.type === 'shortcut' && await isActive(feature.id)) {
-            onShortcutPress(message.shortcut, setting.onPress)
+        const shortcut = feature?.shortcuts?.find((s: Shortcut) => s.id === message.settingId)
+        if (feature && shortcut && await isActive(feature.id)) {
+            onShortcutPress(message.shortcut, shortcut.onPress)
         }
     }
 })
-
-

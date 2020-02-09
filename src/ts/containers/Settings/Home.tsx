@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { setFeatureId } from '../../background/store/settings/actions';
 
-import { Feature, Setting } from '../../utils/settings'
+import { Feature } from '../../utils/settings'
 
 import { Checkbox } from '../../components/Checkbox'
 
@@ -24,18 +24,13 @@ export const Home = ({ features }: HomeProps) => {
                 {
                     features.map((feature: Feature) => (
                         <FeatureListElement key={feature.id}>
-                            {feature.settings.map((setting: Setting) => {
-                                if (setting.type === 'activation') {
-                                    return <Checkbox
-                                        key={`act_${feature.id}`}
-                                        checked={useSelector((state: any) => state[feature.id][setting.id]) || false}
-                                        onSave={(toggle: boolean) => {
-                                            dispatch(setting.onSave(toggle))
-                                        }}
-                                    />
-                                }
-                                return;
-                            })}
+                            {feature.toggleable ?
+                                <Checkbox
+                                    checked={useSelector((state: any) => state[feature.id].active)}
+                                    onSave={(checked: boolean) => {
+                                        dispatch(feature.toggle!(checked))
+                                    }}
+                                /> : null}
                             <FeatureNameContainer onClick={() => { dispatch(setFeatureId(feature.id)) }}>
                                 <FeatureName>
                                     <span style={{ 'color': '#a7b6c2' }}>[[</span>
@@ -81,7 +76,7 @@ const FeatureListElement = styled('li')`
 `;
 
 const FeatureNameContainer = styled('span')`
-    padding: 25px 50px 25px 5px;
+    padding: 25px 50px 25px 0px;
     width: 100%;
     z-index: 1;
 

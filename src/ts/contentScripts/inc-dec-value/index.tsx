@@ -4,13 +4,13 @@ import { Feature } from '../../utils/settings'
 export const config: Feature = {
     id: 'incDec',
     name: 'Increase / Decrease value or date',
-    settings: [
+    shortcuts: [
         {
-            type: 'shortcut', id: 'incShortcut', label: 'Shortcut for +1 value/date', initValue: 'Ctrl+Alt+ArrowUp',
+            id: 'incShortcut', label: 'Shortcut for +1 value/date', initValue: 'Ctrl+Alt+ArrowUp',
             onPress: () => modify('increase')
         },
         {
-            type: 'shortcut', id: 'decShortcut', label: 'Shortcut for -1 value/date', initValue: '', placeholder: 'e.g. Ctrl+Alt+ArrowDown',
+            id: 'decShortcut', label: 'Shortcut for -1 value/date', initValue: '', placeholder: 'e.g. Ctrl+Alt+ArrowDown',
             onPress: () => modify('decrease')
         },
     ]

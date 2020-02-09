@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
-import { Feature, Setting, Activation } from '../../utils/settings'
+import { Feature, Setting } from '../../utils/settings'
 
 import { returnToHome } from '../../background/store/settings/actions';
 
@@ -15,12 +15,31 @@ type FeatureConfigProps = { feature: Feature };
 export const FeatureConfig = ({ feature }: FeatureConfigProps) => {
     const dispatch = useDispatch();
 
-    const active = useSelector((state: any) => state[feature.id][`${feature.id}_active`]);
+    const shortcuts = feature.shortcuts ? feature.shortcuts.map((shortcut, i) => {
+        const value = useSelector((state: any) => state[feature.id][shortcut.id]) || shortcut.initValue;
+        return <Setting key={i}>
+            <Input
+                value={value}
+                placeholder={shortcut.placeholder}
+                label={shortcut.label}
+                onSave={(s) => { dispatch(shortcut.onSave!(s)) }} />
+        </Setting>
+    }) : null;
 
-    const settings: Setting[] = feature.settings;
-    const activationSetting = settings.find(s => s.type === 'activation') as Activation;
+    const settings = feature.settings ? feature.settings.map((setting, i) => {
+        if (setting.type === 'textarea') {
+            const value = useSelector((state: any) => state[feature.id][setting.id]) || setting.initValue;
+            return <Setting key={i}>
+                <Textarea
+                    value={value}
+                    label={setting.label}
+                    onSave={(v) => { dispatch(setting.onSave!(v)) }} />
+            </Setting>
+        }
+        return null;
+    }) : null;
 
-    const label = (
+    const featureName = (
         <FeatureNameContainer>
             <FeatureName>
                 <span style={{ 'color': '#a7b6c2' }}>[[</span>
@@ -30,43 +49,25 @@ export const FeatureConfig = ({ feature }: FeatureConfigProps) => {
         </FeatureNameContainer>
     )
 
+    const header = feature.toggleable ? (
+        <Checkbox
+            checked={useSelector((state: any) => state[feature.id].active)}
+            label={featureName}
+            onSave={(checked) => { dispatch(feature.toggle!(checked)) }}
+        />
+    ) : featureName;
+
+
+
     return (
         <FeatureConfigContainer>
             <Header>
                 <Back onClick={() => { dispatch(returnToHome()) }}>←</Back>
-                <Checkbox
-                    checked={active}
-                    label={label}
-                    onSave={(toggle) => { dispatch(activationSetting.onSave(toggle)) }}
-                />
+                {header}
             </Header>
             <ConfigsContainer>
-                {
-                    feature.settings.map((setting, i) => {
-                        if (setting.type === 'shortcut') {
-                            const value = useSelector((state: any) => state[feature.id][setting.id])
-                                || setting.initValue;
-                            return <Setting key={i}>
-                                <Input
-                                    value={value}
-                                    placeholder={setting.placeholder}
-                                    label={setting.label}
-                                    onSave={(shortcut) => { dispatch(setting.onSave!(shortcut)) }} />
-                            </Setting>
-                        }
-                        if (setting.type === 'textarea') {
-                            const value = useSelector((state: any) => state[feature.id][setting.id])
-                                || setting.initValue;
-                            return <Setting key={i}>
-                                <Textarea
-                                    value={value}
-                                    label={setting.label}
-                                    onSave={(v) => { dispatch(setting.onSave!(v)) }} />
-                            </Setting>
-                        }
-                        return null;
-                    })
-                }
+                {shortcuts}
+                {settings}
             </ConfigsContainer>
         </FeatureConfigContainer>
     )

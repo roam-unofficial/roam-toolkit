@@ -1,10 +1,11 @@
+import { browser } from 'webextension-polyfill-ts';
 import { Feature, isActive, getSetting } from '../../utils/settings'
 
 export const config: Feature = {
     id: 'custom-css',
     name: 'Custom CSS',
     settings: [
-        { type: 'textarea', id: 'css', onSave: (value: string) => setCss(value) },
+        { type: 'textarea', id: 'css' },
     ]
 }
 
@@ -21,7 +22,11 @@ isActive('custom-css').then(active => {
     }
 })
 
-
+browser.runtime.onMessage.addListener(async (message) => {
+    if (message.featureId === 'custom-css') {
+        setCss(message.value);
+    }
+})
 
 
 

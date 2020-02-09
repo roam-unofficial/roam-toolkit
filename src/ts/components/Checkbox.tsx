@@ -27,7 +27,7 @@ export const Checkbox = ({ checked, label, description, onSave }: CheckboxProps)
         )
     } else {
         return (
-            <label style={{ marginTop: '4px' }}>
+            <label style={{ marginTop: '4px', marginRight: '5px' }}>
                 <StyledCheckbox
                     checked={newValue}
                     onChange={(e: any) => {
