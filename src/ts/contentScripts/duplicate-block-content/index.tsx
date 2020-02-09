@@ -1,5 +1,33 @@
-import { browser } from 'webextension-polyfill-ts';
 import { getActiveEditElement } from '../../utils/dom';
+import { Feature } from '../../utils/settings'
+
+export const config: Feature = {
+    id: 'duplicate',
+    name: 'Duplicate',
+    settings: [
+        {
+            type: 'shortcut', id: 'dupShortcut', label: 'Shortcut for duplication', initValue: '',
+            onPress: () => duplicate()
+        },
+    ]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const pasteEvent = new Event('input', {
     bubbles: true,
@@ -19,7 +47,7 @@ const duplicate = () => {
         if (element.selectionStart !== element.selectionEnd) { // duplicate selection
             const contentToPaste = element.value.substring(element.selectionStart, element.selectionEnd);
             const selectionLength = contentToPaste.length;
-            let selectionEnd = element.selectionEnd
+            const selectionEnd = element.selectionEnd
             element.value = element.value.substring(0, element.selectionEnd)
                 + contentToPaste
                 + element.value.substring(element.selectionEnd);
@@ -40,8 +68,8 @@ const duplicate = () => {
     }
 }
 
-browser.runtime.onMessage.addListener((command) => {
-    if (command === 'duplicate-content') {
-        duplicate();
-    }
-});
+// browser.runtime.onMessage.addListener((command) => {
+//     if (command === 'duplicate-content') {
+//         duplicate();
+//     }
+// });

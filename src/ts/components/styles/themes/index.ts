@@ -3,7 +3,7 @@ import { DefaultTheme } from 'styled-components';
 export type ThemeTypes = 'light' | 'dark';
 
 export const lightTheme: DefaultTheme = {
-	backgroundColor: 'lightblue'
+	backgroundColor: '#fff'
 };
 
 export const darkTheme: DefaultTheme = {

@@ -1,7 +1,5 @@
 {
-	"editor.tabSize": 4,
-	"editor.detectIndentation": false,
-	"editor.insertSpaces": false,
+    "editor.tabSize": 4,
 	"files.associations": {
 		"*.js": "javascript",
 		"*.jsx": "javascriptreact",

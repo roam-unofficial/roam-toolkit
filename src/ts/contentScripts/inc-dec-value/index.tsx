@@ -1,5 +1,28 @@
-import {browser} from 'webextension-polyfill-ts';
-import {getActiveEditElement} from '../../utils/dom';
+import { getActiveEditElement } from '../../utils/dom';
+import { Feature } from '../../utils/settings'
+
+export const config: Feature = {
+    id: 'incDec',
+    name: 'Increase / Decrease value or date',
+    settings: [
+        {
+            type: 'shortcut', id: 'incShortcut', label: 'Shortcut for +1 value/date', initValue: 'Ctrl+Alt+ArrowUp',
+            onPress: () => modify('increase')
+        },
+        {
+            type: 'shortcut', id: 'decShortcut', label: 'Shortcut for -1 value/date', initValue: '', placeholder: 'e.g. Ctrl+Alt+ArrowDown',
+            onPress: () => modify('decrease')
+        },
+    ]
+}
+
+
+
+
+
+
+
+
 
 
 const inputEvent = new Event('input', {
@@ -97,9 +120,8 @@ const dateModified = (date: Date, modType: string): Date => {
     return newDate;
 }
 
-const modify = (modType: string) => {
+export const modify = (modType: string) => {
     const element = getActiveEditElement() as HTMLTextAreaElement;
-
     if (element.nodeName === 'TEXTAREA') {
         const itemContent = element.value;
         const cursor = element.selectionStart;
@@ -133,11 +155,3 @@ const modify = (modType: string) => {
     }
 }
 
-browser.runtime.onMessage.addListener((command) => {
-    if (command === 'increase-value') {
-        modify('increase');
-    }
-    if (command === 'decrease-value') {
-        modify('decrease');
-    }
-});

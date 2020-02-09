@@ -36,10 +36,12 @@
     },
     "content_scripts": [{
         "js": [
+            "settings.js",
             "srs.js",
             "inc-dec-value.js",
             "dispatcher.js",
-            "duplicate-block-content.js"
+            "duplicate-block-content.js",
+            "custom-css.js"
         ],
         "matches": [
             "*://*/*"
