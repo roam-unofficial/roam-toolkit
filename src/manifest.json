@@ -43,7 +43,8 @@
             "inc-dec-value.js",
             "dispatcher.js",
             "duplicate-block-content.js",
-            "custom-css.js"
+            "custom-css.js",
+            "fuzzy_date.js"
         ],
         "matches": [
             "*://*/*"
@@ -68,6 +69,9 @@
         },
         "duplicate-current-block": {
             "description": "Duplicate current block"
+        },
+        "replace-fuzzy-date": {
+            "description": "Replace FuzzyDate with computer date"
         }
     }
 }
