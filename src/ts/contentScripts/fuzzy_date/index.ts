@@ -1,10 +1,11 @@
 import * as chrono from 'chrono-node';
-import {Roam, RoamNode} from '../../utils/roam';
+import {Roam, RoamNode, Selection} from '../../utils/roam';
 import dateFormat from 'dateformat';
+import {afterClosingBrackets} from '../../utils/brackets';
 
 export const guard = ';';
 const dateContainerExpr = /;(.{3,}?);/gm;
-const roamFormat = "'[['mmmm dS, yyyy']]'";
+const roamFormat = `'[['mmmm dS, yyyy']]'`;
 
 export function replaceFuzzyDate() {
     Roam.applyToCurrent(node => {
@@ -15,6 +16,8 @@ export function replaceFuzzyDate() {
             return dateFormat(date, roamFormat);
         }));
 
-        return new RoamNode(newText, node.selection);
+        const cursor = node.text === newText ?
+            node.selection.start : afterClosingBrackets(newText, node.selection.start);
+        return new RoamNode(newText, new Selection(cursor, cursor));
     });
 }
