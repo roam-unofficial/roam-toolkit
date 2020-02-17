@@ -42,7 +42,6 @@
             "inc-dec-value.js",
             "dispatcher.js",
             "fuzzy_date.js",
-            "duplicate-block-content.js",
             "create-block.js"
         ],
         "matches": [
@@ -62,13 +61,10 @@
         "delete-current-block": {
             "description": "Delete block you're editing"
         },
-        "duplicate-current-block": {
-            "description": "Duplicate current block"
-        },
         "replace-fuzzy-date": {
             "description": "Replace FuzzyDate with computer date"
         },
-        "duplicate-content": {
+        "duplicate-current-block": {
             "description": "Duplicate block content or selection"
         },
         "create-block": {

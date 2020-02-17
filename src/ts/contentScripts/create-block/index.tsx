@@ -1,30 +1,42 @@
 import { browser } from 'webextension-polyfill-ts';
 import {
-  getTopLevelBlockList,
   getInputEvent,
-  simulateMouseClick,
-  pressESC,
-  pressEnter,
-  pressBackspace,
   getActiveEditElement,
-  pressShiftTab
-} from '../../utils/dom';
+  getLastTopLevelBlock} from '../../utils/dom';
+import { Mouse } from '../../utils/mouse';
+import { Keyboard } from '../../utils/keyboard';
+import { Roam, RoamNode, Selection } from '../../utils/roam';
 
 const create = async () => {
   //get last block from list
-  let lastChild = getTopLevelBlockList().lastChild as HTMLElement;
-  let lastBlock = lastChild.querySelector('.roam-block') as HTMLElement;
+    let lastBlock = getLastTopLevelBlock();
+
+//   let lastChild = getTopLevelBlockList().lastChild as HTMLElement;
+//   console.log('lastChild: ', lastChild);
+//   let lastBlock = lastChild.querySelector('.roam-block') as HTMLElement;
 
   // click on block to trigger textarea
   // not needed if lastblock is already selected
   if (lastBlock) {
     console.log('lastBlock: ', lastBlock);
-    await simulateMouseClick(lastBlock);
+    await Mouse.leftClick(lastBlock);
     // await asyncMouseClick(lastBlock);
   }
 
+  /*
+    to create block at the bottom at current identation:
+    - select last top level
+    - click
+    - esc
+    - down arrow
+    - enter
+  */
+
   //mouse click changes dom so we need to get last block again
-  let element = getActiveEditElement() as HTMLTextAreaElement;
+//   let element = getActiveEditElement() as HTMLTextAreaElement;
+   let element = Roam.getRoamBlockInput();
+
+   let newNode = Roam.getActiveRoamNode();
 
   if (element) {
     console.log('element: ', element);
@@ -37,14 +49,14 @@ const create = async () => {
     );
 
     // add css rule to hide the next block before it is created
-    let ss = document.styleSheets[0] as CSSStyleSheet;
-    let numChildren = getTopLevelBlockList().children.length;
-    ss.insertRule(`.roam-article div .flex-v-box:nth-child(${numChildren+1}) {  width: 0px; overflow: hidden }`)
+    // let ss = document.styleSheets[0] as CSSStyleSheet;
+    // let numChildren = getTopLevelBlockList().children.length;
+    // ss.insertRule(`.roam-article div .flex-v-box:nth-child(${numChildren+1}) {  width: 0px; overflow: hidden }`)
 
     // press enter to create new block
-    await pressEnter();
+    await Keyboard.pressEnter(20);
     // ShiftTab guarantees the new block is a top level block
-    await pressShiftTab();
+    await Keyboard.pressShiftTab(20);
     
     // hide it
     // lastChild = getTopLevelBlockList().lastChild as HTMLElement;
@@ -52,8 +64,9 @@ const create = async () => {
 
 
     // element = getActiveEditElement() as HTMLTextAreaElement;
-    lastChild = getTopLevelBlockList().lastChild as HTMLElement;
-    element = lastChild.querySelector('textarea') as HTMLTextAreaElement;
+    // lastChild = getTopLevelBlockList().lastChild as HTMLElement;
+    // lastBlock = lastChild.querySelector('.roam-block') as HTMLElement;
+    // element = lastBlock.querySelector('textarea') as HTMLTextAreaElement;
   
 
     if (element.nodeName === 'TEXTAREA') {
@@ -69,23 +82,24 @@ const create = async () => {
 
       // unfocus block
       // esc enters into block selection mode
-      await pressESC(element);
+    //   await pressESC(element);
+    //   await Keyboard.pressEsc(20);
 
       // resulting table from query
-      const table = lastChild.querySelector('table');
-      if (table) {
-          console.log(table);
-          const rows = table && Array.from(table.rows);
-          console.log(rows);
-      }
+    //   const table = lastChild.querySelector('table');
+    //   if (table) {
+    //       console.log(table);
+    //       const rows = table && Array.from(table.rows);
+    //       console.log(rows);
+    //   }
 
       // block is selected, now either:
       // leave block selection mode with ESC
     //   await pressESC(element);
       // or delete block with Backspace
-      await pressBackspace();
+    //   await Keyboard.pressBackspace();
 
-      ss.deleteRule(0);
+    //   ss.deleteRule(0);
     }
   }
 };
