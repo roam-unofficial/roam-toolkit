@@ -19,21 +19,10 @@ export function getActiveEditElement(): ValueElement {
     return element as ValueElement;
 }
 
-export function getTopLevelBlockList(): ValueElement {
-    let element = document.querySelector('.roam-article div .flex-v-box');
-    while (element && element.shadowRoot) {
-        if (element.shadowRoot.activeElement) {
-            element = element.shadowRoot.activeElement;
-        } else {
-            const subElement = element.shadowRoot.querySelector('input, textarea, select');
-            if (subElement) {
-                element = subElement;
-            }
-            break;
-        }
-    }
-    return element as ValueElement;
+export function getTopLevelBlockList() {
+    return document.querySelector('.roam-article div .flex-v-box') as HTMLElement;
 }
+
 
 export function getInputEvent() {
     return new Event('input', {
@@ -43,7 +32,7 @@ export function getInputEvent() {
 }
 
 function addDelayAfterInput(fn: void, ms: number) {
-    return new Promise((res,rej) => {
+    return new Promise(res => {
         fn;
         setTimeout(res,ms);
     })
