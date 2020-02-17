@@ -1,5 +1,8 @@
+import { delay } from './async';
+
 export const Mouse = {
-  simulateClick(buttons: number, element: HTMLElement) {
+  standardDelay: 0,
+  simulateClick(buttons: number, element: HTMLElement, additionalDelay: number = 0) {
     console.log('[Click]');
     const mouseClickEvents = ['mousedown', 'click', 'mouseup'];
     mouseClickEvents.forEach(mouseEventType => {
@@ -12,9 +15,9 @@ export const Mouse = {
         })
       );
     });
+    return delay(this.standardDelay + additionalDelay);
   },
-  leftClick(element: HTMLElement) {
-      return this.simulateClick(1, element)
+  leftClick(element: HTMLElement, additionalDelay:number = 0) {
+    return this.simulateClick(1, element, additionalDelay);
   }
-
 };

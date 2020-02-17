@@ -24,6 +24,9 @@ export const Keyboard = {
     async pressBackspace(additionalDelay: number = 0) {
         return this.simulateKey(8, additionalDelay)
     },
+    async pressTab(additionalDelay: number = 0) {
+        return this.simulateKey(9, additionalDelay)
+    },
     async pressShiftTab(additionalDelay: number = 0) {
         return this.simulateKey(9, additionalDelay, {shiftKey: true})
     }
