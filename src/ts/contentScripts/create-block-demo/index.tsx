@@ -22,31 +22,31 @@ export const create = async () => {
   //   Roam.createSiblingBelow();
   //   Roam.createSiblingAbove();
     await Roam.createBlockAtBottom();
-    await Roam.writeText('bottom-block');
+    Roam.writeText('bottom-block');
     await Roam.createBlockAtTop();
-    await Roam.writeText('top-block');
+    Roam.writeText('top-block');
     await Roam.createFirstChild();
-    await Roam.writeText('first child');
+    Roam.writeText('first child');
     await Roam.createFirstChild();
-    await Roam.writeText('grandchild');
+    Roam.writeText('grandchild');
     // // // getFirstTopLevelBlock();
     await Roam.editBlock(getFirstTopLevelBlock());
     await Roam.createLastChild();
-    await Roam.writeText('second child');
+    Roam.writeText('second child');
     await Roam.createFirstChild();
-    await Roam.writeText('grandchild');
+    Roam.writeText('grandchild');
     // // getFirstTopLevelBlock();
     await Roam.editBlock(getFirstTopLevelBlock());
     await Roam.createDeepestLastDescendant()
-    await Roam.writeText('deepest descendant*');
+    Roam.writeText('deepest descendant*');
     // // getFirstTopLevelBlock();
     await Roam.editBlock(getFirstTopLevelBlock());
     // await Roam.createSiblingAbove()
     // // getFirstTopLevelBlock();
     await Roam.createSiblingBelow()
-    await Roam.writeText('3rd top block');
+    Roam.writeText('3rd top block');
     await Roam.createSiblingAbove()
-    await Roam.writeText('2nd top block');
+    Roam.writeText('2nd top block');
     
   /*
     to create block at the bottom at current identation:

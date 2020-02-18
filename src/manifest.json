@@ -42,7 +42,7 @@
             "inc-dec-value.js",
             "dispatcher.js",
             "fuzzy_date.js",
-            "create-block.js"
+            "create-block-demo.js"
         ],
         "matches": [
             "*://roamresearch.com/*"
@@ -67,7 +67,7 @@
         "duplicate-current-block": {
             "description": "Duplicate block content or selection"
         },
-        "create-block": {
+        "create-block-demo": {
             "suggested_key": {
                 "default": "Ctrl+Down"
             },
