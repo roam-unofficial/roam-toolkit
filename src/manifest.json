@@ -66,12 +66,6 @@
         },
         "duplicate-current-block": {
             "description": "Duplicate block content or selection"
-        },
-        "create-block-demo": {
-            "suggested_key": {
-                "default": "Ctrl+Down"
-            },
-            "description": "Create new empty block at the bottom of the page"
         }
     }
 }

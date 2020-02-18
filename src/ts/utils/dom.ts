@@ -25,13 +25,11 @@ export function getTopLevelBlockList() {
 
 export function getLastTopLevelBlock() {
   const lastChild = getTopLevelBlockList().lastChild as HTMLElement;
-    console.log('bottom-block: ', lastChild);
   return lastChild.querySelector('.roam-block, textarea') as HTMLElement; 
 }
 
 export function getFirstTopLevelBlock() {
   const firstChild = getTopLevelBlockList().firstChild as HTMLElement;
-    console.log('top-block: ', firstChild);
   return firstChild.querySelector('.roam-block, textarea') as HTMLElement; 
 }
 

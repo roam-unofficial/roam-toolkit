@@ -1,7 +1,6 @@
 import {getActiveEditElement, getInputEvent, getLastTopLevelBlock, getFirstTopLevelBlock} from './dom';
 import {Keyboard} from './keyboard';
 import { Mouse } from './mouse';
-import { delay } from './async';
 
 export const Roam = {
     save(roamNode: RoamNode) {
