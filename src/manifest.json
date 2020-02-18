@@ -18,7 +18,11 @@
         "webRequestBlocking",
         "clipboardRead",
         "clipboardWrite",
+<<<<<<< HEAD
         "*://roamresearch.com/*"
+=======
+        "*://*/*"
+>>>>>>> 8ebec7a63f7ec9421c94436cd22c05f3ff9f1e67
     ],
     "manifest_version": 2,
     "background": {
@@ -41,8 +45,13 @@
             "srs.js",
             "inc-dec-value.js",
             "dispatcher.js",
+<<<<<<< HEAD
             "fuzzy_date.js",
             "create-block-demo.js"
+=======
+            "duplicate-block-content.js",
+            "create-block.js"
+>>>>>>> 8ebec7a63f7ec9421c94436cd22c05f3ff9f1e67
         ],
         "matches": [
             "*://roamresearch.com/*"
@@ -58,6 +67,7 @@
         "decrease-value": {
             "description": "Decrease value"
         },
+<<<<<<< HEAD
         "delete-current-block": {
             "description": "Delete block you're editing"
         },
@@ -66,6 +76,16 @@
         },
         "duplicate-current-block": {
             "description": "Duplicate block content or selection"
+=======
+        "duplicate-content": {
+            "description": "Duplicate block content or selection"
+        },
+        "create-block": {
+            "suggested_key": {
+                "default": "Ctrl+Down"
+            },
+            "description": "Create new empty block at the bottom of the page"
+>>>>>>> 8ebec7a63f7ec9421c94436cd22c05f3ff9f1e67
         }
     }
 }
