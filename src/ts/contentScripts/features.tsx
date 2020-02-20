@@ -6,6 +6,7 @@ import {config as customCss} from './custom-css/index'
 import {config as srs} from './srs/index'
 import {config as deleteBlock} from './delete-block/index'
 import {filterAsync, mapAsync} from '../utils/async';
+import {config as estimate} from './estimates/index'
 
 export const Features = {
     all: prepareSettings([
@@ -13,7 +14,8 @@ export const Features = {
         duplicate,
         customCss,
         srs,
-        deleteBlock
+        deleteBlock,
+        estimate,
     ]),
 
     isActive: Settings.isActive,
