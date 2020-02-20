@@ -4,6 +4,7 @@ import {config as incDec} from './inc-dec-value/index'
 import {config as customCss} from './custom-css/index'
 import {config as srs} from './srs/index'
 import {config as blockManipulation} from './block-manipulation'
+import {config as estimate} from './estimates/index'
 import {filterAsync, mapAsync} from '../utils/async';
 
 export const Features = {
@@ -12,6 +13,7 @@ export const Features = {
         customCss,
         srs,
         blockManipulation,
+        estimate,
     ]),
 
     isActive: Settings.isActive,
