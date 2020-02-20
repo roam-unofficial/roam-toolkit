@@ -52,10 +52,6 @@
     }],
     "commands": {
         "srs-next-bucket": {
-            "suggested_key": {
-                "default": "Ctrl+S",
-                "mac": "MacCtrl+S"
-            },
             "description": "Next SRS bucket"
         },
         "increase-value": {
