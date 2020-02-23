@@ -1,4 +1,4 @@
-import {getActiveEditElement} from '../../utils/dom';
+import {getActiveEditElement, getInputEvent} from '../../utils/dom';
 import {Feature} from '../../utils/settings'
 import dateFormat from 'dateformat';
 import {roamDateFormat} from '../../date/common';
@@ -18,20 +18,6 @@ export const config: Feature = {
     ]
 }
 
-
-
-
-
-
-
-
-
-
-const inputEvent = new Event('input', {
-    bubbles: true,
-    cancelable: true,
-});
-
 const dateRegex = /\[\[(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}(st|nd|th|rd), \d{4}\]\]/gm;
 
 const dateFromPageName = (text: string): Date => {
@@ -49,7 +35,7 @@ const saveChanges = (el: HTMLTextAreaElement, cursor: number, value: string): vo
     el.value = value;
     el.selectionStart = cursor;
     el.selectionEnd = cursor;
-    el.dispatchEvent(inputEvent);
+    el.dispatchEvent(getInputEvent());
 };
 
 const openBracketsLeftIndex = (text: string, cursor: number): number =>
