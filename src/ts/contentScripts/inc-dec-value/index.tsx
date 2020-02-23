@@ -1,5 +1,7 @@
-import { getActiveEditElement } from '../../utils/dom';
-import { Feature } from '../../utils/settings'
+import {getActiveEditElement} from '../../utils/dom';
+import {Feature} from '../../utils/settings'
+import dateFormat from 'dateformat';
+import {roamDateFormat} from '../../date/common';
 
 export const config: Feature = {
     id: 'incDec',
@@ -30,35 +32,6 @@ const inputEvent = new Event('input', {
     cancelable: true,
 });
 
-const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-];
-
-const nth = (d: number) => {
-    if (d > 3 && d < 21) return 'th';
-    switch (d % 10) {
-        case 1:
-            return 'st';
-        case 2:
-            return 'nd';
-        case 3:
-            return 'rd';
-        default:
-            return 'th';
-    }
-};
-
 const dateRegex = /\[\[(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}(st|nd|th|rd), \d{4}\]\]/gm;
 
 const dateFromPageName = (text: string): Date => {
@@ -70,13 +43,7 @@ const dateFromPageName = (text: string): Date => {
     );
 };
 
-const dateStrFormatted = (d: Date): string => {
-    const year = d.getFullYear();
-    const date = d.getDate();
-    const month = months[d.getMonth()];
-    const nthStr = nth(date);
-    return `[[${month} ${date}${nthStr}, ${year}]]`;
-};
+const dateStrFormatted = (date: Date): string => dateFormat(date, roamDateFormat);
 
 const saveChanges = (el: HTMLTextAreaElement, cursor: number, value: string): void => {
     el.value = value;
