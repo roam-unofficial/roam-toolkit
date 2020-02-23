@@ -2,6 +2,10 @@ import {delay} from './async';
 
 export const Keyboard = {
     // Todo come up with a way to autogenerate the methods from the interface and the code
+    LEFT_ARROW: 37,
+    UP_ARROW: 38,
+    RIGHT_ARROW: 39,
+    DOWN_ARROW: 40,
     standardDelay: 0,
 
     async simulateKey(code: number, additionalDelay: number = 0, opts?: KeyboardEventInit) {
@@ -29,5 +33,5 @@ export const Keyboard = {
     },
     async pressShiftTab(additionalDelay: number = 0) {
         return this.simulateKey(9, additionalDelay, {shiftKey: true})
-    }
+    },
 };

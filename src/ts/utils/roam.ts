@@ -44,8 +44,14 @@ export const Roam = {
         return Promise.reject('We\'re currently not inside roam block');
     },
 
-    async editBlock(element: HTMLElement) {
-        return Mouse.leftClick(element,20)
+    async activateBlock(element: HTMLElement) {
+        if (
+            element.classList.contains('roam-block') || 
+            element.tagName.toLocaleLowerCase() === 'textarea'
+        ) {
+            await Mouse.leftClick(element,20)
+        } 
+        return this.getRoamBlockInput();
     },
 
     async deleteBlock() {
@@ -70,8 +76,7 @@ export const Roam = {
             node =>
                 new RoamNode(
                     node.text,
-                    // new Selection(node.text.length * 2, node.text.length * 2)
-                    new Selection(0,0)
+                        new Selection(0,0)
                 ))
     },
 
@@ -87,6 +92,7 @@ export const Roam = {
     writeText(text: string) {
         this.applyToCurrent(node => 
             new RoamNode(text, node.selection));
+        return this.getActiveRoamNode()?.text === text;
     },
 
     async createSiblingAbove() {
@@ -94,7 +100,7 @@ export const Roam = {
         const isEmpty = !this.getActiveRoamNode()?.text;
         await Keyboard.pressEnter(20);
         if (isEmpty) {
-            await Keyboard.simulateKey(38,20); //Up Arrow
+            await Keyboard.simulateKey(Keyboard.UP_ARROW,20);
         }
     },
     
@@ -117,21 +123,17 @@ export const Roam = {
 
     async createDeepestLastDescendant() {
         await this.selectBlock();
-        await Keyboard.simulateKey(39,20); //Right Arrow
+        await Keyboard.simulateKey(Keyboard.RIGHT_ARROW,20);
         await Keyboard.pressEnter(20);
     },
     
     async createBlockAtTop(){
-        // const tlb = getFirstTopLevelBlock();
-        // await Mouse.leftClick(tlb,20);
-        await this.editBlock(getFirstTopLevelBlock());
+        await this.activateBlock(getFirstTopLevelBlock());
         await this.createSiblingAbove();
     },
     
     async createBlockAtBottom(){
-        await this.editBlock(getLastTopLevelBlock());
-        // const tlb = getLastTopLevelBlock();
-        // await Mouse.leftClick(tlb,20);
+        await this.activateBlock(getLastTopLevelBlock());
         await this.createSiblingBelow();
     }
 

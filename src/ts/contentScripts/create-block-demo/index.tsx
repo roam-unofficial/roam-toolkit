@@ -14,18 +14,18 @@ export const createDemo = async () => {
     await Roam.createFirstChild();
     Roam.writeText('grandchild');
     
-    await Roam.editBlock(getFirstTopLevelBlock());
+    await Roam.activateBlock(getFirstTopLevelBlock());
     await Roam.createLastChild();
     Roam.writeText('second child');
     
     await Roam.createFirstChild();
     Roam.writeText('grandchild');
     
-    await Roam.editBlock(getFirstTopLevelBlock());
+    await Roam.activateBlock(getFirstTopLevelBlock());
     await Roam.createDeepestLastDescendant()
     Roam.writeText('deepest descendant*');
     
-    await Roam.editBlock(getFirstTopLevelBlock());
+    await Roam.activateBlock(getFirstTopLevelBlock());
     await Roam.createSiblingBelow()
     Roam.writeText('3rd top block');
     
