@@ -15,13 +15,14 @@ export const config: Feature = {
     ]
 }
 
-const bucketExpr = /\[\[Bucket (\d+)]]/;
-const nextBucket = (nodeStr: string) => `[[Bucket ${parseInt(nodeStr) + 1}]]`;
+const bucketExpr = /(?:\[\[\[\[interval]]::(\d+)]])|(?:#Box(\d+))/gi;
+const nextBucket = (nodeStr: string) => `[[[[interval]]::${parseInt(nodeStr) + 1}]]`;
 
 export function triggerNextBucket() {
     Roam.applyToCurrent(
-        (element => {
-            return new RoamNode(element.text.replace(bucketExpr, (_, numStr: string) => nextBucket(numStr)),
-                element.selection);
-        }));
+        (element =>
+            new RoamNode(
+                element.text.replace(bucketExpr,
+                    (_, ...numbers) => nextBucket(numbers.filter(it => it)[0])),
+                element.selection)));
 }
