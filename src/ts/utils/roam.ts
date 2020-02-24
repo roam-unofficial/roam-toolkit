@@ -168,7 +168,8 @@ export class RoamNode {
         const property = RoamNode.createInlineProperty(name, value);
         const newText = currentValue ? this.text.replace(RoamNode.getInlinePropertyMatcher(name), property) :
             this.text + ' ' + property;
-        return new RoamNode(newText, this.selection)
+        // @ts-ignore
+        return new this.constructor(newText, this.selection)
     }
 
     static createInlineProperty(name: string, value: string) {
