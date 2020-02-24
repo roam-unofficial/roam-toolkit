@@ -1,7 +1,6 @@
 import {getActiveEditElement, getInputEvent} from '../../utils/dom';
 import {Feature} from '../../utils/settings'
-import dateFormat from 'dateformat';
-import {roamDateFormat} from '../../date/common';
+import {RoamDate} from '../../date/common';
 
 export const config: Feature = {
     id: 'incDec',
@@ -18,7 +17,6 @@ export const config: Feature = {
     ]
 }
 
-const dateRegex = /\[\[(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}(st|nd|th|rd), \d{4}\]\]/gm;
 
 const dateFromPageName = (text: string): Date => {
     return new Date(
@@ -28,8 +26,6 @@ const dateFromPageName = (text: string): Date => {
             .replace(/(th,|nd,|rd,|st,)/, ',')
     );
 };
-
-const dateStrFormatted = (date: Date): string => dateFormat(date, roamDateFormat);
 
 const saveChanges = (el: HTMLTextAreaElement, cursor: number, value: string): void => {
     el.value = value;
@@ -61,7 +57,7 @@ const nameInsideBrackets = (text: string, cursor: number): string =>
     text.substring(text.substring(0, cursor).lastIndexOf('[['), cursor + text.substring(cursor).indexOf(']]') + 2)
 
 const nameIsDate = (pageName: string): boolean =>
-    pageName.match(dateRegex) !== null
+    pageName.match(RoamDate.regex) !== null
 
 const dateModified = (date: Date, modType: string): Date => {
     const newDate = new Date(date.valueOf());
@@ -78,11 +74,11 @@ export const modify = (modType: string) => {
     if (element.nodeName === 'TEXTAREA') {
         const itemContent = element.value;
         const cursor = element.selectionStart;
-        const datesInContent = itemContent.match(dateRegex);
+        const datesInContent = itemContent.match(RoamDate.regex);
 
         if (cursorPlacedOnDate(itemContent, cursor)) { // e.g. Lorem ipsum [[Janu|ary 3rd, 2020]] 123
             const newValue = itemContent.substring(0, openBracketsLeftIndex(itemContent, cursor))
-                + dateStrFormatted(dateModified(dateFromPageName(nameInsideBrackets(itemContent, cursor)), modType))
+                + RoamDate.format(dateModified(dateFromPageName(nameInsideBrackets(itemContent, cursor)), modType))
                 + itemContent.substring(closingBracketsRightIndex(itemContent, cursor) + 2);
             saveChanges(element, cursor, newValue);
         } else if (cursorPlacedOnNumber(itemContent, cursor)) { // e.g. Lorem ipsum [[January 3rd, 2020]] 12|3
@@ -102,7 +98,7 @@ export const modify = (modType: string) => {
             saveChanges(element, cursor, newValue);
         } else if (datesInContent && datesInContent.length === 1) { // e.g. Lor|em ipsum [[January 3rd, 2020]] 123
             const newValue = itemContent.replace(datesInContent[0],
-                dateStrFormatted(dateModified(dateFromPageName(datesInContent[0]), modType)));
+                RoamDate.format(dateModified(dateFromPageName(datesInContent[0]), modType)));
             saveChanges(element, cursor, newValue);
         }
     }

@@ -1,8 +1,7 @@
 import * as chrono from 'chrono-node';
 import {Roam, RoamNode, Selection} from '../../utils/roam';
-import dateFormat from 'dateformat';
 import {afterClosingBrackets} from '../../utils/brackets';
-import {roamDateFormat} from '../../date/common';
+import {RoamDate} from '../../date/common';
 
 export const guard = ';';
 const dateContainerExpr = /;(.{3,}?);/gm;
@@ -13,7 +12,7 @@ export function replaceFuzzyDate() {
             const date = chrono.parseDate(substring, new Date(), {forwardDate: true});
             if (!date) return substring;
 
-            return dateFormat(date, roamDateFormat);
+            return RoamDate.format(date)
         }));
 
         const cursor = node.text === newText ?
