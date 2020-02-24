@@ -39,17 +39,14 @@ export const Roam = {
 
     async selectBlock() {
         if (this.getRoamBlockInput()) {
-            return Keyboard.pressEsc(20);
+            return Keyboard.pressEsc();
         }
         return Promise.reject('We\'re currently not inside roam block');
     },
 
     async activateBlock(element: HTMLElement) {
-        if (
-            element.classList.contains('roam-block') || 
-            element.tagName.toLocaleLowerCase() === 'textarea'
-        ) {
-            await Mouse.leftClick(element,20)
+        if (element.classList.contains('roam-block')) {
+            await Mouse.leftClick(element)
         } 
         return this.getRoamBlockInput();
     },
@@ -66,27 +63,17 @@ export const Roam = {
 
     async duplicateBlock() {
         await this.copyBlock();
-        await Keyboard.pressEnter(15);
+        await Keyboard.pressEnter();
         await Keyboard.pressEnter();
         document.execCommand('paste')
     },
 
     moveCursorToStart() {
-        this.applyToCurrent(
-            node =>
-                new RoamNode(
-                    node.text,
-                        new Selection(0,0)
-                ))
+        this.applyToCurrent(node => node.withCursorAtTheStart())
     },
 
     moveCursorToEnd() {
-        this.applyToCurrent(
-            node =>
-                new RoamNode(
-                    node.text,
-                    new Selection(node.text.length * 2, node.text.length * 2)
-                ))
+        this.applyToCurrent(node => node.withCursorAtTheEnd())
     },
 
     writeText(text: string) {
@@ -98,47 +85,48 @@ export const Roam = {
     async createSiblingAbove() {
         this.moveCursorToStart();
         const isEmpty = !this.getActiveRoamNode()?.text;
-        await Keyboard.pressEnter(20);
+        await Keyboard.pressEnter();
         if (isEmpty) {
-            await Keyboard.simulateKey(Keyboard.UP_ARROW,20);
+            await Keyboard.simulateKey(Keyboard.UP_ARROW);
         }
     },
     
     async createSiblingBelow() {
         this.moveCursorToEnd();
-        await Keyboard.pressEnter(20);
-        await Keyboard.pressShiftTab(40);
+        await Keyboard.pressEnter();
+        await Keyboard.pressShiftTab(Keyboard.standardDelay);
     },
 
     async createFirstChild() {
         this.moveCursorToEnd();
-        await Keyboard.pressEnter(20);
-        await Keyboard.pressTab(20);
+        await Keyboard.pressEnter();
+        await Keyboard.pressTab();
     },
 
     async createLastChild() {
         await this.createSiblingBelow();
-        await Keyboard.pressTab(20);
+        await Keyboard.pressTab();
     },
 
     async createDeepestLastDescendant() {
         await this.selectBlock();
-        await Keyboard.simulateKey(Keyboard.RIGHT_ARROW,20);
-        await Keyboard.pressEnter(20);
+        await Keyboard.simulateKey(Keyboard.RIGHT_ARROW);
+        await Keyboard.pressEnter();
     },
     
-    async createBlockAtTop(){
+    async createBlockAtTop(forceCreation:boolean = false){
         await this.activateBlock(getFirstTopLevelBlock());
-        await this.createSiblingAbove();
+        if (this.getActiveRoamNode()?.text || forceCreation) {
+            await this.createSiblingAbove();
+        }
     },
     
-    async createBlockAtBottom(){
+    async createBlockAtBottom(forceCreation:boolean = false){
         await this.activateBlock(getLastTopLevelBlock());
-        await this.createSiblingBelow();
+        if (this.getActiveRoamNode()?.text || forceCreation) {
+            await this.createSiblingBelow();
+        }
     }
-
-    
-
 };
 
 export class RoamNode {
@@ -148,6 +136,18 @@ export class RoamNode {
     selectedText(): string {
         return this.text.substring(this.selection.start, this.selection.end)
     }
+    withCursorAtTheStart() {
+        return new RoamNode(
+                          this.text,
+                          new Selection(0, 0)
+                      )
+      }
+    withCursorAtTheEnd() {
+        return new RoamNode(
+                          this.text,
+                          new Selection(this.text.length, this.text.length)
+                      )
+      }
 }
 
 export class Selection {
