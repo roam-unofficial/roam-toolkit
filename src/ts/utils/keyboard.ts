@@ -6,9 +6,9 @@ export const Keyboard = {
     UP_ARROW: 38,
     RIGHT_ARROW: 39,
     DOWN_ARROW: 40,
-    standardDelay: 20,
+    BASE_DELAY: 20,
 
-    async simulateKey(code: number, additionalDelay: number = 0, opts?: KeyboardEventInit) {
+    async simulateKey(code: number, delayOverride: number = 0, opts?: KeyboardEventInit) {
         const event = new KeyboardEvent('keydown', {
             bubbles: true,
             cancelable: true,
@@ -17,21 +17,21 @@ export const Keyboard = {
             ...opts
         });
         document?.activeElement?.dispatchEvent(event);
-        return delay(this.standardDelay + additionalDelay);
+        return delay(delayOverride ||this.BASE_DELAY);
     },
-    async pressEnter(additionalDelay: number = 0) {
-        return this.simulateKey(13, additionalDelay)
+    async pressEnter(delayOverride: number = 0) {
+        return this.simulateKey(13, delayOverride)
     },
-    async pressEsc(additionalDelay: number = 0) {
-        return this.simulateKey(27, additionalDelay)
+    async pressEsc(delayOverride: number = 0) {
+        return this.simulateKey(27, delayOverride)
     },
-    async pressBackspace(additionalDelay: number = 0) {
-        return this.simulateKey(8, additionalDelay)
+    async pressBackspace(delayOverride: number = 0) {
+        return this.simulateKey(8, delayOverride)
     },
-    async pressTab(additionalDelay: number = 0) {
-        return this.simulateKey(9, additionalDelay)
+    async pressTab(delayOverride: number = 0) {
+        return this.simulateKey(9, delayOverride)
     },
-    async pressShiftTab(additionalDelay: number = 0) {
-        return this.simulateKey(9, additionalDelay, {shiftKey: true})
+    async pressShiftTab(delayOverride: number = 0) {
+        return this.simulateKey(9, delayOverride, {shiftKey: true})
     },
 };

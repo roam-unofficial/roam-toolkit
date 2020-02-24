@@ -94,7 +94,7 @@ export const Roam = {
     async createSiblingBelow() {
         this.moveCursorToEnd();
         await Keyboard.pressEnter();
-        await Keyboard.pressShiftTab(Keyboard.standardDelay);
+        await Keyboard.pressShiftTab(Keyboard.BASE_DELAY);
     },
 
     async createFirstChild() {
