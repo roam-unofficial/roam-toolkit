@@ -6,7 +6,7 @@ export const Keyboard = {
     UP_ARROW: 38,
     RIGHT_ARROW: 39,
     DOWN_ARROW: 40,
-    standardDelay: 0,
+    standardDelay: 20,
 
     async simulateKey(code: number, additionalDelay: number = 0, opts?: KeyboardEventInit) {
         const event = new KeyboardEvent('keydown', {

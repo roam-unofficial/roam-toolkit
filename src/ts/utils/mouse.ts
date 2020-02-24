@@ -1,7 +1,7 @@
 import { delay } from './async';
 
 export const Mouse = {
-  standardDelay: 0,
+  standardDelay: 20,
   simulateClick(buttons: number, element: HTMLElement, additionalDelay: number = 0) {
     const mouseClickEvents = ['mousedown', 'click', 'mouseup'];
     mouseClickEvents.forEach(mouseEventType => {
