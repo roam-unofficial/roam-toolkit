@@ -22,9 +22,15 @@ document.addEventListener('keyup', ev => {
 });
 
 
-document.addEventListener('keyup', ev => {
-    if (ev.ctrlKey && ev.shiftKey && ev.key === 'U') {
-        console.log('exec demo')
-           createDemo();
+
+//@ts-ignore couldn't resolve this typing
+browser.runtime.onMessage.addListener((message,sender,sendResponse) => {
+    switch (message) {
+        case 'create-block-demo':
+            createDemo();
+            sendResponse('exec demo');
+            break;
+        default:
+            break;
     }
-});
+})
