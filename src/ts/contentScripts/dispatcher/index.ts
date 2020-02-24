@@ -13,6 +13,7 @@ const dispatchMap = new Map([
     ['delete-current-block', () => Roam.deleteBlock()],
     ['duplicate-current-block', () => Roam.duplicateBlock()],
     ['replace-fuzzy-date', replaceFuzzyDate],
+    ['create-block-demo', createDemo],
 ]);
 
 browser.runtime.onMessage.addListener((command) => dispatchMap.get(command)?.());
@@ -20,17 +21,3 @@ browser.runtime.onMessage.addListener((command) => dispatchMap.get(command)?.())
 document.addEventListener('keyup', ev => {
     if (ev.key === guard) replaceFuzzyDate();
 });
-
-
-
-//@ts-ignore couldn't resolve this typing
-browser.runtime.onMessage.addListener((message,sender,sendResponse) => {
-    switch (message) {
-        case 'create-block-demo':
-            createDemo();
-            sendResponse('exec demo');
-            break;
-        default:
-            break;
-    }
-})
