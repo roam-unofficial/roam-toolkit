@@ -1,8 +1,6 @@
 import {RoamNode} from '../utils/roam';
 import {RoamDate} from './common';
-
-
-type Constructor<T> = new (...args: any[]) => T;
+import {Constructor} from '../mixins/common';
 
 export function withDate<T extends Constructor<RoamNode>>(SuperClass: T) {
     return class NodeWithDate extends SuperClass {
