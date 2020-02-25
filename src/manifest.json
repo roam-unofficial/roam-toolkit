@@ -41,10 +41,11 @@
             "srs.js",
             "inc-dec-value.js",
             "dispatcher.js",
-            "fuzzy_date.js"
+            "fuzzy_date.js",
+            "create-block-demo.js"
         ],
         "matches": [
-            "*://*/*"
+            "*://roamresearch.com/*"
         ]
     }],
     "commands": {
@@ -60,11 +61,11 @@
         "delete-current-block": {
             "description": "Delete block you're editing"
         },
-        "duplicate-current-block": {
-            "description": "Duplicate current block"
-        },
         "replace-fuzzy-date": {
             "description": "Replace FuzzyDate with computer date"
+        },
+        "duplicate-current-block": {
+            "description": "Duplicate block content or selection"
         }
     }
 }

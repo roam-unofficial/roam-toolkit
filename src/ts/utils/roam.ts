@@ -1,9 +1,10 @@
-import {getActiveEditElement, getInputEvent} from './dom';
+import {getActiveEditElement, getInputEvent, getLastTopLevelBlock, getFirstTopLevelBlock} from './dom';
 import {Keyboard} from './keyboard';
+import { Mouse } from './mouse';
 
 export const Roam = {
     save(roamNode: RoamNode) {
-        console.log(`Saving, ${roamNode}`);
+        console.log(`Saving`, roamNode);
         const roamElement = this.getRoamBlockInput();
         if (roamElement) {
             roamElement.value = roamNode.text;
@@ -38,9 +39,16 @@ export const Roam = {
 
     async selectBlock() {
         if (this.getRoamBlockInput()) {
-            return Keyboard.pressEsc(20);
+            return Keyboard.pressEsc();
         }
         return Promise.reject('We\'re currently not inside roam block');
+    },
+
+    async activateBlock(element: HTMLElement) {
+        if (element.classList.contains('roam-block')) {
+            await Mouse.leftClick(element)
+        } 
+        return this.getRoamBlockInput();
     },
 
     async deleteBlock() {
@@ -55,9 +63,69 @@ export const Roam = {
 
     async duplicateBlock() {
         await this.copyBlock();
-        await Keyboard.pressEnter(15);
+        await Keyboard.pressEnter();
         await Keyboard.pressEnter();
         document.execCommand('paste')
+    },
+
+    moveCursorToStart() {
+        this.applyToCurrent(node => node.withCursorAtTheStart())
+    },
+
+    moveCursorToEnd() {
+        this.applyToCurrent(node => node.withCursorAtTheEnd())
+    },
+
+    writeText(text: string) {
+        this.applyToCurrent(node => 
+            new RoamNode(text, node.selection));
+        return this.getActiveRoamNode()?.text === text;
+    },
+
+    async createSiblingAbove() {
+        this.moveCursorToStart();
+        const isEmpty = !this.getActiveRoamNode()?.text;
+        await Keyboard.pressEnter();
+        if (isEmpty) {
+            await Keyboard.simulateKey(Keyboard.UP_ARROW);
+        }
+    },
+    
+    async createSiblingBelow() {
+        this.moveCursorToEnd();
+        await Keyboard.pressEnter();
+        await Keyboard.pressShiftTab(Keyboard.BASE_DELAY);
+    },
+
+    async createFirstChild() {
+        this.moveCursorToEnd();
+        await Keyboard.pressEnter();
+        await Keyboard.pressTab();
+    },
+
+    async createLastChild() {
+        await this.createSiblingBelow();
+        await Keyboard.pressTab();
+    },
+
+    async createDeepestLastDescendant() {
+        await this.selectBlock();
+        await Keyboard.simulateKey(Keyboard.RIGHT_ARROW);
+        await Keyboard.pressEnter();
+    },
+    
+    async createBlockAtTop(forceCreation:boolean = false){
+        await this.activateBlock(getFirstTopLevelBlock());
+        if (this.getActiveRoamNode()?.text || forceCreation) {
+            await this.createSiblingAbove();
+        }
+    },
+    
+    async createBlockAtBottom(forceCreation:boolean = false){
+        await this.activateBlock(getLastTopLevelBlock());
+        if (this.getActiveRoamNode()?.text || forceCreation) {
+            await this.createSiblingBelow();
+        }
     }
 };
 
@@ -68,6 +136,18 @@ export class RoamNode {
     selectedText(): string {
         return this.text.substring(this.selection.start, this.selection.end)
     }
+    withCursorAtTheStart() {
+        return new RoamNode(
+                          this.text,
+                          new Selection(0, 0)
+                      )
+      }
+    withCursorAtTheEnd() {
+        return new RoamNode(
+                          this.text,
+                          new Selection(this.text.length, this.text.length)
+                      )
+      }
 }
 
 export class Selection {
