@@ -5,9 +5,14 @@
 </div>
 
 ## Currently supported functionality
-1. SRS
-1. Date inc/dec
-1. Delete action
+1. Fuzzy Date functionality
+1. Date increment/decrement
+1. SRS Leitner System automation shortcuts
+1. Block actions: Delete, Duplicate
+
+### WIP:
+1. Task estimates
+1. New block cretion 
 
 
 ## How to run:
