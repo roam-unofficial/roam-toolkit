@@ -39,3 +39,27 @@ export function getInputEvent() {
         cancelable: true,
     });
 }
+
+export function detectChange(fn: () => void){
+    const targetNode = document.querySelector('.roam-body-main') as HTMLElement;
+    const config = { attributes: true, childList: true, subtree: true };
+    return new Promise(resolve => {
+        const callback = function(mutationsList:MutationRecord[], observer: MutationObserver) {
+            // Use traditional 'for loops' for IE 11
+            console.log(mutationsList)
+            // for(let mutation of mutationsList) {
+            //     if (mutation.type === 'childList') {
+            //         console.log('A child node has been added or removed.');
+            //     }
+            //     else if (mutation.type === 'attributes') {
+            //         console.log('The ' + mutation.attributeName + ' attribute was modified.');
+            //     }
+            // }
+            resolve('mutated')
+            observer.disconnect();
+        };
+        const observer = new MutationObserver(callback);
+        observer.observe(targetNode, config);
+        fn();
+    })
+}

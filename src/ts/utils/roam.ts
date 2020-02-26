@@ -1,17 +1,17 @@
-import {getActiveEditElement, getInputEvent, getLastTopLevelBlock, getFirstTopLevelBlock} from './dom';
+import {getActiveEditElement, getInputEvent, getLastTopLevelBlock, getFirstTopLevelBlock, detectChange} from './dom';
 import {Keyboard} from './keyboard';
 import { Mouse } from './mouse';
 
 export const Roam = {
-    save(roamNode: RoamNode) {
+    async save(roamNode: RoamNode) {
         console.log(`Saving`, roamNode);
         const roamElement = this.getRoamBlockInput();
         if (roamElement) {
             roamElement.value = roamNode.text;
             roamElement.selectionStart = roamNode.selection.start;
             roamElement.selectionEnd = roamNode.selection.end;
-
-            roamElement.dispatchEvent(getInputEvent());
+            await detectChange(() => roamElement.dispatchEvent(getInputEvent()))
+            ;
         }
     },
 
@@ -30,11 +30,11 @@ export const Roam = {
         return new RoamNode(element.value, new Selection(element.selectionStart, element.selectionEnd))
     },
 
-    applyToCurrent(action: (node: RoamNode) => RoamNode) {
+    async applyToCurrent(action: (node: RoamNode) => RoamNode) {
         const node = this.getActiveRoamNode();
         if (!node) return;
 
-        this.save(action(node));
+        await this.save(action(node));
     },
 
     async selectBlock() {
@@ -68,22 +68,22 @@ export const Roam = {
         document.execCommand('paste')
     },
 
-    moveCursorToStart() {
-        this.applyToCurrent(node => node.withCursorAtTheStart())
+    async moveCursorToStart() {
+        return this.applyToCurrent(node => node.withCursorAtTheStart())
     },
 
-    moveCursorToEnd() {
-        this.applyToCurrent(node => node.withCursorAtTheEnd())
+    async moveCursorToEnd() {
+        return this.applyToCurrent(node => node.withCursorAtTheEnd())
     },
 
-    writeText(text: string) {
-        this.applyToCurrent(node => 
+    async writeText(text: string) {
+        await this.applyToCurrent(node => 
             new RoamNode(text, node.selection));
         return this.getActiveRoamNode()?.text === text;
     },
 
     async createSiblingAbove() {
-        this.moveCursorToStart();
+        await this.moveCursorToStart();
         const isEmpty = !this.getActiveRoamNode()?.text;
         await Keyboard.pressEnter();
         if (isEmpty) {
@@ -92,13 +92,12 @@ export const Roam = {
     },
     
     async createSiblingBelow() {
-        this.moveCursorToEnd();
-        await Keyboard.pressEnter();
+        await this.createFirstChild();
         await Keyboard.pressShiftTab(Keyboard.BASE_DELAY);
     },
 
     async createFirstChild() {
-        this.moveCursorToEnd();
+        await this.moveCursorToEnd();
         await Keyboard.pressEnter();
         await Keyboard.pressTab();
     },

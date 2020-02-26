@@ -21,3 +21,7 @@ browser.runtime.onMessage.addListener((command) => dispatchMap.get(command)?.())
 document.addEventListener('keyup', ev => {
     if (ev.key === guard) replaceFuzzyDate();
 });
+
+document.addEventListener('keyup', ev => {
+    if (ev.key === 'Q' && ev.shiftKey && ev.ctrlKey) Roam.createFirstChild();
+});
