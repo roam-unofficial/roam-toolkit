@@ -1,7 +1,7 @@
-import { browser } from 'webextension-polyfill-ts';
-import { Reducer } from 'redux';
-import { createReducer } from './redux'
-import { getStateFromStorage } from './storage'
+import {browser} from 'webextension-polyfill-ts';
+import {Reducer} from 'redux';
+import {createReducer} from './redux'
+import {getStateFromStorage} from './storage'
 
 
 export interface Textarea {
@@ -37,22 +37,17 @@ export interface Shortcut {
 }
 
 
-
-export const getSetting = async (featureId: string, settingId: string) => {
-    return (await getStateFromStorage())[featureId][settingId]
+export const Settings = {
+    get: async (featureId: string, settingId: string) => (await getStateFromStorage())[featureId][settingId],
 }
 
-export const isActive = async (featureId: string) => {
-    return (await getStateFromStorage())[featureId].active
-}
-
-export const prepareSettings = (features: any) => {
+export const prepareSettings = (features: Feature[]): Feature[] => {
     return features.map((feature: any) => {
 
         if (feature.toggleable !== false) {
             feature.toggleable = true;
         }
-        feature.toggle = (active: boolean) => ({ type: `${feature.id}_toggle`, payload: active })
+        feature.toggle = (active: boolean) => ({type: `${feature.id}_toggle`, payload: active})
 
         const initialState: any = {
             active: false
@@ -60,21 +55,21 @@ export const prepareSettings = (features: any) => {
 
         let reducers = {
             [`${feature.id}_toggle`]: (state: any, action: any) =>
-                ({ ...state, active: action.payload })
+                ({...state, active: action.payload})
         }
 
         feature.shortcuts = feature.shortcuts ? feature.shortcuts.map((shortcut: Shortcut) => {
             initialState[shortcut.id] = shortcut.initValue
             shortcut.onSave = (payload: any = '') =>
-                ({ type: `${feature.id}_set_${shortcut.id}_shortcut`, payload })
+                ({type: `${feature.id}_set_${shortcut.id}_shortcut`, payload})
             reducers = {
                 ...reducers,
                 [`${feature.id}_set_${shortcut.id}_shortcut`]: (state: any, action: any) => {
                     const newShortcut = action.payload;
                     if (state[shortcut.id] !== newShortcut && newShortcut !== '') {
-                        updateShortcut(newShortcut, feature.id, shortcut.id);
+                        updateShortcut();
                     }
-                    return { ...state, [shortcut.id]: newShortcut }
+                    return {...state, [shortcut.id]: newShortcut}
                 }
             }
             return shortcut
@@ -82,12 +77,12 @@ export const prepareSettings = (features: any) => {
 
         feature.settings = feature.settings ? feature.settings.map((setting: Setting) => {
             initialState[setting.id] = setting.initValue
-            setting.onSave = (payload: any = '') => ({ type: `${feature.id}_${setting.id}`, payload })
+            setting.onSave = (payload: any = '') => ({type: `${feature.id}_${setting.id}`, payload})
             reducers = {
                 ...reducers,
                 [`${feature.id}_${setting.id}`]: (state: any, action: any) => {
                     updateSetting(action.payload, feature.id, setting.id);
-                    return { ...state, [setting.id]: action.payload }
+                    return {...state, [setting.id]: action.payload}
                 }
             }
             return setting
@@ -98,18 +93,18 @@ export const prepareSettings = (features: any) => {
     });
 }
 
-const updateShortcut = (shortcut: string, featureId: string, shortcutId: string) => {
-    browser.tabs.query({ currentWindow: true, active: true }).then((tabs: any) => {
+const updateShortcut = () => {
+    browser.tabs.query({currentWindow: true, active: true}).then((tabs: any) => {
         for (const tab of tabs) {
-            browser.tabs.sendMessage(tab.id, { shortcut, featureId, shortcutId });
+            browser.tabs.sendMessage(tab.id, 'update-shortcuts');
         }
     })
 }
 
 const updateSetting = (value: string, featureId: string, settingId: string) => {
-    browser.tabs.query({ currentWindow: true, active: true }).then((tabs: any) => {
+    browser.tabs.query({currentWindow: true, active: true}).then((tabs: any) => {
         for (const tab of tabs) {
-            browser.tabs.sendMessage(tab.id, { value, featureId, settingId });
+            browser.tabs.sendMessage(tab.id, {value, featureId, settingId});
         }
     })
 }

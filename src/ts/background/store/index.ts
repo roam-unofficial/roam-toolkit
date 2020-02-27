@@ -1,7 +1,7 @@
-import { combineReducers } from 'redux';
-import settings, { IAppSettings } from './settings/reducer';
+import {combineReducers} from 'redux';
+import settings, {IAppSettings} from './settings/reducer';
 
-import { features } from '../../contentScripts/features'
+import {Features} from '../../contentScripts/features'
 
 import 'redux';
 // Enhance the Action interface with the option of a payload.
@@ -20,7 +20,7 @@ export interface IAppState {
 }
 
 const reducers = combineReducers<IAppState>({
-    ...features.map((f: any) => ({ [f.id]: f.reducer })).reduce(((r: any, c: any) => Object.assign(r, c)), {}),
+    ...Features.all.map((f: any) => ({ [f.id]: f.reducer })).reduce(((r: any, c: any) => Object.assign(r, c)), {}),
     settings
 });
 

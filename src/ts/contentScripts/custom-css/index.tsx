@@ -1,5 +1,6 @@
-import { browser } from 'webextension-polyfill-ts';
-import { Feature, isActive, getSetting } from '../../utils/settings'
+import {browser} from 'webextension-polyfill-ts';
+import {Feature, Settings} from '../../utils/settings'
+import {Features} from '../features';
 
 export const config: Feature = {
     id: 'custom-css',
@@ -14,9 +15,9 @@ export const config: Feature = {
 
 
 
-isActive('custom-css').then(active => {
+Features.isActive('custom-css').then(active => {
     if (active) {
-        getSetting('custom-css', 'css').then((value: string) => {
+        Settings.get('custom-css', 'css').then((value: string) => {
             setCss(value)
         })
     }
