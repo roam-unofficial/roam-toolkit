@@ -1,5 +1,5 @@
 import {delay} from './async';
-import { detectChange } from './dom';
+import { DOM } from './dom';
 
 export const Keyboard = {
     // Todo come up with a way to autogenerate the methods from the interface and the code
@@ -17,10 +17,12 @@ export const Keyboard = {
             keyCode: code,
             ...opts
         });
-        return detectChange(
-            () => document?.activeElement?.dispatchEvent(event)
-        )
-        // return delay(delayOverride ||this.BASE_DELAY);
+        // settime
+        // return await DOM.detectChange(
+            // () => 
+                document?.activeElement?.dispatchEvent(event)
+        // )
+        return delay(delayOverride || this.BASE_DELAY);
     },
     async pressEnter(delayOverride: number = 0) {
         return this.simulateKey(13, delayOverride)
