@@ -5,7 +5,6 @@ import {config as duplicate} from './duplicate-block-content/index'
 import {config as customCss} from './custom-css/index'
 import {config as srs} from './srs/index'
 import {config as deleteBlock} from './delete-block/index'
-import {getStateFromStorage} from '../utils/storage';
 import {filterAsync, mapAsync} from '../utils/async';
 
 export const Features = {
@@ -17,7 +16,7 @@ export const Features = {
         deleteBlock
     ]),
 
-    isActive: async (featureId: string) => (await getStateFromStorage())[featureId].active,
+    isActive: Settings.isActive,
 
     async getActiveFeatures(): Promise<Feature[]> {
         return filterAsync(this.all, (it) => this.isActive(it.id))

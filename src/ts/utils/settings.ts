@@ -39,6 +39,7 @@ export interface Shortcut {
 
 export const Settings = {
     get: async (featureId: string, settingId: string) => (await getStateFromStorage())[featureId][settingId],
+    isActive: async (featureId: string) => (await getStateFromStorage())[featureId]?.active
 }
 
 export const prepareSettings = (features: Feature[]): Feature[] => {
