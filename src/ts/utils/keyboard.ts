@@ -7,7 +7,7 @@ export const Keyboard = {
     UP_ARROW: 38,
     RIGHT_ARROW: 39,
     DOWN_ARROW: 40,
-    BASE_DELAY: 20,
+    BASE_DELAY: 50,
 
     async simulateKey(code: number, delayOverride: number = 0, opts?: KeyboardEventInit) {
         const event = new KeyboardEvent('keydown', {
@@ -17,11 +17,7 @@ export const Keyboard = {
             keyCode: code,
             ...opts
         });
-        // settime
-        // return await DOM.detectChange(
-            // () => 
                 document?.activeElement?.dispatchEvent(event)
-        // )
         return delay(delayOverride || this.BASE_DELAY);
     },
     async pressEnter(delayOverride: number = 0) {

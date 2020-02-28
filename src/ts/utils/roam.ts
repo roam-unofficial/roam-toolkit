@@ -119,7 +119,6 @@ export const Roam = {
         return this.getRoamBlockInput()?.id as string;
     },
     async removePlaceholder(id: string) {
-        console.log('remove')
         const currentId = this.getRoamBlockInput()?.id as string;
         const placeholderElement = document.getElementById(id) as HTMLElement;
         await this.activateBlock(placeholderElement)
@@ -131,23 +130,17 @@ export const Roam = {
         let placeholderId = '';
         if(this.isEmpty()){
             placeholderId = await this.addPlaceholder();
-            console.log('plID', placeholderId)
         }
 
         await fn();
 
-        console.log('plac', placeholderId)
         if (placeholderId) await this.removePlaceholder(placeholderId);
     },
 
     async createSiblingAbove(text?: string) {
-        // await this.emptyPlaceholder();
         await this.usePlaceholder(async ()=> {
             await this.moveCursorToStart();
             await Keyboard.pressEnter();
-            // if (this.isEmpty()) {
-            //     await Keyboard.simulateKey(Keyboard.UP_ARROW);
-            // }
         })
         if (text) await this.writeText(text);
     },
@@ -158,31 +151,14 @@ export const Roam = {
     },
 
     async createFirstChild(text?: string) {
-        try{
-            // let parent = this.getRoamBlockInput() as HTMLElement;
-            // const parentId = parent.id;
-            // console.log(parentId)
-            // console.log('parentB',parent)
-            // const count = DOM.getBlockChildren(parent).length;
-            // if (parent) {
-            console.log('exec')
-                await this.moveCursorToEnd();
-                
-                if (this.hasChildren()) await Keyboard.pressEnter();
-                else 
-                    await this.usePlaceholder( async () => {
-                        console.log('no children')
-                        await Keyboard.pressEnter();
-                        await Keyboard.pressTab();
-                    })
-                if (text) await this.writeText(text);
-            // }
-            // console.log('parentA',parent)
-        // parent = document.getElementById(parentId) as HTMLElement;
-        // console.assert(DOM.getBlockChildren(parent).length === count+1)
-        } catch (e) {
-            console.log(e)
-        }
+        await this.moveCursorToEnd();
+        if (this.hasChildren()) await Keyboard.pressEnter();
+        else 
+            await this.usePlaceholder( async () => {
+                await Keyboard.pressEnter();
+                await Keyboard.pressTab();
+            })
+        if (text) await this.writeText(text);
     },
 
     async createLastChild(text?: string) {
@@ -193,7 +169,6 @@ export const Roam = {
     async createDeepestLastDescendant(text?: string) {
         await this.selectBlock();
         await Keyboard.simulateKey(Keyboard.RIGHT_ARROW);
-        // await Keyboard.pressEnter();
         await this.createSiblingBelow();
         if (text) await this.writeText(text);
     },
