@@ -1,6 +1,6 @@
 import {getActiveEditElement, getInputEvent} from '../../utils/dom';
 import {Feature, Shortcut} from '../../utils/settings'
-import {RoamDate} from '../../date/common';
+import {dateFromPageName, RoamDate} from '../../date/common';
 
 export const config: Feature = {
     id: 'incDec',
@@ -23,16 +23,6 @@ export const config: Feature = {
         } as Shortcut,
     ]
 }
-
-
-const dateFromPageName = (text: string): Date => {
-    return new Date(
-        text
-            .slice(2)
-            .slice(0, -2)
-            .replace(/(th,|nd,|rd,|st,)/, ',')
-    );
-};
 
 const saveChanges = (el: HTMLTextAreaElement, cursor: number, value: string): void => {
     el.value = value;
