@@ -1,5 +1,5 @@
 import {Roam, RoamNode} from '../../utils/roam';
-import {Feature, getSetting, Textarea} from '../../utils/settings';
+import {Feature, Settings, Textarea} from '../../utils/settings';
 import {getActiveEditElement} from '../../utils/dom';
 
 
@@ -34,7 +34,7 @@ function getParentElement() {
  *
  */
 export async function calculateFirstSiblingTotal() {
-    const attributeName = await getSetting(config.id, estimateProperty.id) || 'pomodoro_estimate';
+    const attributeName = await Settings.get(config.id, estimateProperty.id) || 'pomodoro_estimate';
     const estimateRegex = new RegExp(`${attributeName}:\\s*(\\d+\\.?\\d*)`, 'g');
 
     const queryNode = getParentElement()?.querySelector('.rm-reference-main') as HTMLElement;
