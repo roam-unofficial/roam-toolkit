@@ -1,11 +1,15 @@
 import {RoamNode} from '../utils/roam';
-import {RoamDate} from './common';
+import {dateFromPageName, RoamDate} from './common';
 import {Constructor} from '../mixins/common';
 
 export function withDate<T extends Constructor<RoamNode>>(SuperClass: T) {
     return class NodeWithDate extends SuperClass {
         listDatePages() {
             return this.text.match(RoamDate.regex) || []
+        }
+
+        listDates() {
+            return this.listDatePages().map(dateFromPageName)
         }
 
         /** If has 1 date - replace it, if more then 1 date - append it */
