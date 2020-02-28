@@ -20,7 +20,8 @@ export function withDate<T extends Constructor<RoamNode>>(SuperClass: T) {
                 this.text.replace(currentDates[0], newDate) :
                 this.text + ' ' + newDate;
 
-            return new NodeWithDate(newText, this.selection)
+            // @ts-ignore
+            return new this.constructor(newText, this.selection)
         }
     };
 }
