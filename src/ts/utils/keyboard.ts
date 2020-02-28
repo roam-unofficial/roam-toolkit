@@ -1,5 +1,4 @@
 import {delay} from './async';
-import { DOM } from './dom';
 
 export const Keyboard = {
     // Todo come up with a way to autogenerate the methods from the interface and the code
@@ -13,7 +12,7 @@ export const Keyboard = {
         const event = new KeyboardEvent('keydown', {
             bubbles: true,
             cancelable: true,
-            // @ts-ignore
+            // @ts-ignore 
             keyCode: code,
             ...opts
         });

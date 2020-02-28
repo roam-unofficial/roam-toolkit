@@ -46,17 +46,8 @@ export const DOM = {
         const targetNode = el || document.querySelector('.roam-body-main') as HTMLElement;
         const config = { attributes: true, childList: true, subtree: true };
         return new Promise(async resolve => {
+            //@ts-ignore unused arg
             const callback = function(mutationsList:MutationRecord[], observer: MutationObserver) {
-                // Use traditional 'for loops' for IE 11
-                // console.log(mutationsList)
-                // for(let mutation of mutationsList) {
-                //     if (mutation.type === 'childList') {
-                //         console.log('A child node has been added or removed.');
-                //     }
-                //     else if (mutation.type === 'attributes') {
-                //         console.log('The ' + mutation.attributeName + ' attribute was modified.');
-                //     }
-                // }
                 resolve('mutated')
                 observer.disconnect();
             };
@@ -70,7 +61,6 @@ export const DOM = {
         let parent = null; 
         let el = element || document.querySelector('textarea') as HTMLElement
         while(el && !parent){
-            // console.log(el.parentElement)
             if (el.parentElement?.className?.includes('flex-v-box roam-block-container')) {
                 parent = el?.parentElement;
             }
@@ -93,8 +83,6 @@ export const DOM = {
     
     getBlockChildren(element: HTMLElement) : HTMLCollection{
         const childrenDiv = this.getBlockContainer(element)?.lastChild as HTMLElement;
-        // console.log(childrenDiv)
-        // console.log(childrenDiv.children)
         return childrenDiv?.children;
     },
     getNthChild(element: HTMLElement, n:number){
