@@ -2,11 +2,15 @@ import {RoamNode} from '../../../src/ts/utils/roam';
 
 describe(RoamNode, () => {
     const propertyName = 'inline_property';
+    const dateProperty = 'date_property';
     const value = `value`;
 
     const propertyMatcher = RoamNode.getInlinePropertyMatcher(propertyName);
     const nodeWithValue = new RoamNode(`blah [[[[${propertyName}]]::${value}]]`);
     const nodeWithNoProperty = new RoamNode(`blah`);
+
+    const datePage = '[[February 26th, 2020]]';
+    const nodeWithDate = new RoamNode(`[[[[${dateProperty}]]::${datePage}]]`)
 
     describe('getInlineProperty', () => {
         test('retrieves inline property if it is present', () => {
@@ -22,9 +26,20 @@ describe(RoamNode, () => {
         test('returns undefined when property is missing', () => {
             expect(nodeWithNoProperty.getInlineProperty(propertyName)).toBeUndefined();
         })
+
+        test('works for values with multiple properties', () => {
+            expect(new RoamNode(nodeWithValue.text+nodeWithValue.text)
+                .getInlineProperty(propertyName)).toBe(value)
+        })
+
+        // TODO
+        test.skip('works for values containing brackets', () => {
+            expect(nodeWithDate.getInlineProperty(dateProperty)).toBe(datePage)
+        })
+
     });
 
-    describe('getInlineProperty', () => {
+    describe('withInlineProperty', () => {
         test('if missing would append at the end', () => {
             expect(nodeWithNoProperty.withInlineProperty(propertyName, value).text)
                 .toMatch(propertyMatcher)
