@@ -1,34 +1,21 @@
-import { getFirstTopLevelBlock } from '../../utils/dom';
+import { DOM } from '../../utils/dom';
 import { Roam} from '../../utils/roam';
 
 export const createDemo = async () => {
-    await Roam.createBlockAtBottom();
-    Roam.writeText('bottom-block');
+    await Roam.createBlockAtBottom(false, 'bottom-block');
 
-    await Roam.createBlockAtTop();
-    Roam.writeText('top-block');
+    await Roam.createBlockAtTop(false, 'top-block');
+    await Roam.createFirstChild('first child');
+    await Roam.createFirstChild('grandchild');
+
+    await Roam.activateBlock(DOM.getFirstTopLevelBlock());
+    await Roam.createLastChild('second child');
+    await Roam.createFirstChild('grandchild');
     
-    await Roam.createFirstChild();
-    Roam.writeText('first child');
+    await Roam.activateBlock(DOM.getFirstTopLevelBlock());
+    await Roam.createDeepestLastDescendant('deepest descendant*');
     
-    await Roam.createFirstChild();
-    Roam.writeText('grandchild');
-    
-    await Roam.activateBlock(getFirstTopLevelBlock());
-    await Roam.createLastChild();
-    Roam.writeText('second child');
-    
-    await Roam.createFirstChild();
-    Roam.writeText('grandchild');
-    
-    await Roam.activateBlock(getFirstTopLevelBlock());
-    await Roam.createDeepestLastDescendant()
-    Roam.writeText('deepest descendant*');
-    
-    await Roam.activateBlock(getFirstTopLevelBlock());
-    await Roam.createSiblingBelow()
-    Roam.writeText('3rd top block');
-    
-    await Roam.createSiblingAbove()
-    Roam.writeText('2nd top block');
+    await Roam.activateBlock(DOM.getFirstTopLevelBlock());
+    await Roam.createSiblingBelow('3rd top block');
+    await Roam.createSiblingAbove('2nd top block');
 };

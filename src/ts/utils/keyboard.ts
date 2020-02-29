@@ -6,18 +6,18 @@ export const Keyboard = {
     UP_ARROW: 38,
     RIGHT_ARROW: 39,
     DOWN_ARROW: 40,
-    BASE_DELAY: 20,
+    BASE_DELAY: 50,
 
     async simulateKey(code: number, delayOverride: number = 0, opts?: KeyboardEventInit) {
         const event = new KeyboardEvent('keydown', {
             bubbles: true,
             cancelable: true,
-            // @ts-ignore
+            // @ts-ignore 
             keyCode: code,
             ...opts
         });
-        document?.activeElement?.dispatchEvent(event);
-        return delay(delayOverride ||this.BASE_DELAY);
+                document?.activeElement?.dispatchEvent(event)
+        return delay(delayOverride || this.BASE_DELAY);
     },
     async pressEnter(delayOverride: number = 0) {
         return this.simulateKey(13, delayOverride)

@@ -20,3 +20,12 @@ browser.commands.onCommand.addListener((command) => {
     }).then((tabs) =>
         tabs.forEach((tab) => browser.tabs.sendMessage(tab?.id!, command)));
 });
+
+browser.runtime.onMessage.addListener((command) => {
+    browser.tabs.query({
+        currentWindow: true,
+        active: true
+    }).then((tabs) =>
+        tabs.forEach((tab) => browser.tabs.sendMessage(tab?.id!, command)));
+    return Promise.resolve('received message: ' + command)
+});

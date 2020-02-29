@@ -1,5 +1,5 @@
 import {browser} from 'webextension-polyfill-ts';
-import {getActiveEditElement} from '../../utils/dom';
+import {DOM} from '../../utils/dom';
 
 
 const inputEvent = new Event('input', {
@@ -98,7 +98,7 @@ const dateModified = (date: Date, modType: string): Date => {
 }
 
 const modify = (modType: string) => {
-    const element = getActiveEditElement() as HTMLTextAreaElement;
+    const element = DOM.getActiveEditElement() as HTMLTextAreaElement;
 
     if (element.nodeName === 'TEXTAREA') {
         const itemContent = element.value;
