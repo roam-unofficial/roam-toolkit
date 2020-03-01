@@ -6,9 +6,24 @@ type InputProps = {
     onSave: (newValue: string) => void
 };
 
-export const Input = ({ value, label, description, placeholder, onSave }: InputProps) => {
+export const Input = (
+    {
+        value,
+        label,
+        description,
+        placeholder,
+        onSave
+    }: InputProps) => {
     const [newValue, setValue] = React.useState(value);
     const [saved, setSave] = React.useState(false);
+
+    const save = () => {
+        onSave(newValue);
+        setSave(true);
+        setTimeout(() => {
+            setSave(false);
+        }, 1500);
+    };
 
     return (
         <div>
@@ -19,15 +34,7 @@ export const Input = ({ value, label, description, placeholder, onSave }: InputP
                     value={newValue}
                     placeholder={placeholder}
                     onChange={e => setValue(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            onSave(newValue);
-                            setSave(true);
-                            setTimeout(() => {
-                                setSave(false);
-                            }, 1500);
-                        }
-                    }}
+                    onBlur={save}
                 />
                 {saved ?
                     <SavedIndicator>✓</SavedIndicator>
