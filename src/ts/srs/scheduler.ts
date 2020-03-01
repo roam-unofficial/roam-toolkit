@@ -28,63 +28,63 @@ interface Scheduler {
  * cards becoming due more often than is useful and annoying users.
  */
 export class AnkiScheduler implements Scheduler {
-    static defaultEase = 2
+    static defaultFactor = 2.5
     static defaultInterval = 2
 
     static maxInterval = 50 * 365
-    static minEase = 1.3
+    static minFactor = 1.3
+    static hardFactor = 1.2;
 
     schedule(node: SM2Node, signal: SRSSignal): SM2Node {
-        // todo min ease, max interval, etc
-
         const newParams = this.getNewParameters(node, signal);
 
         const currentDate = node.listDates()[0] || new Date()
         return node
             .withInterval(newParams.interval)
-            .withEase(newParams.ease)
+            .withFactor(newParams.factor)
             // TODO random jitter, in percentage points of interval
             .withDate(addDays(currentDate, Math.ceil(newParams.interval)))
     }
 
+
     getNewParameters(node: SM2Node, signal: SRSSignal) {
-        const ease = node.ease || AnkiScheduler.defaultEase
+        const factor = node.factor || AnkiScheduler.defaultFactor
         const interval = node.interval || AnkiScheduler.defaultInterval
 
-        let newEase = ease
+        let newFactor = factor
         let newInterval = interval
 
-        const easeModifier = 0.15
+        const factorModifier = 0.15
         switch (signal) {
             case SRSSignal.AGAIN:
-                newEase = ease - 0.2
+                newFactor = factor - 0.2
                 newInterval = 1
                 break;
             case SRSSignal.HARD:
-                newEase = ease - easeModifier
-                newInterval = interval * 1.2
+                newFactor = factor - factorModifier
+                newInterval = interval * AnkiScheduler.hardFactor
                 break
             case SRSSignal.GOOD:
-                newInterval = interval * ease
+                newInterval = interval * factor
                 break
             case SRSSignal.EASY:
-                newInterval = interval * ease
-                newEase = ease + easeModifier
+                newInterval = interval * factor
+                newFactor = factor + factorModifier
                 break
         }
 
-        return AnkiScheduler.enforceLimits(new SM2Params(newInterval, newEase))
+        return AnkiScheduler.enforceLimits(new SM2Params(newInterval, newFactor))
     }
 
     private static enforceLimits(params: SM2Params) {
         return new SM2Params(
             Math.min(params.interval, AnkiScheduler.maxInterval),
-            Math.max(params.ease, AnkiScheduler.minEase))
+            Math.max(params.factor, AnkiScheduler.minFactor))
     }
 }
 
 class SM2Params {
-    constructor(readonly interval: number, readonly ease: number) {
+    constructor(readonly interval: number, readonly factor: number) {
     }
 }
 
