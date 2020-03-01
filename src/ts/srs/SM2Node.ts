@@ -8,23 +8,23 @@ export class SM2Node extends withDate(RoamNode) {
     }
 
     private readonly intervalProperty = 'interval';
-    private readonly easeProperty = 'ease';
+    private readonly factorProperty = 'factor';
 
     get interval(): number | undefined {
         return parseFloat(this.getInlineProperty(this.intervalProperty)!);
     }
 
-    withInterval(interval: number) {
+    withInterval(interval: number): SM2Node {
         // Discarding the fractional part for display purposes/and so we don't get infinite number of intervals
         // Should potentially reconsider this later
         return this.withInlineProperty(this.intervalProperty, Number(interval).toFixed(1));
     }
 
-    get ease(): number | undefined {
-        return parseFloat(this.getInlineProperty(this.easeProperty)!);
+    get factor(): number | undefined {
+        return parseFloat(this.getInlineProperty(this.factorProperty)!);
     }
 
-    withEase(ease: number) {
-        return this.withInlineProperty(this.easeProperty, Number(ease).toFixed(2));
+    withFactor(factor: number): SM2Node {
+        return this.withInlineProperty(this.factorProperty, Number(factor).toFixed(2));
     }
 }
