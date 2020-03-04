@@ -1,4 +1,4 @@
-import {Feature, prepareSettings, Settings} from '../utils/settings'
+import {Feature, prepareSettings, Settings, Shortcut} from '../utils/settings'
 
 import {config as incDec} from './inc-dec-value/index'
 import {config as duplicate} from './duplicate-block-content/index'
@@ -29,7 +29,7 @@ export const Features = {
         }, {}),
 
     async getCurrentKeyMap() {
-        const features = (await Features.getActiveFeatures()).filter(it => it.shortcuts);
+        const features = (await Features.getActiveFeatures()).filter(it => it.settings);
         const allShortcuts = (await mapAsync(features, this.getKeyMapFor)).flat().filter(it => it[1]);
         return allShortcuts
             .reduce((acc: any, current) => {
@@ -39,10 +39,12 @@ export const Features = {
     },
 
     async getKeyMapFor(feature: Feature) {
-        return mapAsync(feature.shortcuts!, async it => [it.id, await Settings.get(feature.id, it.id)])
+        return mapAsync(feature.settings!, async it => [it.id, await Settings.get(feature.id, it.id)])
     }
 }
 
-export const getAllShortcuts = (features: Feature[]) =>
-    features.filter(it => it.shortcuts)
-        .flatMap(it => it.shortcuts);
+
+export const getAllShortcuts = (features: Feature[]): Shortcut[] =>
+    features.filter(it => it.settings)
+        .flatMap(it => it.settings).filter(it => it!.type === 'shortcut')
+        .map(it => it as Shortcut);

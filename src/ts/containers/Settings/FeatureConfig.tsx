@@ -1,72 +1,86 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import styled from 'styled-components';
 
-import { Feature, Setting } from '../../utils/settings'
+import {Feature, Setting} from '../../utils/settings'
 
-import { returnToHome } from '../../background/store/settings/actions';
+import {returnToHome} from '../../background/store/settings/actions';
 
-import { Input } from '../../components/Input'
-import { Checkbox } from '../../components/Checkbox'
-import { Textarea } from '../../components/Textarea'
+import {Input} from '../../components/Input'
+import {Checkbox} from '../../components/Checkbox'
+import {Textarea} from '../../components/Textarea'
 
 type FeatureConfigProps = { feature: Feature };
 
-export const FeatureConfig = ({ feature }: FeatureConfigProps) => {
+export const FeatureConfig = ({feature}: FeatureConfigProps) => {
     const dispatch = useDispatch();
 
-    const shortcuts = feature.shortcuts ? feature.shortcuts.map((shortcut, i) => {
-        const value = useSelector((state: any) => state[feature.id][shortcut.id]) || shortcut.initValue;
-        return <Setting key={i}>
-            <Input
-                value={value}
-                placeholder={shortcut.placeholder}
-                label={shortcut.label}
-                onSave={(s) => { dispatch(shortcut.onSave!(s)) }} />
-        </Setting>
-    }) : null;
+    function getTextarea(value: string, setting: Setting) {
+        return <Textarea
+            value={value}
+            label={setting.label}
+            onSave={(v) => {
+                dispatch(setting.onSave!(v))
+            }}
+        />;
+    }
 
-    const settings = feature.settings ? feature.settings.map((setting, i) => {
-        if (setting.type === 'textarea') {
-            const value = useSelector((state: any) => state[feature.id][setting.id]) || setting.initValue;
+    function getInput(value: string, setting: Setting) {
+        return <Input
+            value={value}
+            placeholder={setting.placeholder}
+            label={setting.label}
+            onSave={(s) => {
+                dispatch(setting.onSave!(s))
+            }}
+        />;
+    }
+
+    const settings = feature?.settings?.map((setting, i) => {
+        const value = useSelector((state: any) => state[feature.id][setting.id]) || setting.initValue;
+
+        if (setting.type === 'large_string') {
             return <Setting key={i}>
-                <Textarea
-                    value={value}
-                    label={setting.label}
-                    onSave={(v) => { dispatch(setting.onSave!(v)) }} />
+                {getTextarea(value, setting)}
+            </Setting>
+        } else if (['string', 'shortcut'].includes(setting.type)) {
+            return <Setting key={i}>
+                {getInput(value, setting)}
             </Setting>
         }
         return null;
-    }) : null;
+    });
 
     const featureName = (
         <FeatureNameContainer>
             <FeatureName>
-                <span style={{ 'color': '#a7b6c2' }}>[[</span>
+                <span style={{'color': '#a7b6c2'}}>[[</span>
                 {feature.name}
-                <span style={{ 'color': '#a7b6c2' }}>]]</span>
+                <span style={{'color': '#a7b6c2'}}>]]</span>
             </FeatureName>
         </FeatureNameContainer>
     )
 
-    const header = feature.toggleable ? (
-        <Checkbox
-            checked={useSelector((state: any) => state[feature.id].active)}
-            label={featureName}
-            onSave={(checked) => { dispatch(feature.toggle!(checked)) }}
-        />
-    ) : featureName;
+    const toggleCheckBox = <Checkbox
+        checked={useSelector((state: any) => state[feature.id].active)}
+        label={featureName}
+        onSave={(checked) => {
+            dispatch(feature.toggle!(checked))
+        }}
+    />;
 
+    const header = feature.toggleable ? toggleCheckBox : featureName;
 
 
     return (
         <FeatureConfigContainer>
             <Header>
-                <Back onClick={() => { dispatch(returnToHome()) }}>←</Back>
+                <Back onClick={() => {
+                    dispatch(returnToHome())
+                }}>←</Back>
                 {header}
             </Header>
             <ConfigsContainer>
-                {shortcuts}
                 {settings}
             </ConfigsContainer>
         </FeatureConfigContainer>

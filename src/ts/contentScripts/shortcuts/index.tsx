@@ -15,6 +15,7 @@ export async function updateShortcuts() {
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/31734 was not able to resolve it
     // @ts-ignore
     ReactDOM.render(shortcutElement, document.createElement('globalShortcuts'));
+    //todo removing shortcut does not work?
 }
 
 updateShortcuts()

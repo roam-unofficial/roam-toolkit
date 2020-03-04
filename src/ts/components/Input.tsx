@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 type InputProps = {
-    value: string, label: string, description?: string, placeholder?: string,
+    value: string, label?: string, description?: string, placeholder?: string,
     onSave: (newValue: string) => void
 };
 

@@ -5,7 +5,7 @@ export const config: Feature = {
     id: 'custom-css',
     name: 'Custom CSS',
     settings: [
-        { type: 'textarea', id: 'css' },
+        { type: 'large_string', id: 'css' },
     ]
 }
 
@@ -18,14 +18,10 @@ Settings.isActive('custom-css').then(active => {
 })
 
 browser.runtime.onMessage.addListener(async (message) => {
-    if (message.featureId === 'custom-css') {
+    if (message?.featureId === 'custom-css') {
         setCss(message.value);
     }
 })
-
-
-
-
 
 const setCss = (value: string) => {
     if (document.getElementById('roam-custom-styles')) {

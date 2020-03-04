@@ -1,14 +1,17 @@
-import { Roam, RoamNode } from '../../utils/roam';
-import { Feature } from '../../utils/settings'
+import {Roam, RoamNode} from '../../utils/roam';
+import {Feature, Shortcut} from '../../utils/settings'
 
 export const config: Feature = {
     id: 'srs',
     name: 'SRS',
-    shortcuts: [
+    settings: [
         {
-            id: 'nextBucketShortcut', label: 'Trigger next bucket', initValue: 'Ctrl+s',
+            type: 'shortcut',
+            id: 'nextBucketShortcut',
+            label: 'Trigger next bucket',
+            initValue: 'Ctrl+s',
             onPress: triggerNextBucket
-        }
+        } as Shortcut
     ]
 }
 

@@ -1,14 +1,14 @@
-import { Feature } from '../../utils/settings'
-import { Roam, RoamNode, Selection } from '../../utils/roam';
+import {Feature, Shortcut} from '../../utils/settings'
+import {Roam, RoamNode, Selection} from '../../utils/roam';
 
 export const config: Feature = {
     id: 'duplicate',
     name: 'Duplicate',
-    shortcuts: [
+    settings: [
         {
-            id: 'dupShortcut', label: 'Shortcut for duplication', initValue: '',
+            type: 'shortcut', id: 'dupShortcut', label: 'Shortcut for duplication', initValue: '',
             onPress: () => duplicate()
-        },
+        } as Shortcut,
     ]
 }
 
@@ -17,12 +17,8 @@ const duplicate = () => {
     const selectedText = node?.selectedText();
 
     if (node && selectedText) {
-        const selectionLength = selectedText.length;
-        const selectionEnd = node.selection.end
-        const newText = node.text.substring(0, selectionEnd)
-            + selectedText
-            + node.text.substring(selectionEnd);
-        Roam.save(new RoamNode(newText, new Selection(selectionEnd, selectionEnd + selectionLength)));
+        const newText = node.textBeforeSelection() + selectedText + selectedText + node.textAfterSelection()
+        Roam.save(new RoamNode(newText, new Selection(node.selection.end, node.selection.end + selectedText.length)));
     } else {
         Roam.duplicateBlock()
     }

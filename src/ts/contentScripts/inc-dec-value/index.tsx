@@ -1,19 +1,26 @@
 import {getActiveEditElement, getInputEvent} from '../../utils/dom';
-import {Feature} from '../../utils/settings'
+import {Feature, Shortcut} from '../../utils/settings'
 import {RoamDate} from '../../date/common';
 
 export const config: Feature = {
     id: 'incDec',
     name: 'Increase / Decrease value or date',
-    shortcuts: [
+    settings: [
         {
-            id: 'incShortcut', label: 'Shortcut for +1 value/date', initValue: 'Ctrl+Alt+ArrowUp',
+            type: 'shortcut',
+            id: 'incShortcut',
+            label: 'Shortcut for +1 value/date',
+            initValue: 'Ctrl+Alt+ArrowUp',
             onPress: () => modify('increase')
-        },
+        } as Shortcut,
         {
-            id: 'decShortcut', label: 'Shortcut for -1 value/date', initValue: '', placeholder: 'e.g. Ctrl+Alt+ArrowDown',
+            type: 'shortcut',
+            id: 'decShortcut',
+            label: 'Shortcut for -1 value/date',
+            initValue: '',
+            placeholder: 'e.g. Ctrl+Alt+ArrowDown',
             onPress: () => modify('decrease')
-        },
+        } as Shortcut,
     ]
 }
 
