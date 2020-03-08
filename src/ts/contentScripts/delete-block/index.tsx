@@ -13,5 +13,12 @@ export const config: Feature = {
             placeholder: 'e.g. cmd+shift+backspace',
             onPress: () => Roam.deleteBlock()
         } as Shortcut,
+        {
+            type: 'shortcut',
+            id: 'copyBlockRef',
+            label: 'Copy Block Reference',
+            initValue: 'cmd+alt+c',
+            onPress: () => navigator.clipboard.writeText(`((${Roam.getActiveRoamNode()?.uid}))`)
+        } as Shortcut,
     ]
 }

@@ -2,6 +2,8 @@ import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLe
 import {Keyboard} from './keyboard';
 import {Mouse} from './mouse';
 
+// @ts-ignore
+// @ts-ignore
 export const Roam = {
     save(roamNode: RoamNode) {
         console.log(`Saving`, roamNode);
@@ -126,11 +128,30 @@ export const Roam = {
         if (this.getActiveRoamNode()?.text || forceCreation) {
             await this.createSiblingBelow();
         }
+    },
+
+    get(dbId: number) {
+        //@ts-ignore
+        return window.roamAlphaAPI.pull('[*]', dbId)
+    },
+    query(query: string, ...params: any[]) {
+        //@ts-ignore
+        return window.roamAlphaAPI.q(query, ...params)
     }
 };
 
 export class RoamNode {
     constructor(readonly text: string, readonly selection: Selection = new Selection()) {
+    }
+
+    get id(): string {
+        //todo should be part of the node
+        const parts = Roam.getRoamBlockInput()?.id?.split('-')
+        return parts?.[parts.length - 1]!
+    }
+
+    get uid(): string {
+        return Roam.get(parseInt(this.id))[':block/uid']
     }
 
     textBeforeSelection() {
