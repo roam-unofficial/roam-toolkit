@@ -1,19 +1,17 @@
 import {Feature, prepareSettings, Settings, Shortcut} from '../utils/settings'
 
 import {config as incDec} from './inc-dec-value/index'
-import {config as duplicate} from './duplicate-block-content/index'
 import {config as customCss} from './custom-css/index'
 import {config as srs} from './srs/index'
-import {config as deleteBlock} from './delete-block/index'
+import {config as blockManipulation} from './block-manipulation'
 import {filterAsync, mapAsync} from '../utils/async';
 
 export const Features = {
     all: prepareSettings([
         incDec,
-        duplicate,
         customCss,
         srs,
-        deleteBlock
+        blockManipulation,
     ]),
 
     isActive: Settings.isActive,

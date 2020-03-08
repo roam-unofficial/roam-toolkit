@@ -17,8 +17,7 @@ export const config: Feature = {
             type: 'shortcut',
             id: 'decShortcut',
             label: 'Shortcut for -1 value/date',
-            initValue: '',
-            placeholder: 'e.g. Ctrl+Alt+ArrowDown',
+            initValue: 'Ctrl+Alt+ArrowDown',
             onPress: () => modify('decrease')
         } as Shortcut,
     ]

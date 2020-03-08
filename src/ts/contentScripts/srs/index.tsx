@@ -9,7 +9,7 @@ export const config: Feature = {
             type: 'shortcut',
             id: 'nextBucketShortcut',
             label: 'Trigger next bucket',
-            initValue: 'Ctrl+s',
+            initValue: 'Ctrl+q',
             onPress: triggerNextBucket
         } as Shortcut
     ]

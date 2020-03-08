@@ -42,7 +42,7 @@
             "srs.js",
             "inc-dec-value.js",
             "dispatcher.js",
-            "duplicate-block-content.js",
+            "block-manipulation.js",
             "custom-css.js",
             "fuzzy_date.js",
             "create-block-demo.js"

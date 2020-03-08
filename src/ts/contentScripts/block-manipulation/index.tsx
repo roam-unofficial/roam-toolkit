@@ -2,12 +2,23 @@ import {Feature, Shortcut} from '../../utils/settings'
 import {Roam, RoamNode, Selection} from '../../utils/roam';
 
 export const config: Feature = {
-    id: 'duplicate',
-    name: 'Duplicate',
+    id: 'block_manipulation',
+    name: 'Block manipulation',
     settings: [
         {
-            type: 'shortcut', id: 'dupShortcut', label: 'Shortcut for duplication', initValue: '',
+            type: 'shortcut',
+            id: 'duplicateBlockOrSelection',
+            label: 'Duplicate block or selection',
+            initValue: 'Ctrl+y',
             onPress: () => duplicate()
+        } as Shortcut,
+        {
+            type: 'shortcut',
+            id: 'deleteBlock',
+            label: 'Delete block',
+            initValue: 'Ctrl+w',
+            placeholder: 'e.g. cmd+shift+backspace',
+            onPress: () => Roam.deleteBlock()
         } as Shortcut,
     ]
 }
