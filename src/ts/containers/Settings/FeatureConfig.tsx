@@ -71,7 +71,6 @@ export const FeatureConfig = ({feature}: FeatureConfigProps) => {
 
     const header = feature.toggleable ? toggleCheckBox : featureName;
 
-
     return (
         <FeatureConfigContainer>
             <Header>

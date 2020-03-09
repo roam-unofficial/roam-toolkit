@@ -26,7 +26,6 @@ export type Feature = {
     id: string,
     name: string,
     description?: string,
-    shortcuts?: Shortcut[],
     settings?: Setting[],
     toggleable?: boolean,
     toggle?: (active: boolean) => void,

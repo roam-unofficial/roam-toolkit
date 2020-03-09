@@ -1,43 +1,51 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import styled from 'styled-components';
-import { setFeatureId } from '../../background/store/settings/actions';
+import {setFeatureId} from '../../background/store/settings/actions';
 
-import { Feature } from '../../utils/settings'
+import {Feature} from '../../utils/settings'
 
-import { Checkbox } from '../../components/Checkbox'
+import {Checkbox} from '../../components/Checkbox'
 
 
 type HomeProps = { features: Feature[] };
-export const Home = ({ features }: HomeProps) => {
+export const Home = ({features}: HomeProps) => {
 
     const dispatch = useDispatch();
 
     const theme = useSelector((state: any) => state.settings.theme)
 
+    const getCheckbox = (feature: Feature) =>
+        <Checkbox
+            checked={useSelector((state: any) => state[feature.id].active)}
+            onSave={(checked: boolean) => {
+                dispatch(feature.toggle!(checked))
+            }}
+        />;
+
+    const getFeatureContainer = (feature: Feature) =>
+        <FeatureNameContainer onClick={() => {
+            dispatch(setFeatureId(feature.id))
+        }}>
+            <FeatureName>
+                <span style={{'color': '#a7b6c2'}}>[[</span>
+                {feature.name}
+                <span style={{'color': '#a7b6c2'}}>]]</span>
+            </FeatureName>
+        </FeatureNameContainer>;
+
     return (
         <HomeContainer>
             <Header>
-                <img src={`../../../assets/logo-${theme}.png`} />
+                <img src={`../../../assets/logo-${theme}.png`}/>
             </Header>
             <FeaturesList>
                 {
                     features.map((feature: Feature) => (
                         <FeatureListElement key={feature.id}>
                             {feature.toggleable ?
-                                <Checkbox
-                                    checked={useSelector((state: any) => state[feature.id].active)}
-                                    onSave={(checked: boolean) => {
-                                        dispatch(feature.toggle!(checked))
-                                    }}
-                                /> : null}
-                            <FeatureNameContainer onClick={() => { dispatch(setFeatureId(feature.id)) }}>
-                                <FeatureName>
-                                    <span style={{ 'color': '#a7b6c2' }}>[[</span>
-                                    {feature.name}
-                                    <span style={{ 'color': '#a7b6c2' }}>]]</span>
-                                </FeatureName>
-                            </FeatureNameContainer>
+                                getCheckbox(feature) : null}
+                            {getFeatureContainer(feature)}
                         </FeatureListElement>
                     ))
                 }
