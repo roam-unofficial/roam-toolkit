@@ -1,23 +1,23 @@
 import {Roam, RoamNode} from '../../utils/roam';
-import {Feature, getSetting, Textarea} from '../../utils/settings';
+import {Feature, Settings, Shortcut, String} from '../../utils/settings';
 import {getActiveEditElement} from '../../utils/dom';
 
-
-// TODO: Input instead of textarea
-const estimateProperty: Textarea = {type: 'textarea', id: 'estimate_property', label: 'Property to base estimates on'};
+const estimateProperty: String = {type: 'string', id: 'estimate_property', label: 'Property to base estimates on'};
 
 export const config: Feature = {
     id: 'calculate-estimate',
     name: 'Calculate estimate',
-    shortcuts: [
-        {
-            id: 'calculate-estimate', label: 'Calculate estimate shortcut', initValue: 'ctl+m', placeholder: '',
-            onPress: calculateFirstSiblingTotal
-        }
-    ],
     settings: [
+        {
+            type: 'shortcut',
+            id: 'calculate-estimate',
+            label: 'Calculate estimate shortcut',
+            initValue: 'ctrl+m',
+            placeholder: '',
+            onPress: calculateFirstSiblingTotal
+        } as Shortcut,
         estimateProperty,
-    ]
+    ],
 };
 
 function getParentElement() {
@@ -34,7 +34,7 @@ function getParentElement() {
  *
  */
 export async function calculateFirstSiblingTotal() {
-    const attributeName = await getSetting(config.id, estimateProperty.id) || 'pomodoro_estimate';
+    const attributeName = await Settings.get(config.id, estimateProperty.id, 'pomodoro_estimate');
     const estimateRegex = new RegExp(`${attributeName}:\\s*(\\d+\\.?\\d*)`, 'g');
 
     const queryNode = getParentElement()?.querySelector('.rm-reference-main') as HTMLElement;
