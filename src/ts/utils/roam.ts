@@ -1,6 +1,6 @@
-import {getActiveEditElement, getInputEvent, getLastTopLevelBlock, getFirstTopLevelBlock} from './dom';
+import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLevelBlock} from './dom';
 import {Keyboard} from './keyboard';
-import { Mouse } from './mouse';
+import {Mouse} from './mouse';
 
 export const Roam = {
     save(roamNode: RoamNode) {
@@ -47,7 +47,7 @@ export const Roam = {
     async activateBlock(element: HTMLElement) {
         if (element.classList.contains('roam-block')) {
             await Mouse.leftClick(element)
-        } 
+        }
         return this.getRoamBlockInput();
     },
 
@@ -77,7 +77,7 @@ export const Roam = {
     },
 
     writeText(text: string) {
-        this.applyToCurrent(node => 
+        this.applyToCurrent(node =>
             new RoamNode(text, node.selection));
         return this.getActiveRoamNode()?.text === text;
     },
@@ -90,7 +90,7 @@ export const Roam = {
             await Keyboard.simulateKey(Keyboard.UP_ARROW);
         }
     },
-    
+
     async createSiblingBelow() {
         this.moveCursorToEnd();
         await Keyboard.pressEnter();
@@ -113,15 +113,15 @@ export const Roam = {
         await Keyboard.simulateKey(Keyboard.RIGHT_ARROW);
         await Keyboard.pressEnter();
     },
-    
-    async createBlockAtTop(forceCreation:boolean = false){
+
+    async createBlockAtTop(forceCreation: boolean = false) {
         await this.activateBlock(getFirstTopLevelBlock());
         if (this.getActiveRoamNode()?.text || forceCreation) {
             await this.createSiblingAbove();
         }
     },
-    
-    async createBlockAtBottom(forceCreation:boolean = false){
+
+    async createBlockAtBottom(forceCreation: boolean = false) {
         await this.activateBlock(getLastTopLevelBlock());
         if (this.getActiveRoamNode()?.text || forceCreation) {
             await this.createSiblingBelow();
@@ -133,21 +133,31 @@ export class RoamNode {
     constructor(readonly text: string, readonly selection: Selection) {
     }
 
-    selectedText(): string {
-        return this.text.substring(this.selection.start, this.selection.end)
+    textBeforeSelection() {
+        return this.text.substring(0, this.selection.start)
     }
+
+    textAfterSelection() {
+        return this.text.substring(this.selection.end + 1)
+    }
+
+    selectedText(): string {
+        return this.text.substring(this.selection.start, this.selection.end + 1)
+    }
+
     withCursorAtTheStart() {
         return new RoamNode(
-                          this.text,
-                          new Selection(0, 0)
-                      )
-      }
+            this.text,
+            new Selection(0, 0)
+        )
+    }
+
     withCursorAtTheEnd() {
         return new RoamNode(
-                          this.text,
-                          new Selection(this.text.length, this.text.length)
-                      )
-      }
+            this.text,
+            new Selection(this.text.length, this.text.length)
+        )
+    }
 }
 
 export class Selection {

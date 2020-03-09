@@ -1,42 +1,28 @@
-import {browser} from 'webextension-polyfill-ts';
-import {getActiveEditElement} from '../../utils/dom';
+import {getActiveEditElement, getInputEvent} from '../../utils/dom';
+import {Feature, Shortcut} from '../../utils/settings'
+import {RoamDate} from '../../date/common';
 
+export const config: Feature = {
+    id: 'incDec',
+    name: 'Increase / Decrease value or date',
+    settings: [
+        {
+            type: 'shortcut',
+            id: 'incShortcut',
+            label: 'Shortcut for +1 value/date',
+            initValue: 'Ctrl+Alt+ArrowUp',
+            onPress: () => modify('increase')
+        } as Shortcut,
+        {
+            type: 'shortcut',
+            id: 'decShortcut',
+            label: 'Shortcut for -1 value/date',
+            initValue: 'Ctrl+Alt+ArrowDown',
+            onPress: () => modify('decrease')
+        } as Shortcut,
+    ]
+}
 
-const inputEvent = new Event('input', {
-    bubbles: true,
-    cancelable: true,
-});
-
-const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-];
-
-const nth = (d: number) => {
-    if (d > 3 && d < 21) return 'th';
-    switch (d % 10) {
-        case 1:
-            return 'st';
-        case 2:
-            return 'nd';
-        case 3:
-            return 'rd';
-        default:
-            return 'th';
-    }
-};
-
-const dateRegex = /\[\[(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}(st|nd|th|rd), \d{4}\]\]/gm;
 
 const dateFromPageName = (text: string): Date => {
     return new Date(
@@ -47,19 +33,11 @@ const dateFromPageName = (text: string): Date => {
     );
 };
 
-const dateStrFormatted = (d: Date): string => {
-    const year = d.getFullYear();
-    const date = d.getDate();
-    const month = months[d.getMonth()];
-    const nthStr = nth(date);
-    return `[[${month} ${date}${nthStr}, ${year}]]`;
-};
-
 const saveChanges = (el: HTMLTextAreaElement, cursor: number, value: string): void => {
     el.value = value;
     el.selectionStart = cursor;
     el.selectionEnd = cursor;
-    el.dispatchEvent(inputEvent);
+    el.dispatchEvent(getInputEvent());
 };
 
 const openBracketsLeftIndex = (text: string, cursor: number): number =>
@@ -85,7 +63,7 @@ const nameInsideBrackets = (text: string, cursor: number): string =>
     text.substring(text.substring(0, cursor).lastIndexOf('[['), cursor + text.substring(cursor).indexOf(']]') + 2)
 
 const nameIsDate = (pageName: string): boolean =>
-    pageName.match(dateRegex) !== null
+    pageName.match(RoamDate.regex) !== null
 
 const dateModified = (date: Date, modType: string): Date => {
     const newDate = new Date(date.valueOf());
@@ -97,17 +75,16 @@ const dateModified = (date: Date, modType: string): Date => {
     return newDate;
 }
 
-const modify = (modType: string) => {
+export const modify = (modType: string) => {
     const element = getActiveEditElement() as HTMLTextAreaElement;
-
     if (element.nodeName === 'TEXTAREA') {
         const itemContent = element.value;
         const cursor = element.selectionStart;
-        const datesInContent = itemContent.match(dateRegex);
+        const datesInContent = itemContent.match(RoamDate.regex);
 
         if (cursorPlacedOnDate(itemContent, cursor)) { // e.g. Lorem ipsum [[Janu|ary 3rd, 2020]] 123
             const newValue = itemContent.substring(0, openBracketsLeftIndex(itemContent, cursor))
-                + dateStrFormatted(dateModified(dateFromPageName(nameInsideBrackets(itemContent, cursor)), modType))
+                + RoamDate.format(dateModified(dateFromPageName(nameInsideBrackets(itemContent, cursor)), modType))
                 + itemContent.substring(closingBracketsRightIndex(itemContent, cursor) + 2);
             saveChanges(element, cursor, newValue);
         } else if (cursorPlacedOnNumber(itemContent, cursor)) { // e.g. Lorem ipsum [[January 3rd, 2020]] 12|3
@@ -127,17 +104,9 @@ const modify = (modType: string) => {
             saveChanges(element, cursor, newValue);
         } else if (datesInContent && datesInContent.length === 1) { // e.g. Lor|em ipsum [[January 3rd, 2020]] 123
             const newValue = itemContent.replace(datesInContent[0],
-                dateStrFormatted(dateModified(dateFromPageName(datesInContent[0]), modType)));
+                RoamDate.format(dateModified(dateFromPageName(datesInContent[0]), modType)));
             saveChanges(element, cursor, newValue);
         }
     }
 }
 
-browser.runtime.onMessage.addListener((command) => {
-    if (command === 'increase-value') {
-        modify('increase');
-    }
-    if (command === 'decrease-value') {
-        modify('decrease');
-    }
-});

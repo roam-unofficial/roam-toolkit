@@ -1,4 +1,19 @@
 import {Roam, RoamNode} from '../../utils/roam';
+import {Feature, Shortcut} from '../../utils/settings'
+
+export const config: Feature = {
+    id: 'srs',
+    name: 'SRS',
+    settings: [
+        {
+            type: 'shortcut',
+            id: 'nextBucketShortcut',
+            label: 'Trigger next bucket',
+            initValue: 'Ctrl+q',
+            onPress: triggerNextBucket
+        } as Shortcut
+    ]
+}
 
 const bucketExpr = /\[\[Bucket (\d+)]]/;
 const nextBucket = (nodeStr: string) => `[[Bucket ${parseInt(nodeStr) + 1}]]`;

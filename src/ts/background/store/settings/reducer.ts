@@ -1,26 +1,29 @@
-import { Reducer } from 'redux';
-import { ThemeTypes } from './../../../components/styles/themes';
-import { SettingsActions } from './actions';
+import {Reducer} from 'redux';
+import {ThemeTypes} from './../../../components/styles/themes';
+import {SettingsActions} from './actions';
 
 export interface IAppSettings {
-	theme: ThemeTypes;
+    theme: ThemeTypes;
+    featureId: string;
 }
 
 const initialState: IAppSettings = {
-	theme: 'light'
+    theme: 'light',
+    featureId: ''
 };
 
 const settings: Reducer<IAppSettings, SettingsActions> = (state = initialState, action) => {
-	switch (action.type) {
-		case 'DARK_THEME':
-			return { ...state, theme: 'dark' };
+    const {payload} = action;
+    switch (action.type) {
+        case 'RETURN_TO_HOME':
+            return {...state, featureId: ''};
 
-		case 'LIGHT_THEME':
-			return { ...state, theme: 'light' };
+        case 'SET_FEATURE_ID':
+            return {...state, featureId: payload};
 
-		default:
-			return state;
-	}
+        default:
+            return state;
+    }
 };
 
 export default settings;

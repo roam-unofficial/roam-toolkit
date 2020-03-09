@@ -1,22 +1,11 @@
-import {createStore} from 'redux';
-import {wrapStore} from 'webext-redux';
-import {configureApp} from './AppConfig';
-import reducers, {loadState} from './store';
-import {browser} from 'webextension-polyfill-ts';
+import { createStore } from 'redux';
+import { wrapStore } from 'webext-redux';
+import { Store } from 'redux';
+import reducers, { IAppState } from './store';
+import { getStateFromStorage, saveStateToStorage } from '../utils/storage';
 
-const preloadedState = loadState();
-const store = createStore(reducers, preloadedState);
-
-configureApp(store);
-wrapStore(store);
-
-browser.commands.onCommand.addListener((command) => {
-    /* This is a hack to support keyboard shortcuts for frontend script. */
-    console.log('received in background');
-
-    browser.tabs.query({
-        currentWindow: true,
-        active: true
-    }).then((tabs) =>
-        tabs.forEach((tab) => browser.tabs.sendMessage(tab?.id!, command)));
-});
+(async () => {
+    const store: Store<IAppState> = createStore(reducers, await getStateFromStorage());
+    store.subscribe(() => saveStateToStorage(store.getState()))
+    wrapStore(store);
+})()

@@ -1,8 +1,7 @@
-import { Action } from 'redux';
+import {Action} from 'redux';
 
-export type ThemeActionTypes = 'DARK_THEME' | 'LIGHT_THEME';
+export type SettingActionTypes = 'RETURN_TO_HOME' | 'SET_FEATURE_ID';
+export type SettingsActions = Action<SettingActionTypes, string> | Action<SettingActionTypes>;
 
-export type SettingsActions = Action<ThemeActionTypes>;
-
-export const setDarkTheme = () => ({ type: 'DARK_THEME' });
-export const setLightTheme = () => ({ type: 'LIGHT_THEME' });
+export const returnToHome = () => ({type: 'RETURN_TO_HOME'});
+export const setFeatureId = (payload: string = '') => ({type: 'SET_FEATURE_ID', payload});
