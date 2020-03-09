@@ -50,25 +50,5 @@
         "matches": [
             "*://roamresearch.com/*"
         ]
-    }],
-    "commands": {
-        "srs-next-bucket": {
-            "description": "Next SRS bucket"
-        },
-        "increase-value": {
-            "description": "Increase value"
-        },
-        "decrease-value": {
-            "description": "Decrease value"
-        },
-        "delete-current-block": {
-            "description": "Delete block you're editing"
-        },
-        "replace-fuzzy-date": {
-            "description": "Replace FuzzyDate with computer date"
-        },
-        "duplicate-current-block": {
-            "description": "Duplicate block content or selection"
-        }
-    }
+    }]
 }
