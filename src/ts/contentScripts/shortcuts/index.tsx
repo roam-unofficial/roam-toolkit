@@ -7,6 +7,8 @@ configure({
     ignoreTags: [],
 })
 
+const shortcutContainer = document.createElement('div');
+
 export async function updateShortcuts() {
     const shortcutElement = <GlobalHotKeys keyMap={await Features.getCurrentKeyMap()}
                                            handlers={Features.getShortcutHandlers()}
@@ -14,7 +16,7 @@ export async function updateShortcuts() {
     // TODO: hitting this
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/31734 was not able to resolve it
     // @ts-ignore
-    ReactDOM.render(shortcutElement, document.createElement('globalShortcuts'));
+    ReactDOM.render(shortcutElement, shortcutContainer);
     //todo removing shortcut does not work?
 }
 
