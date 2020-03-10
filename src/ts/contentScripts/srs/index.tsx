@@ -1,7 +1,8 @@
 import {Roam, RoamNode} from '../../utils/roam';
 import {Feature, Shortcut} from '../../utils/settings'
-import {AnkiScheduler, SRSSignal, SRSSignals} from '../../srs/scheduler';
+import {SRSSignal, SRSSignals} from '../../srs/scheduler';
 import {SM2Node} from '../../srs/SM2Node';
+import {AnkiScheduler} from '../../srs/AnkiScheduler';
 
 export const config: Feature = {
     id: 'srs',
@@ -14,12 +15,11 @@ export const config: Feature = {
             initValue: 'Ctrl+q',
             onPress: triggerNextBucket
         } as Shortcut
-    ].concat(SRSSignals.map(it => {
-        return {
+    ].concat(SRSSignals.map(it => ({
             type: 'shortcut', id: `srs_${SRSSignal[it]}`, label: `SRS: ${SRSSignal[it]}`, initValue: `ctrl+shift+${it}`,
             onPress: () => rescheduleCurrentNote(it)
         }
-    }))
+    )))
 }
 
 export function rescheduleCurrentNote(signal: SRSSignal) {
