@@ -39,7 +39,8 @@ export interface Shortcut extends Setting {
 
 
 export const Settings = {
-    get: async (featureId: string, settingId: string) => (await getStateFromStorage())[featureId][settingId],
+    get: async (featureId: string, settingId: string, defaultValue?: string) =>
+        (await getStateFromStorage())[featureId][settingId] || defaultValue,
     isActive: async (featureId: string) => (await getStateFromStorage())[featureId]?.active
 }
 

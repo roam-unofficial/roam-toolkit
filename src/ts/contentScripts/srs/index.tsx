@@ -1,5 +1,8 @@
 import {Roam, RoamNode} from '../../utils/roam';
 import {Feature, Shortcut} from '../../utils/settings'
+import {SRSSignal, SRSSignals} from '../../srs/scheduler';
+import {SM2Node} from '../../srs/SM2Node';
+import {AnkiScheduler} from '../../srs/AnkiScheduler';
 
 export const config: Feature = {
     id: 'srs',
@@ -12,16 +15,26 @@ export const config: Feature = {
             initValue: 'Ctrl+q',
             onPress: triggerNextBucket
         } as Shortcut
-    ]
+    ].concat(SRSSignals.map(it => ({
+            type: 'shortcut', id: `srs_${SRSSignal[it]}`, label: `SRS: ${SRSSignal[it]}`, initValue: `ctrl+shift+${it}`,
+            onPress: () => rescheduleCurrentNote(it)
+        }
+    )))
 }
 
-const bucketExpr = /\[\[Bucket (\d+)]]/;
-const nextBucket = (nodeStr: string) => `[[Bucket ${parseInt(nodeStr) + 1}]]`;
+export function rescheduleCurrentNote(signal: SRSSignal) {
+    const scheduler = new AnkiScheduler()
+    Roam.applyToCurrent(node => scheduler.schedule(new SM2Node(node.text, node.selection), signal))
+}
+
+const bucketExpr = /(?:\[\[\[\[interval]]::(\d+)]])|(?:#Box(\d+))/gi;
+const nextBucket = (nodeStr: string) => `[[[[interval]]::${parseInt(nodeStr) + 1}]]`;
 
 export function triggerNextBucket() {
     Roam.applyToCurrent(
-        (element => {
-            return new RoamNode(element.text.replace(bucketExpr, (_, numStr: string) => nextBucket(numStr)),
-                element.selection);
-        }));
+        (element =>
+            new RoamNode(
+                element.text.replace(bucketExpr,
+                    (_, ...numbers) => nextBucket(numbers.filter(it => it)[0])),
+                element.selection)));
 }
