@@ -2,7 +2,12 @@ import {Roam, RoamNode} from '../../utils/roam';
 import {Feature, Settings, Shortcut, String} from '../../utils/settings';
 import {getActiveEditElement} from '../../utils/dom';
 
-const estimateProperty: String = {type: 'string', id: 'estimate_property', label: 'Property to base estimates on'};
+const estimateProperty: String = {
+    type: 'string',
+    id: 'estimate_property',
+    label: 'Property to base estimates on',
+    initValue: 'estimate',
+};
 
 export const config: Feature = {
     id: 'calculate-estimate',
@@ -34,7 +39,7 @@ function getParentElement() {
  *
  */
 export async function calculateFirstSiblingTotal() {
-    const attributeName = await Settings.get(config.id, estimateProperty.id, 'pomodoro_estimate');
+    const attributeName = await Settings.get(config.id, estimateProperty.id);
     const estimateRegex = new RegExp(`${attributeName}:\\s*(\\d+\\.?\\d*)`, 'g');
 
     const queryNode = getParentElement()?.querySelector('.rm-reference-main') as HTMLElement;
