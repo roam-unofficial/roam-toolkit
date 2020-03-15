@@ -10,7 +10,7 @@ export const config: Feature = {
             type: 'shortcut',
             id: 'duplicateBlockOrSelection',
             label: 'Duplicate block or selection',
-            initValue: 'Ctrl+y',
+            initValue: 'Meta+shift+d',
             onPress: () => duplicate()
         } as Shortcut,
         {
