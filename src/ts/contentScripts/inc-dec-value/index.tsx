@@ -1,6 +1,7 @@
-import {getActiveEditElement, getInputEvent} from '../../utils/dom';
 import {Feature, Shortcut} from '../../utils/settings'
 import {dateFromPageName, RoamDate} from '../../date/common';
+import {Roam} from '../../roam/roam';
+import {RoamNode, Selection} from '../../roam/roam-node';
 
 export const config: Feature = {
     id: 'incDec',
@@ -22,13 +23,6 @@ export const config: Feature = {
         } as Shortcut,
     ]
 }
-
-const saveChanges = (el: HTMLTextAreaElement, cursor: number, value: string): void => {
-    el.value = value;
-    el.selectionStart = cursor;
-    el.selectionEnd = cursor;
-    el.dispatchEvent(getInputEvent());
-};
 
 const openBracketsLeftIndex = (text: string, cursor: number): number =>
     text.substring(0, cursor).lastIndexOf('[[')
@@ -66,37 +60,36 @@ const dateModified = (date: Date, modType: string): Date => {
 }
 
 export const modify = (modType: string) => {
-    const element = getActiveEditElement() as HTMLTextAreaElement;
-    if (element.nodeName === 'TEXTAREA') {
-        const itemContent = element.value;
-        const cursor = element.selectionStart;
-        const datesInContent = itemContent.match(RoamDate.regex);
+    const node = Roam.getActiveRoamNode()
+    if (!node) return
 
-        if (cursorPlacedOnDate(itemContent, cursor)) { // e.g. Lorem ipsum [[Janu|ary 3rd, 2020]] 123
-            const newValue = itemContent.substring(0, openBracketsLeftIndex(itemContent, cursor))
-                + RoamDate.format(dateModified(dateFromPageName(nameInsideBrackets(itemContent, cursor)), modType))
-                + itemContent.substring(closingBracketsRightIndex(itemContent, cursor) + 2);
-            saveChanges(element, cursor, newValue);
-        } else if (cursorPlacedOnNumber(itemContent, cursor)) { // e.g. Lorem ipsum [[January 3rd, 2020]] 12|3
-            const left = itemContent.substring(0, cursor)?.match(/[0-9]*$/)![0];
-            const right = itemContent.substring(cursor)?.match(/^[0-9]*/)![0];
-            const numberStr = left + right;
-            const numberStartedAt = itemContent.substring(0, cursor)?.match(/[0-9]*$/)?.index!;
-            let nr = parseInt(numberStr);
-            if (modType === 'increase') {
-                nr++;
-            } else if (modType === 'decrease') {
-                nr--;
-            }
-            const newValue = itemContent.substring(0, numberStartedAt)
-                + nr
-                + itemContent.substring(numberStartedAt + numberStr.length);
-            saveChanges(element, cursor, newValue);
-        } else if (datesInContent && datesInContent.length === 1) { // e.g. Lor|em ipsum [[January 3rd, 2020]] 123
-            const newValue = itemContent.replace(datesInContent[0],
-                RoamDate.format(dateModified(dateFromPageName(datesInContent[0]), modType)));
-            saveChanges(element, cursor, newValue);
+    const cursor = node.selection.start;
+    const datesInContent = node.text.match(RoamDate.regex);
+
+    let newValue = node.text
+
+    if (cursorPlacedOnDate(node.text, cursor)) { // e.g. Lorem ipsum [[Janu|ary 3rd, 2020]] 123
+        newValue = node.text.substring(0, openBracketsLeftIndex(node.text, cursor))
+            + RoamDate.format(dateModified(dateFromPageName(nameInsideBrackets(node.text, cursor)), modType))
+            + node.text.substring(closingBracketsRightIndex(node.text, cursor) + 2);
+    } else if (cursorPlacedOnNumber(node.text, cursor)) { // e.g. Lorem ipsum [[January 3rd, 2020]] 12|3
+        const left = node.text.substring(0, cursor)?.match(/[0-9]*$/)![0];
+        const right = node.text.substring(cursor)?.match(/^[0-9]*/)![0];
+        const numberStr = left + right;
+        const numberStartedAt = node.text.substring(0, cursor)?.match(/[0-9]*$/)?.index!;
+        let number = parseInt(numberStr);
+        if (modType === 'increase') {
+            number++;
+        } else if (modType === 'decrease') {
+            number--;
         }
+        newValue = node.text.substring(0, numberStartedAt)
+            + number
+            + node.text.substring(numberStartedAt + numberStr.length);
+    } else if (datesInContent && datesInContent.length === 1) { // e.g. Lor|em ipsum [[January 3rd, 2020]] 123
+        newValue = node.text.replace(datesInContent[0],
+            RoamDate.format(dateModified(dateFromPageName(datesInContent[0]), modType)));
     }
+    Roam.save(new RoamNode(newValue, new Selection(cursor, cursor)))
 }
 
