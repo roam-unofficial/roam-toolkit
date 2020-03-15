@@ -53,7 +53,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
         feature.toggle = (active: boolean) => ({type: `${feature.id}_toggle`, payload: active})
 
         const initialState: any = {
-            active: false
+            active: true
         }
 
         let reducers: any = {
