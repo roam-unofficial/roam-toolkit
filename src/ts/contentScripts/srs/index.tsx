@@ -6,7 +6,7 @@ import {AnkiScheduler} from '../../srs/AnkiScheduler';
 
 export const config: Feature = {
     id: 'srs',
-    name: 'SRS',
+    name: 'Spaced Repetition',
     settings: [
         {
             type: 'shortcut',

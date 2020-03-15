@@ -10,10 +10,10 @@ import {filterAsync, mapAsync} from '../utils/async';
 export const Features = {
     all: prepareSettings([
         incDec,
-        customCss,
         srs,
         blockManipulation,
         estimate,
+        customCss,
     ]),
 
     isActive: Settings.isActive,
