@@ -9,15 +9,10 @@ export const Keyboard = {
     BASE_DELAY: 20,
 
     async simulateKey(code: number, delayOverride: number = 0, opts?: KeyboardEventInit) {
-        const event = new KeyboardEvent('keydown', {
-            bubbles: true,
-            cancelable: true,
-            // @ts-ignore
-            keyCode: code,
-            ...opts
-        });
-        document?.activeElement?.dispatchEvent(event);
-        return delay(delayOverride ||this.BASE_DELAY);
+        ['keydown', 'keyup'].forEach(eventType =>
+            document?.activeElement?.dispatchEvent(getKeyboardEvent(eventType, code, opts))
+        )
+        return delay(delayOverride || this.BASE_DELAY);
     },
     async pressEnter(delayOverride: number = 0) {
         return this.simulateKey(13, delayOverride)
@@ -35,3 +30,11 @@ export const Keyboard = {
         return this.simulateKey(9, delayOverride, {shiftKey: true})
     },
 };
+
+const getKeyboardEvent = (type: string, code: number, opts: any) => new KeyboardEvent(type, {
+    bubbles: true,
+    cancelable: true,
+    // @ts-ignore
+    keyCode: code,
+    ...opts
+})

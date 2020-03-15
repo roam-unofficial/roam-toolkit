@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 
 configure({
     ignoreTags: [],
+    ignoreRepeatedEventsWhenKeyHeldDown: false,
 })
 
 const shortcutContainer = document.createElement('div');
