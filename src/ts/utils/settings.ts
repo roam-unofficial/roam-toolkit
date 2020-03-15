@@ -1,7 +1,7 @@
-import {browser} from 'webextension-polyfill-ts';
 import {Reducer} from 'redux';
 import {createReducer} from './redux'
 import {getStateFromStorage} from './storage'
+import {sendMessageToActiveTab} from './browser';
 
 
 export interface LargeString extends Setting {
@@ -57,8 +57,10 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
         }
 
         let reducers: any = {
-            [`${feature.id}_toggle`]: (state: any, action: any) =>
-                ({...state, active: action.payload})
+            [`${feature.id}_toggle`]: (state: any, action: any) => {
+                notifySettingsUpdated()
+                return {...state, active: action.payload};
+            }
         }
 
         feature.settings = feature?.settings.map((setting: Setting) => {
@@ -68,6 +70,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
 
             reducers[`${feature.id}_${setting.id}`] = (state: any, action: any) => {
                 updateSetting(action.payload, feature.id, setting.id);
+                notifySettingsUpdated()
                 return {...state, [setting.id]: action.payload}
             }
 
@@ -79,11 +82,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
     });
 }
 
-const updateSetting = (value: string, featureId: string, settingId: string) => {
-    browser.tabs.query({currentWindow: true, active: true}).then((tabs: any) => {
-        for (const tab of tabs) {
-            browser.tabs.sendMessage(tab.id, 'update-shortcuts');
-            browser.tabs.sendMessage(tab.id, {value, featureId, settingId});
-        }
-    })
-}
+const notifySettingsUpdated = () => sendMessageToActiveTab('settings-updated')
+
+const updateSetting = (value: string, featureId: string, settingId: string) =>
+    sendMessageToActiveTab({value, featureId, settingId})

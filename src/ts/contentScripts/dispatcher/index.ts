@@ -15,7 +15,7 @@ const dispatchMap = new Map([
     ['duplicate-current-block', () => Roam.duplicateBlock()],
     ['replace-fuzzy-date', replaceFuzzyDate],
     ['create-block-demo', createDemo],
-    ['update-shortcuts', updateShortcuts],
+    ['settings-updated', updateShortcuts],
 ]);
 
 browser.runtime.onMessage.addListener((command) => dispatchMap.get(command)?.());
