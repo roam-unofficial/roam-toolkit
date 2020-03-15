@@ -16,7 +16,7 @@ export const config: Feature = {
             type: 'shortcut',
             id: 'deleteBlock',
             label: 'Delete block',
-            initValue: 'Ctrl+w',
+            initValue: 'Alt+k',
             placeholder: 'e.g. cmd+shift+backspace',
             onPress: () => Roam.deleteBlock()
         } as Shortcut,
