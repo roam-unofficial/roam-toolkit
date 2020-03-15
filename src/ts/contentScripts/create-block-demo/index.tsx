@@ -1,5 +1,5 @@
-import { getFirstTopLevelBlock } from '../../utils/dom';
-import { Roam} from '../../utils/roam';
+import {getFirstTopLevelBlock} from '../../utils/dom';
+import {Roam} from '../../roam/roam';
 
 export const createDemo = async () => {
     await Roam.createBlockAtBottom();

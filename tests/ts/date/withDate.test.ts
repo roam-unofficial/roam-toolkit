@@ -1,6 +1,6 @@
 import {withDate} from '../../../src/ts/date/withDate';
-import {RoamNode} from '../../../src/ts/utils/roam';
 import {RoamDate} from '../../../src/ts/date/common';
+import {RoamNode} from '../../../src/ts/roam/roam-node';
 
 const NodeWitDate = withDate(RoamNode)
 

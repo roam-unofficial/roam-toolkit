@@ -1,8 +1,9 @@
-import {Roam, RoamNode} from '../../utils/roam';
 import {Feature, Shortcut} from '../../utils/settings'
 import {SRSSignal, SRSSignals} from '../../srs/scheduler';
 import {SM2Node} from '../../srs/SM2Node';
 import {AnkiScheduler} from '../../srs/AnkiScheduler';
+import {RoamNode} from '../../roam/roam-node';
+import {Roam} from '../../roam/roam';
 
 export const config: Feature = {
     id: 'srs',

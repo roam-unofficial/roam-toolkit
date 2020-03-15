@@ -1,12 +1,14 @@
-import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLevelBlock} from './dom';
-import {Keyboard} from './keyboard';
-import {Mouse} from './mouse';
+import {RoamNode, Selection} from './roam-node';
+import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLevelBlock} from '../utils/dom';
+import {Keyboard} from '../utils/keyboard';
+import {Mouse} from '../utils/mouse';
 
 export const Roam = {
     save(roamNode: RoamNode) {
-        console.log(`Saving`, roamNode);
         const roamElement = this.getRoamBlockInput();
         if (roamElement) {
+            console.log(`Saving`, roamNode);
+
             roamElement.value = roamNode.text;
             roamElement.selectionStart = roamNode.selection.start;
             roamElement.selectionEnd = roamNode.selection.end;
@@ -128,60 +130,3 @@ export const Roam = {
         }
     }
 };
-
-export class RoamNode {
-    constructor(readonly text: string, readonly selection: Selection = new Selection()) {
-    }
-
-    textBeforeSelection() {
-        return this.text.substring(0, this.selection.start)
-    }
-
-    textAfterSelection() {
-        return this.text.substring(this.selection.end + 1)
-    }
-
-    selectedText(): string {
-        return this.text.substring(this.selection.start, this.selection.end + 1)
-    }
-
-    withCursorAtTheStart() {
-        return new RoamNode(
-            this.text,
-            new Selection(0, 0)
-        )
-    }
-
-    withCursorAtTheEnd() {
-        return new RoamNode(
-            this.text,
-            new Selection(this.text.length, this.text.length)
-        )
-    }
-
-    getInlineProperty(name: string) {
-        return RoamNode.getInlinePropertyMatcher(name).exec(this.text)?.[1]
-    }
-
-    withInlineProperty(name: string, value: string) {
-        const currentValue = this.getInlineProperty(name);
-        const property = RoamNode.createInlineProperty(name, value);
-        const newText = currentValue ? this.text.replace(RoamNode.getInlinePropertyMatcher(name), property) :
-            this.text + ' ' + property;
-        // @ts-ignore
-        return new this.constructor(newText, this.selection)
-    }
-
-    static createInlineProperty(name: string, value: string) {
-        return `[[[[${name}]]::${value}]]`
-    }
-
-    static getInlinePropertyMatcher(name: string) {
-        return new RegExp(`\\[\\[\\[\\[${name}]]::(.*?)]]`, 'g')
-    }
-}
-
-export class Selection {
-    constructor(readonly start: number = 0, readonly end: number = 0) {
-    }
-}

@@ -1,9 +1,9 @@
 import {browser} from 'webextension-polyfill-ts';
 import {triggerNextBucket} from '../srs';
-import {Roam} from '../../utils/roam';
 import {guard, replaceFuzzyDate} from '../fuzzy_date';
 import {createDemo} from '../create-block-demo'
 import {updateShortcuts} from '../shortcuts';
+import {Roam} from '../../roam/roam';
 
 /**
  * Be cautious to reference functions on the objects via anonymous functions (e.g. see Roam.deleteBlock)

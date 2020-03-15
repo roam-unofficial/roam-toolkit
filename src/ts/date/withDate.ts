@@ -1,6 +1,6 @@
-import {RoamNode} from '../utils/roam';
 import {dateFromPageName, RoamDate} from './common';
 import {Constructor} from '../mixins/common';
+import {RoamNode} from '../roam/roam-node';
 
 export function withDate<T extends Constructor<RoamNode>>(SuperClass: T) {
     return class NodeWithDate extends SuperClass {

@@ -1,5 +1,5 @@
-import {RoamNode, Selection} from '../utils/roam';
 import {withDate} from '../date/withDate';
+import {RoamNode, Selection} from '../roam/roam-node';
 
 
 export class SM2Node extends withDate(RoamNode) {

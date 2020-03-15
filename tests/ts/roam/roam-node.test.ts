@@ -1,4 +1,4 @@
-import {RoamNode} from '../../../src/ts/utils/roam';
+import {RoamNode, Selection} from '../../../src/ts/roam/roam-node';
 
 describe(RoamNode, () => {
     const propertyName = 'inline_property';
@@ -28,7 +28,7 @@ describe(RoamNode, () => {
         })
 
         test('works for values with multiple properties', () => {
-            expect(new RoamNode(nodeWithValue.text+nodeWithValue.text)
+            expect(new RoamNode(nodeWithValue.text + nodeWithValue.text)
                 .getInlineProperty(propertyName)).toBe(value)
         })
 
@@ -53,4 +53,22 @@ describe(RoamNode, () => {
             expect(resultNode.getInlineProperty(propertyName)).toBe(newValue);
         })
     });
+
+    describe('selection', () => {
+        const content = 'test';
+        test('when selection start and end are the same, selected text should be empty', () => {
+            expect(new RoamNode(content).selectedText()).toBe('')
+        })
+
+        describe('when selection start and end are 1 char apart', () => {
+            const testNode = new RoamNode(content, new Selection(0, 1));
+            test('selected text should contain 1 char', () => {
+                expect(testNode.selectedText()).toBe(content[0])
+            })
+
+            test('text after selection should contain rest of the string', () => {
+                expect(testNode.selectedText() + testNode.textAfterSelection()).toBe(content)
+            })
+        })
+    })
 });
