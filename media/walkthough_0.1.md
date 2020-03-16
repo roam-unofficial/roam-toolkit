@@ -1,4 +1,4 @@
-<iframe width="560" height="315" src="https://www.youtube.com/embed/llP-3AqFGL8" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![Watch the video](https://img.youtube.com/vi/llP-3AqFGL8/maxresdefault.jpg)](https://youtu.be/llP-3AqFGL8)
 
 - link::
     - https://github.com/roam-unofficial/roam-toolkit
