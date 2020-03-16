@@ -1,0 +1,103 @@
+<iframe width="560" height="315" src="https://www.youtube.com/embed/llP-3AqFGL8" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+- link::
+    - https://github.com/roam-unofficial/roam-toolkit
+    - https://chrome.google.com/webstore/detail/roam-toolkit/ebckolanhdjilblnkcgcgifaikppnhba
+    - https://addons.mozilla.org/en-US/firefox/addon/roam-toolkit/
+- collaborators::
+    - [[Piotr Skarżyński]]
+    - [[Dalmo Mendonça]]
+- [[walkthrough]]
+    - Overview
+        - Available in Both [[Chrome Web Store]] & [[Firefox add-on store]]
+        - Make sure to reload the page after installing the extension
+        - Settings menu
+        - Enable/disable features
+        - Set new shortcuts
+        - Mention all the features
+    - Date manipulation
+        - [[FuzzyDate]]
+            - wed [[March 18th, 2020]]
+            - next week
+            - last month
+            - in 2 years 
+            - Not an exhaustive list, just some examples, if you wonder if a particular format  is supported - just give it a try - it probably does
+        - Increment decrement date/number
+            - **If 1 date in the block the cursor can be anywhere in the block, if more then 1 - only within the date name**
+            - Block with date [[March 15th, 2020]]
+            - Block with 2+ dates [[March 15th, 2020]] [[March 19th, 2020]]
+    - Block manipulation (duplication, deletion, content duplication)
+        - test blockblock
+            - with child
+        - test blockblock
+            - with child
+    - Calculating estimate total for tasks
+        - Very useful for [[Task management]], I add estimates for the tasks and then when I plan the week, I can use them to prioritize tasks/make sure I have enough time for them
+        - Involves using [[[[Roam]] [[query]]]]
+        - Say we have some tasks with numeric [[estimate]] property
+            - {{[[TODO]]}} task1
+                - estimate::4.2
+            - {{[[TODO]]}} task2
+                - estimate::9
+        - We can write a query to find these estimates (show it)
+            - {{[[query]]: {and: [[TODO]] [[estimate]]}}}
+            - total_estimate::13.2
+        - There are some peculiarities about using this one: you need to run it from the block that is sibling to the query.
+        - You can change the name of the property used for estimates
+    - [[Spaced Repetition]]
+        - [[Anki]] scheduling
+            - a card is a block with some metadata [[[[interval]]::5.0]] [[[[factor]]::2.50]] [[March 17th, 2020]]
+            - having metadata in the child block works too
+                - [[[[interval]]::12.5]] [[[[factor]]::2.65]] [[March 31st, 2020]]
+            - After reviewing a card - you decide on how easy it was for you to remember it and press the appropriate shortcut. There are 4 options:
+                - **Again** - `Ctrl+Shift+1` - ease decreased, card scheduled for tomorrow
+                - **Hard** - `Ctrl+Shift+2`
+                - **Good** - `Ctrl+Shift+3`
+                - **Easy** - `Ctrl+Shift+4`
+            - If block has no metadata - it'll get the default one on the first use of the shortcuts above  [[[[interval]]::5.0]] [[[[factor]]::2.50]] [[March 20th, 2020]]
+        - Card styles
+            - Information block
+                - Just a block that you want to rise to your attention again at some point. 
+                - Example - a simulation of [[Readwise]] within Roam (reviewing highlights from the books you've read)
+                    - In [[poker]], [[recursion]] is a dangerous game. You don’t want to get caught one step behind your opponent, of course — but there’s also an imperative not to get too far ahead of them either. “There’s a rule that [[you really only want to play one level above your opponent]],” explains poker professional Vanessa Rousso.   
+                    “If you play too far above your opponent, you’re going to think they have information that they don’t actually have—[and] they won’t be able to glean the information that you want them to glean from your actions.”   
+                    Sometimes poker pros will deliberately bait their opponent into a convoluted recursion, meanwhile playing completely by-the-book, unpsychological poker themselves. This is known as luring them into “a leveling war against themselves.”
+                        - [Algorithms to Live By: 280](https://www.google.com/url?q=http://play.google.com/books/reader?printsec%3Dfrontcover%26output%3Dreader%26id%3DjvB0CgAAAEAJ%26source%3Dbooks-notes-export%26pg%3DGBS.PA280.w.0.0.0.1&sa=D&ust=1538516778016000)
+                        - [[algorithm]] [[recursion]] [[[[interval]]::40.0]] [[[[factor]]::2.50]] [[April 10th, 2020]]
+ 
+            - Q&A
+                - Question is top block with child block being an answer
+                    - How do you use FuzzyDate in [[Roam Toolkit]]?  [[[[interval]]::13.3]] [[[[factor]]::2.80]] [[March 31st, 2020]]
+                        - You type `;` followed by the date in the human form and then another `;`.
+            - [[Cloze]]
+                - What is cloze deletion
+                - Styles
+                    - "simulating by using [[Anki]] syntax"
+                        - Create one live
+                        - Outer message {{hint::cloze block}} that {{hint2::continues after}} the cloze block
+                        - Still, the algorithmic techniques honed for the standard version of the multi-armed bandit problem are useful even in a restless world. Strategies like the {{c1::[[Gittins index]]}} and {{c2::[[Upper Confidence Bound]]}} provide reasonably good approximate solutions and rules of thumb, particularly if payoffs don’t change very much over time. And many of the world’s payoffs are arguably more static today than they’ve ever been. A berry patch might be ripe one week and rotten the next, but as Andy Warhol put it, “A Coke is a Coke.”   
+                        Having instincts tuned by evolution for a world in constant flux isn’t necessarily helpful in an era of industrial standardization.
+                            - [Algorithms to Live By: 68](https://www.google.com/url?q=http://play.google.com/books/reader?printsec%3Dfrontcover%26output%3Dreader%26id%3DjvB0CgAAAEAJ%26source%3Dbooks-notes-export%26pg%3DGBS.PA68.w.0.0.0.3&sa=D&ust=1538516777762000)
+                            - c1 [[[[interval]]::68.2]] [[[[factor]]::2.35]] [[May 11th, 2020]] 
+                            - c2 [[[[interval]]::35.0]] [[[[factor]]::2.50]] [[April 15th, 2020]] 
+ 
+                    - "simulating it with [[hiccup]] [[Roam Toolkit]]"
+                        - Requires using custom [[CSS]]
+                            - `span.cloze { background-color: #1f2b33; } span.cloze:hover {background-color: white}`
+                        -  There are many ways to relax a problem, and we’ve seen three of the most important. The first, {{embed: ((l0ysE-RF9))}} simply removes some constraints altogether and makes progress on a looser form of the problem before coming back to reality. The second, {{embed: ((G_H5cDY1k))}}, turns discrete or binary choices into continua: when deciding between iced tea and lemonade, first imagine a 50–50 “Arnold Palmer” blend and then round it up or down. The third, {{embed: ((VZeWxteHW))}}, turns impossibilities into mere penalties, teaching the art of bending the rules (or breaking them and accepting the consequences).
+                            - [[[[Cloze]] deletions]]
+                                - :hiccup  [:span.cloze "Constraint Relaxation," ] 
+                                    - [[[[interval]]::50.0]] [[[[factor]]::2.65]] [[April 21st, 2020]]
+                                - :hiccup  [:span.cloze "Continuous Relaxation," ] 
+                                    - [[[[interval]]::44.6]] [[[[factor]]::2.50]] [[April 18th, 2020]]
+                                - :hiccup  [:span.cloze "Lagrangian Relaxation," ] 
+                                    - [[[[interval]]::50.0]] [[[[factor]]::2.50]] [[April 26th, 2020]]
+                            - [Algorithms to Live By: 219](https://www.google.com/url?q=http://play.google.com/books/reader?printsec%3Dfrontcover%26output%3Dreader%26id%3DjvB0CgAAAEAJ%26source%3Dbooks-notes-export%26pg%3DGBS.PA219.w.0.0.0.1&sa=D&ust=1538516777966000)
+
+        - [[Leitner system]]
+            - Honorary mention, as building support for automating working with it is what started Roam Toolkit
+            - Inspired by the video [[Anonym-s]] made for doing SRS in Roam
+            - https://www.reddit.com/r/RoamResearch/comments/esrzkq/spaced_repetition_in_roam_video_tutorial/
+            - Quick explanation of how it works
+                - Block to remember [[[[interval]]::3]]
+                - [[[[interval]]::2]] review date: [[March 18th, 2020]]  

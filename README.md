@@ -4,18 +4,30 @@
 
 </div>
 
+## WalkThrough
+
+[![Watch the video](https://img.youtube.com/vi/llP-3AqFGL8/maxresdefault.jpg)](https://youtu.be/llP-3AqFGL8)
+
+[Document in the video](./media/walkthough_0.1.md)
+
+## Installation
+It's available in their respective extension stores for both [Chrome](https://chrome.google.com/webstore/detail/roam-toolkit/ebckolanhdjilblnkcgcgifaikppnhba)  & [Firefox](https://addons.mozilla.org/en-US/firefox/addon/roam-toolkit/)
+
 ## Currently supported functionality
 1. Fuzzy Date functionality
+  
+  ![](./media/fuzzy_date.gif)
 1. Date increment/decrement
-1. SRS Leitner System automation shortcuts
+    - If there is only 1 date in the block - place the cursor anywhere withing it and press `Ctrl-Alt-Up/Down`, if there is more then 1 date - you need to place the cursor within the name of the date.
+1. Spaced repetition
+   * Anki SRS algorithm & Shortcuts
+   * Leitner System automation shortcuts 
 1. Block actions: Delete, Duplicate
-
-### WIP:
 1. Task estimates
-1. New block cretion 
+1. Custom CSS
 
 
-## How to run:
+## Running the development version
 ### In terminal or command prompt
 
 ```
