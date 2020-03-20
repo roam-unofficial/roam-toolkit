@@ -4,6 +4,8 @@
 
 </div>
 
+Browser extension designed to improve your experience of using Roam Research
+
 ## WalkThrough
 
 [![Watch the video](https://img.youtube.com/vi/llP-3AqFGL8/maxresdefault.jpg)](https://youtu.be/llP-3AqFGL8)
