@@ -21,7 +21,19 @@ export const config: Feature = {
             placeholder: 'e.g. cmd+shift+backspace',
             onPress: () => Roam.deleteBlock()
         } as Shortcut,
+        {
+            type: 'shortcut',
+            id: 'copyBlockRef',
+            label: 'Copy Block Reference',
+            initValue: 'ctrl+shift+c',
+            onPress: () => navigator.clipboard.writeText(getCurrentBlockReference())
+        } as Shortcut,
     ]
+}
+
+function getCurrentBlockReference() {
+    const dbId = Roam.getCurrentBlockId()
+    return `((${Roam.get(parseInt(dbId))[':block/uid']}))`;
 }
 
 const duplicate = () => {
