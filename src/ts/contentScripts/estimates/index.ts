@@ -41,7 +41,7 @@ function getParentElement() {
  */
 export async function calculateFirstSiblingTotal() {
     const attributeName = await Settings.get(config.id, estimateProperty.id);
-    const estimateRegex = new RegExp(`${attributeName}:\\s*(\\d+\\.?\\d*)`, 'g');
+    const estimateRegex = new RegExp(`${attributeName}:{1,2}\\s*(\\d+\\.?\\d*)`, 'g');
 
     const queryNode = getParentElement()?.querySelector('.rm-reference-main') as HTMLElement;
     const queryText = queryNode?.innerText;
