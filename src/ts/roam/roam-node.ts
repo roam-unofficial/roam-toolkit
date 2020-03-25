@@ -1,3 +1,5 @@
+import {Roam} from './roam';
+
 export class RoamNode {
     constructor(readonly text: string, readonly selection: Selection = new Selection()) {
     }
@@ -30,6 +32,16 @@ export class RoamNode {
             this.text + ' ' + property;
         // @ts-ignore
         return new this.constructor(newText, this.selection)
+    }
+
+    get id(): string {
+        //todo should be part of the node
+        const parts = Roam.getRoamBlockInput()?.id?.split('-')
+        return parts?.[parts.length - 1]!
+    }
+
+    get uid(): string {
+        return Roam.get(parseInt(this.id))[':block/uid']
     }
 
     static createInlineProperty(name: string, value: string) {

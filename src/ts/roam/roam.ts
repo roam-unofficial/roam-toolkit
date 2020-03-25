@@ -47,11 +47,21 @@ export const Roam = {
         return Promise.reject('We\'re currently not inside roam block');
     },
 
-    async activateBlock(element: HTMLElement) {
+    async activateBlockFromElement(element: HTMLElement) {
         if (element.classList.contains('roam-block')) {
             await Mouse.leftClick(element)
+        } else {
+            return null
         }
         return this.getRoamBlockInput();
+    },
+
+    async activateBlock(dbId: number) {
+        //  Does not work for invisible blocks, as they don't actually exist in the dom =\
+        const element = document.querySelector(`div[id$="${dbId}"]`) as HTMLElement
+        if (!element) return null
+
+        return this.activateBlockFromElement(element)
     },
 
     async deleteBlock() {
@@ -118,14 +128,14 @@ export const Roam = {
     },
 
     async createBlockAtTop(forceCreation: boolean = false) {
-        await this.activateBlock(getFirstTopLevelBlock());
+        await this.activateBlockFromElement(getFirstTopLevelBlock());
         if (this.getActiveRoamNode()?.text || forceCreation) {
             await this.createSiblingAbove();
         }
     },
 
     async createBlockAtBottom(forceCreation: boolean = false) {
-        await this.activateBlock(getLastTopLevelBlock());
+        await this.activateBlockFromElement(getLastTopLevelBlock());
         if (this.getActiveRoamNode()?.text || forceCreation) {
             await this.createSiblingBelow();
         }

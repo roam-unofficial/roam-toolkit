@@ -1,4 +1,4 @@
-import { delay } from './async';
+import {delay} from './async';
 
 export const Mouse = {
   BASE_DELAY: 20,
@@ -19,6 +19,8 @@ const getMouseEvent = (mouseEventType: string, buttons: number) =>
         view: window,
         bubbles: true,
         cancelable: true,
+        // shiftKey: true,
+        // ctrlKey: true,
         buttons
     });
 

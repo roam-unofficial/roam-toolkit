@@ -28,8 +28,23 @@ export const config: Feature = {
             initValue: 'ctrl+shift+c',
             onPress: () => navigator.clipboard.writeText(getCurrentBlockReference())
         } as Shortcut,
+        {
+            type: 'shortcut',
+            id: 'go_first_child',
+            label: 'Go to first child',
+            initValue: 'ctrl+shift+alt+meta+0',
+            onPress: () => goToFirstChild()
+        } as Shortcut,
     ]
 }
+
+const goToFirstChild = () => {
+    const dbId = Roam.getCurrentBlockId()
+    const node = Roam.get(parseInt(dbId))
+    const childId = node[':block/children'][0][':db/id']
+    console.log("child id", childId)
+    Roam.activateBlock(childId)
+};
 
 function getCurrentBlockReference() {
     const dbId = Roam.getCurrentBlockId()
