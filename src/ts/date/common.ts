@@ -6,6 +6,10 @@ export const RoamDate = {
 
     format(date: Date) {
         return dateFormat(date, this.formatString)
+    },
+
+    formatUS(date: Date) {
+        return dateFormat(date, "mm-dd-yyyy")
     }
 }
 

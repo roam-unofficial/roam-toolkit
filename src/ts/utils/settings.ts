@@ -1,7 +1,7 @@
 import {Reducer} from 'redux';
 import {createReducer} from './redux'
 import {getStateFromStorage} from './storage'
-import {sendMessageToActiveTab} from './browser';
+import {Browser} from './browser';
 
 
 export interface LargeString extends Setting {
@@ -82,7 +82,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
     });
 }
 
-const notifySettingsUpdated = () => sendMessageToActiveTab('settings-updated')
+const notifySettingsUpdated = () => Browser.sendMessageToActiveTab('settings-updated')
 
 const updateSetting = (value: string, featureId: string, settingId: string) =>
-    sendMessageToActiveTab({value, featureId, settingId})
+    Browser.sendMessageToActiveTab({value, featureId, settingId})

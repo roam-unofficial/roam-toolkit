@@ -1,13 +1,5 @@
 import {browser} from 'webextension-polyfill-ts';
 
-export const sendMessageToActiveTab = (message: any) =>
-    browser.tabs.query({currentWindow: true, active: true})
-        .then((tabs: any) => {
-            for (const tab of tabs) {
-                browser.tabs.sendMessage(tab.id, message);
-            }
-        })
-
 // Breaks out of the content script context by injecting a specially
 // constructed script tag and injecting it into the page.
 export const runInPageContext = (method: Function, ...args: any[]) => {
@@ -29,3 +21,17 @@ export const runInPageContext = (method: Function, ...args: any[]) => {
     console.log(result)
     return result;
 };
+
+export const Browser = {
+    goToPage: (url: string) => window.location.href = url,
+
+    getActiveTabUrl: () => window.location.href,
+
+    // Does not work from content script
+    getActiveTab: () => browser.tabs.query({currentWindow: true, active: true}).then(tabs => tabs[0]),
+
+    sendMessageToActiveTab(message: any) {
+        return this.getActiveTab()
+            .then(tab => browser.tabs.sendMessage(tab.id!, message));
+    },
+}

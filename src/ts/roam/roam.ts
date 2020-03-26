@@ -2,7 +2,7 @@ import {RoamNode, Selection} from './roam-node';
 import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLevelBlock} from '../utils/dom';
 import {Keyboard} from '../utils/keyboard';
 import {Mouse} from '../utils/mouse';
-import {runInPageContext} from '../utils/browser';
+import {Browser, runInPageContext} from '../utils/browser';
 
 export const Roam = {
     save(roamNode: RoamNode) {
@@ -143,5 +143,14 @@ export const Roam = {
     query(query: string, ...params: any[]) {
         //@ts-ignore
         return runInPageContext((...args: any[]) => window.roamAlphaAPI.q(...args), query, ...params)
+    },
+
+    baseUrl: () => {
+        //https://roamresearch.com/#/app/roam-toolkit/page/03-24-2020
+        const url = new URL(Browser.getActiveTabUrl())
+        const parts = url.hash.split('/')
+
+        url.hash = parts.slice(0, 3).concat(['page']).join('/')
+        return url
     }
 };
