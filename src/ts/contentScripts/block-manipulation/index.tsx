@@ -32,6 +32,13 @@ export const config: Feature = {
         } as Shortcut,
         {
             type: 'shortcut',
+            id: 'copyBlockEmbed',
+            label: 'Copy Block Embed',
+            initValue: 'ctrl+meta+c',
+            onPress: () => navigator.clipboard.writeText(getCurrentBlockEmbed())
+        } as Shortcut,
+        {
+            type: 'shortcut',
             id: 'goToTodayPage',
             label: 'Go to today page',
             initValue: 'ctrl+shift+`',
@@ -47,8 +54,11 @@ const goToTodayPage = async () => {
     return Browser.goToPage(Roam.baseUrl().toString() + '/' + RoamDate.formatUS(currentDate))
 }
 
+const getCurrentBlockEmbed = () => `{{embed: ${getCurrentBlockReference()}}}`
+
 function getCurrentBlockReference() {
     const dbId = Roam.getCurrentBlockId()
+    // TODO: better interfaces, uid should be a part of the block interfaces
     return `((${Roam.get(parseInt(dbId))[':block/uid']}))`;
 }
 
