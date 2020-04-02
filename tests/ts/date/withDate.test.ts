@@ -24,18 +24,18 @@ describe(NodeWitDate, () => {
     describe('withDate', () => {
         const newDate = new Date(2020, 2, 22);
         test('when multiple dates => append new one at the end', () => {
-            expect(multiDateNode.withDate(newDate).text).toEndWith(RoamDate.format(newDate))
+            expect(multiDateNode.withDate(newDate).text).toEndWith(RoamDate.formatPage(newDate))
         })
 
         test('when no date => append new one at the end', () => {
-            expect(noDateNode.withDate(newDate).text).toEndWith(RoamDate.format(newDate))
+            expect(noDateNode.withDate(newDate).text).toEndWith(RoamDate.formatPage(newDate))
         })
 
         test('when 1 date => replace it with new one', () => {
             const oneDateNode = new NodeWitDate(`test ${datePage1} continues`)
 
             const newNode = oneDateNode.withDate(newDate);
-            const dateStr = RoamDate.format(newDate);
+            const dateStr = RoamDate.formatPage(newDate);
 
             expect(newNode.text).not.toEndWith(dateStr)
             expect(newNode.listDatePages()).toContain(dateStr)

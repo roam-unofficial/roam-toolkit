@@ -13,7 +13,7 @@ export function replaceFuzzyDate() {
             const date = chrono.parseDate(substring, new Date(), {forwardDate: true});
             if (!date) return substring;
 
-            return RoamDate.format(date)
+            return RoamDate.formatPage(date)
         }));
 
         const cursor = node.text === newText ?

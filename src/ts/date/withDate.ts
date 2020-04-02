@@ -15,7 +15,7 @@ export function withDate<T extends Constructor<RoamNode>>(SuperClass: T) {
         /** If has 1 date - replace it, if more then 1 date - append it */
         withDate(date: Date) {
             const currentDates = this.listDatePages()
-            const newDate = RoamDate.format(date);
+            const newDate = RoamDate.formatPage(date);
             const newText = currentDates.length === 1 ?
                 this.text.replace(currentDates[0], newDate) :
                 this.text + ' ' + newDate;

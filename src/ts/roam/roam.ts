@@ -144,6 +144,12 @@ export const Roam = {
         //@ts-ignore
         return runInPageContext((...args: any[]) => window.roamAlphaAPI.q(...args), query, ...params)
     },
+    getPageByName(name: string) {
+        const results = this.query('[:find ?e :in $ ?a :where [?e :node/title ?a]]', name)
+        if (results?.[0].lenght < 1) return null
+
+        return this.get(results[0][0])
+    },
 
     baseUrl: () => {
         //https://roamresearch.com/#/app/roam-toolkit/page/03-24-2020

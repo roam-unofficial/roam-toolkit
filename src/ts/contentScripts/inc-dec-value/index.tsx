@@ -70,7 +70,7 @@ export const modify = (modType: string) => {
 
     if (cursorPlacedOnDate(node.text, cursor)) { // e.g. Lorem ipsum [[Janu|ary 3rd, 2020]] 123
         newValue = node.text.substring(0, openBracketsLeftIndex(node.text, cursor))
-            + RoamDate.format(dateModified(dateFromPageName(nameInsideBrackets(node.text, cursor)), modType))
+            + RoamDate.formatPage(dateModified(dateFromPageName(nameInsideBrackets(node.text, cursor)), modType))
             + node.text.substring(closingBracketsRightIndex(node.text, cursor) + 2);
     } else if (cursorPlacedOnNumber(node.text, cursor)) { // e.g. Lorem ipsum [[January 3rd, 2020]] 12|3
         const left = node.text.substring(0, cursor)?.match(/[0-9]*$/)![0];
@@ -88,7 +88,7 @@ export const modify = (modType: string) => {
             + node.text.substring(numberStartedAt + numberStr.length);
     } else if (datesInContent && datesInContent.length === 1) { // e.g. Lor|em ipsum [[January 3rd, 2020]] 123
         newValue = node.text.replace(datesInContent[0],
-            RoamDate.format(dateModified(dateFromPageName(datesInContent[0]), modType)));
+            RoamDate.formatPage(dateModified(dateFromPageName(datesInContent[0]), modType)));
     }
     Roam.save(new RoamNode(newValue, new Selection(cursor, cursor)))
 }

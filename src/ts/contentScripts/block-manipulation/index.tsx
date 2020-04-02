@@ -51,7 +51,10 @@ const goToTodayPage = async () => {
     const currentDate = new Date();
     // Tomorrow starts at 2am for the purposes of this
     currentDate.setHours(currentDate.getHours() - 2)
-    return Browser.goToPage(Roam.baseUrl().toString() + '/' + RoamDate.formatUS(currentDate))
+
+    const datePage = Roam.getPageByName(RoamDate.format(currentDate))
+    if (!datePage) return
+    return Browser.goToPage(Roam.baseUrl().toString() + '/' + datePage[':block/uid'])
 }
 
 const getCurrentBlockEmbed = () => `{{embed: ${getCurrentBlockReference()}}}`
