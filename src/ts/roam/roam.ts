@@ -131,9 +131,11 @@ export const Roam = {
         }
     },
 
-    getCurrentBlockUid(): string {
-        const parts = Roam.getRoamBlockInput()?.id?.split('-')
-        return parts?.[parts.length - 1]!
+    getCurrentBlockUid(): string | undefined {
+        // An empirical observation:
+        const uidLength = 9
+        const elementId = Roam.getRoamBlockInput()?.id;
+        return elementId?.substr(elementId?.length - uidLength)
     },
 
     get(dbId: number) {
