@@ -60,9 +60,8 @@ const goToTodayPage = async () => {
 const getCurrentBlockEmbed = () => `{{embed: ${getCurrentBlockReference()}}}`
 
 function getCurrentBlockReference() {
-    const dbId = Roam.getCurrentBlockId()
     // TODO: better interfaces, uid should be a part of the block interfaces
-    return `((${Roam.get(parseInt(dbId))[':block/uid']}))`;
+    return `((${(Roam.getCurrentBlockUid())}))`;
 }
 
 const duplicate = () => {

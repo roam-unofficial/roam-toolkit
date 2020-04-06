@@ -131,7 +131,7 @@ export const Roam = {
         }
     },
 
-    getCurrentBlockId(): string {
+    getCurrentBlockUid(): string {
         const parts = Roam.getRoamBlockInput()?.id?.split('-')
         return parts?.[parts.length - 1]!
     },
