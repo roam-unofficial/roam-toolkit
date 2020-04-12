@@ -3,6 +3,8 @@ import {dateFromPageName, RoamDate} from '../../date/common';
 import {Roam} from '../../roam/roam';
 import {RoamNode, Selection} from '../../roam/roam-node';
 
+const createModifier = (change: number) => ((num: number) => num + change)
+
 export const config: Feature = {
     id: 'incDec',
     name: 'Increase / Decrease value or date',
@@ -10,16 +12,30 @@ export const config: Feature = {
         {
             type: 'shortcut',
             id: 'incShortcut',
-            label: 'Shortcut for +1 value/date',
+            label: 'Increase date or number by 1',
             initValue: 'Ctrl+Alt+ArrowUp',
-            onPress: () => modify('increase')
+            onPress: () => modify(createModifier(1))
         } as Shortcut,
         {
             type: 'shortcut',
             id: 'decShortcut',
-            label: 'Shortcut for -1 value/date',
+            label: 'Decrease date or number by 1',
             initValue: 'Ctrl+Alt+ArrowDown',
-            onPress: () => modify('decrease')
+            onPress: () => modify(createModifier(-1))
+        } as Shortcut,
+        {
+            type: 'shortcut',
+            id: 'incWeekShortcut',
+            label: 'Increase date or number by 7',
+            initValue: 'Ctrl+Alt+PageUp',
+            onPress: () => modify(createModifier(7))
+        } as Shortcut,
+        {
+            type: 'shortcut',
+            id: 'decWeekShortcut',
+            label: 'Decrease date or number by 7',
+            initValue: 'Ctrl+Alt+PageDown',
+            onPress: () => modify(createModifier(-7))
         } as Shortcut,
     ]
 }
@@ -49,17 +65,13 @@ const nameInsideBrackets = (text: string, cursor: number): string =>
 const nameIsDate = (pageName: string): boolean =>
     pageName.match(RoamDate.regex) !== null
 
-const dateModified = (date: Date, modType: string): Date => {
-    const newDate = new Date(date.valueOf());
-    if (modType === 'increase') {
-        newDate.setDate(date.getDate() + 1);
-    } else if (modType === 'decrease') {
-        newDate.setDate(date.getDate() - 1);
-    }
+const modifyDate = (date: Date, modifier: (input: number) => number): Date => {
+    const newDate = new Date(date);
+    newDate.setDate(modifier(date.getDate()));
     return newDate;
 }
 
-export const modify = (modType: string) => {
+export const modify = (modifier: (input: number) => number) => {
     const node = Roam.getActiveRoamNode()
     if (!node) return
 
@@ -70,25 +82,21 @@ export const modify = (modType: string) => {
 
     if (cursorPlacedOnDate(node.text, cursor)) { // e.g. Lorem ipsum [[Janu|ary 3rd, 2020]] 123
         newValue = node.text.substring(0, openBracketsLeftIndex(node.text, cursor))
-            + RoamDate.formatPage(dateModified(dateFromPageName(nameInsideBrackets(node.text, cursor)), modType))
+            + RoamDate.formatPage(modifyDate(dateFromPageName(nameInsideBrackets(node.text, cursor)), modifier))
             + node.text.substring(closingBracketsRightIndex(node.text, cursor) + 2);
     } else if (cursorPlacedOnNumber(node.text, cursor)) { // e.g. Lorem ipsum [[January 3rd, 2020]] 12|3
         const left = node.text.substring(0, cursor)?.match(/[0-9]*$/)![0];
         const right = node.text.substring(cursor)?.match(/^[0-9]*/)![0];
         const numberStr = left + right;
         const numberStartedAt = node.text.substring(0, cursor)?.match(/[0-9]*$/)?.index!;
-        let number = parseInt(numberStr);
-        if (modType === 'increase') {
-            number++;
-        } else if (modType === 'decrease') {
-            number--;
-        }
+
+        let number = modifier(parseInt(numberStr));
         newValue = node.text.substring(0, numberStartedAt)
             + number
             + node.text.substring(numberStartedAt + numberStr.length);
     } else if (datesInContent && datesInContent.length === 1) { // e.g. Lor|em ipsum [[January 3rd, 2020]] 123
         newValue = node.text.replace(datesInContent[0],
-            RoamDate.formatPage(dateModified(dateFromPageName(datesInContent[0]), modType)));
+            RoamDate.formatPage(modifyDate(dateFromPageName(datesInContent[0]), modifier)));
     }
     Roam.save(new RoamNode(newValue, new Selection(cursor, cursor)))
 }
