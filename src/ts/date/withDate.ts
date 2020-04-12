@@ -25,3 +25,5 @@ export function withDate<T extends Constructor<RoamNode>>(SuperClass: T) {
         }
     };
 }
+
+export const NodeWithDate = withDate(RoamNode)

@@ -1,15 +1,13 @@
-import {withDate} from '../../../src/ts/date/withDate';
+import {NodeWithDate} from '../../../src/ts/date/withDate';
 import {RoamDate} from '../../../src/ts/date/common';
-import {RoamNode} from '../../../src/ts/roam/roam-node';
 
-const NodeWitDate = withDate(RoamNode)
 
-describe(NodeWitDate, () => {
+describe(NodeWithDate, () => {
     const datePage1 = `[[February 23rd, 2020]]`;
     const datePage2 = `[[February 24th, 2020]]`;
 
-    const multiDateNode = new NodeWitDate(`test ${datePage1} ${datePage2}`)
-    const noDateNode = new NodeWitDate('test')
+    const multiDateNode = new NodeWithDate(`test ${datePage1} ${datePage2}`)
+    const noDateNode = new NodeWithDate('test')
 
     describe('listDatePages', () => {
         test('return list of dates when multiple are present', () => {
@@ -32,7 +30,7 @@ describe(NodeWitDate, () => {
         })
 
         test('when 1 date => replace it with new one', () => {
-            const oneDateNode = new NodeWitDate(`test ${datePage1} continues`)
+            const oneDateNode = new NodeWithDate(`test ${datePage1} continues`)
 
             const newNode = oneDateNode.withDate(newDate);
             const dateStr = RoamDate.formatPage(newDate);
