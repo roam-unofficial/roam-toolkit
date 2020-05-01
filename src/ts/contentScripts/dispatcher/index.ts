@@ -25,8 +25,11 @@ document.addEventListener('keydown', ev => {
     const isExitingTitle = (ev: KeyboardEvent) => {
         return ev.target.parentElement instanceof HTMLHeadingElement;
     }
+    const isNoBlockSelected = (ev: KeyboardEvent) => {
+        return ev.target instanceof HTMLBodyElement;
+    }
 
-    if (ev.key === enter && isExitingTitle(ev)) {
+    if (ev.key === enter && (isExitingTitle(ev) || isNoBlockSelected(ev))) {
         Roam.createBlockAtTop();
     }
 });
