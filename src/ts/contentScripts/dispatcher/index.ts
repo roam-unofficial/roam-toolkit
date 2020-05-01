@@ -20,6 +20,20 @@ const dispatchMap = new Map([
 
 browser.runtime.onMessage.addListener(command => dispatchMap.get(command)?.())
 
+const enhanceNavigation = (event: KeyboardEvent) => {
+    const isEditingTitle = event.target?.parentElement instanceof HTMLHeadingElement
+    const isNoBlockActive = !Roam.getActiveRoamNode()
+
+    if (event.key === 'Enter' && (isEditingTitle || isNoBlockActive)) {
+        Roam.createBlockAtTop()
+    }
+}
+
+document.addEventListener('keydown', ev => {
+    // When used with 'keyup', this function fires twice. 🤔
+    enhanceNavigation(ev)
+})
+
 document.addEventListener('keyup', ev => {
     if (ev.key === guard) replaceFuzzyDate()
 })
