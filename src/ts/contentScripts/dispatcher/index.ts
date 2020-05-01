@@ -20,6 +20,17 @@ const dispatchMap = new Map([
 
 browser.runtime.onMessage.addListener((command) => dispatchMap.get(command)?.());
 
+document.addEventListener('keydown', ev => {
+    const enter = 'Enter';
+    const isExitingTitle = (ev: KeyboardEvent) => {
+        return ev.target.parentElement instanceof HTMLHeadingElement;
+    }
+
+    if (ev.key === enter && isExitingTitle(ev)) {
+        Roam.createBlockAtTop();
+    }
+});
+
 document.addEventListener('keyup', ev => {
     if (ev.key === guard) replaceFuzzyDate();
 });
