@@ -30,6 +30,10 @@ It's available in their respective extension stores for both [Chrome](https://ch
 
 
 ## Running the development version
+
+1. Checkout the repository
+2. Revert the https://github.com/roam-unofficial/roam-toolkit/commit/20ad9560b7cfaf71adf65dbc3645b3554c2ab598 change locally to allow Toolkit to properly run in the development mode
+
 ### In terminal or command prompt
 
 ```
