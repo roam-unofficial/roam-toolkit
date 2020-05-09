@@ -1,50 +1,50 @@
 {
-  "name": "Roam Toolkit",
-  "author": "roam-unofficial",
-  "version": "0.2.0",
-  "description": "Roam force multiplier",
-  "icons": {
-    "128": "assets/icon-128.png"
-  },
-  "content_security_policy": "script-src 'self'; object-src 'self'",
-  "permissions": [
-    "activeTab",
-    "alarms",
-    "bookmarks",
-    "storage",
-    "tabs",
-    "webRequestBlocking",
-    "clipboardRead",
-    "clipboardWrite",
-    "*://roamresearch.com/*"
-  ],
-  "manifest_version": 2,
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": true
-  },
-  "browser_action": {
-    "default_title": "Roam Toolkit",
-    "default_icon": "assets/icon-48.png",
-    "default_popup": "popup.html"
-  },
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": true
-  },
-  "content_scripts": [
-    {
-      "js": [
-        "shortcuts.js",
-        "srs.js",
-        "inc-dec-value.js",
-        "dispatcher.js",
-        "block-manipulation.js",
-        "custom-css.js",
-        "fuzzy_date.js",
-        "create-block-demo.js"
-      ],
-      "matches": ["*://roamresearch.com/*"]
-    }
-  ]
+    "name": "Roam Toolkit",
+    "author": "roam-unofficial",
+    "version": "0.2.0",
+    "description": "Roam force multiplier",
+    "icons": {
+        "128": "assets/icon-128.png"
+    },
+    "content_security_policy": "script-src 'self'; object-src 'self'",
+    "permissions": [
+        "activeTab",
+        "alarms",
+        "bookmarks",
+        "storage",
+        "tabs",
+        "webRequestBlocking",
+        "clipboardRead",
+        "clipboardWrite",
+        "*://roamresearch.com/*"
+    ],
+    "manifest_version": 2,
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": true
+    },
+    "browser_action": {
+        "default_title": "Roam Toolkit",
+        "default_icon": "assets/icon-48.png",
+        "default_popup": "popup.html"
+    },
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": true
+    },
+    "content_scripts": [
+        {
+            "js": [
+                "shortcuts.js",
+                "srs.js",
+                "inc-dec-value.js",
+                "dispatcher.js",
+                "block-manipulation.js",
+                "custom-css.js",
+                "fuzzy_date.js",
+                "create-block-demo.js"
+            ],
+            "matches": ["*://roamresearch.com/*"]
+        }
+    ]
 }

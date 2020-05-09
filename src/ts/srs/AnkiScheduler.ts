@@ -27,63 +27,65 @@ import { Scheduler, SRSSignal } from './scheduler';
  * Source: https://docs.ankiweb.net/#/faqs?id=what-spaced-repetition-algorithm-does-anki-use
  */
 export class AnkiScheduler implements Scheduler {
-  static defaultFactor = 2.5;
-  static defaultInterval = 2;
+    static defaultFactor = 2.5;
+    static defaultInterval = 2;
 
-  static maxInterval = 50 * 365;
-  static minFactor = 1.3;
-  static hardFactor = 1.2;
+    static maxInterval = 50 * 365;
+    static minFactor = 1.3;
+    static hardFactor = 1.2;
 
-  schedule(node: SM2Node, signal: SRSSignal): SM2Node {
-    const newParams = this.getNewParameters(node, signal);
+    schedule(node: SM2Node, signal: SRSSignal): SM2Node {
+        const newParams = this.getNewParameters(node, signal);
 
-    const currentDate = node.listDates()[0] || new Date();
-    return (
-      node
-        .withInterval(newParams.interval)
-        .withFactor(newParams.factor)
-        // TODO random jitter, in percentage points of interval
-        .withDate(addDays(currentDate, Math.ceil(newParams.interval)))
-    );
-  }
-
-  getNewParameters(node: SM2Node, signal: SRSSignal) {
-    const factor = node.factor || AnkiScheduler.defaultFactor;
-    const interval = node.interval || AnkiScheduler.defaultInterval;
-
-    let newFactor = factor;
-    let newInterval = interval;
-
-    const factorModifier = 0.15;
-    switch (signal) {
-      case SRSSignal.AGAIN:
-        newFactor = factor - 0.2;
-        newInterval = 1;
-        break;
-      case SRSSignal.HARD:
-        newFactor = factor - factorModifier;
-        newInterval = interval * AnkiScheduler.hardFactor;
-        break;
-      case SRSSignal.GOOD:
-        newInterval = interval * factor;
-        break;
-      case SRSSignal.EASY:
-        newInterval = interval * factor;
-        newFactor = factor + factorModifier;
-        break;
+        const currentDate = node.listDates()[0] || new Date();
+        return (
+            node
+                .withInterval(newParams.interval)
+                .withFactor(newParams.factor)
+                // TODO random jitter, in percentage points of interval
+                .withDate(addDays(currentDate, Math.ceil(newParams.interval)))
+        );
     }
 
-    return AnkiScheduler.enforceLimits(new SM2Params(newInterval, newFactor));
-  }
+    getNewParameters(node: SM2Node, signal: SRSSignal) {
+        const factor = node.factor || AnkiScheduler.defaultFactor;
+        const interval = node.interval || AnkiScheduler.defaultInterval;
 
-  private static enforceLimits(params: SM2Params) {
-    return new SM2Params(
-      Math.min(params.interval, AnkiScheduler.maxInterval),
-      Math.max(params.factor, AnkiScheduler.minFactor)
-    );
-  }
+        let newFactor = factor;
+        let newInterval = interval;
+
+        const factorModifier = 0.15;
+        switch (signal) {
+            case SRSSignal.AGAIN:
+                newFactor = factor - 0.2;
+                newInterval = 1;
+                break;
+            case SRSSignal.HARD:
+                newFactor = factor - factorModifier;
+                newInterval = interval * AnkiScheduler.hardFactor;
+                break;
+            case SRSSignal.GOOD:
+                newInterval = interval * factor;
+                break;
+            case SRSSignal.EASY:
+                newInterval = interval * factor;
+                newFactor = factor + factorModifier;
+                break;
+        }
+
+        return AnkiScheduler.enforceLimits(
+            new SM2Params(newInterval, newFactor)
+        );
+    }
+
+    private static enforceLimits(params: SM2Params) {
+        return new SM2Params(
+            Math.min(params.interval, AnkiScheduler.maxInterval),
+            Math.max(params.factor, AnkiScheduler.minFactor)
+        );
+    }
 }
 
 class SM2Params {
-  constructor(readonly interval: number, readonly factor: number) {}
+    constructor(readonly interval: number, readonly factor: number) {}
 }

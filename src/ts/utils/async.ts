@@ -1,18 +1,18 @@
 export function delay(millis: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, millis));
+    return new Promise((resolve) => setTimeout(resolve, millis));
 }
 
 export function mapAsync<T, U>(
-  array: T[],
-  callbackfn: (value: T, index: number, array: T[]) => Promise<U>
+    array: T[],
+    callbackfn: (value: T, index: number, array: T[]) => Promise<U>
 ): Promise<U[]> {
-  return Promise.all(array.map(callbackfn));
+    return Promise.all(array.map(callbackfn));
 }
 
 export async function filterAsync<T>(
-  array: T[],
-  callbackfn: (value: T, index: number, array: T[]) => Promise<boolean>
+    array: T[],
+    callbackfn: (value: T, index: number, array: T[]) => Promise<boolean>
 ): Promise<T[]> {
-  const filterMap = await mapAsync(array, callbackfn);
-  return array.filter((_value, index) => filterMap[index]);
+    const filterMap = await mapAsync(array, callbackfn);
+    return array.filter((_value, index) => filterMap[index]);
 }
