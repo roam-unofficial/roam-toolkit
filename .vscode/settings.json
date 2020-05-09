@@ -1,10 +1,10 @@
 {
-	"editor.tabSize": 4,
-	"editor.detectIndentation": false,
-	"files.associations": {
-		"*.js": "javascript",
-		"*.jsx": "javascriptreact",
-		"*.ts": "typescript",
-		"*.tsx": "typescriptreact"
-	}
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false,
+    "files.associations": {
+        "*.js": "javascript",
+        "*.jsx": "javascriptreact",
+        "*.ts": "typescript",
+        "*.tsx": "typescriptreact"
+    }
 }
