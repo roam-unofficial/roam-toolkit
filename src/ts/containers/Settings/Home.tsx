@@ -1,87 +1,86 @@
-import * as React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import styled from 'styled-components';
-import {setFeatureId} from '../../background/store/settings/actions';
+import * as React from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import styled from 'styled-components'
+import {setFeatureId} from '../../background/store/settings/actions'
 
 import {Feature} from '../../utils/settings'
 
 import {Checkbox} from '../../components/Checkbox'
 
-
-type HomeProps = { features: Feature[] };
+type HomeProps = {features: Feature[]}
 export const Home = ({features}: HomeProps) => {
-
-    const dispatch = useDispatch();
+    const dispatch = useDispatch()
 
     const theme = useSelector((state: any) => state.settings.theme)
 
-    const getCheckbox = (feature: Feature) =>
+    const getCheckbox = (feature: Feature) => (
         <Checkbox
             checked={useSelector((state: any) => state[feature.id].active)}
             onSave={(checked: boolean) => {
                 dispatch(feature.toggle!(checked))
             }}
-        />;
+        />
+    )
 
-    const getFeatureContainer = (feature: Feature) =>
-        <FeatureNameContainer onClick={() => {
-            dispatch(setFeatureId(feature.id))
-        }}>
+    const getFeatureContainer = (feature: Feature) => (
+        <FeatureNameContainer
+            onClick={() => {
+                dispatch(setFeatureId(feature.id))
+            }}
+        >
             <FeatureName>
-                <span style={{'color': '#a7b6c2'}}>[[</span>
+                <span style={{color: '#a7b6c2'}}>[[</span>
                 {feature.name}
-                <span style={{'color': '#a7b6c2'}}>]]</span>
+                <span style={{color: '#a7b6c2'}}>]]</span>
             </FeatureName>
-        </FeatureNameContainer>;
+        </FeatureNameContainer>
+    )
 
     return (
         <HomeContainer>
             <Header>
-                <img src={`../../../assets/logo-${theme}.png`}/>
+                <img src={`../../../assets/logo-${theme}.png`} />
             </Header>
             <FeaturesList>
-                {
-                    features.map((feature: Feature) => (
-                        <FeatureListElement key={feature.id}>
-                            {feature.toggleable ?
-                                getCheckbox(feature) : null}
-                            {getFeatureContainer(feature)}
-                        </FeatureListElement>
-                    ))
-                }
+                {features.map((feature: Feature) => (
+                    <FeatureListElement key={feature.id}>
+                        {feature.toggleable ? getCheckbox(feature) : null}
+                        {getFeatureContainer(feature)}
+                    </FeatureListElement>
+                ))}
             </FeaturesList>
         </HomeContainer>
-    );
+    )
 }
 
 const HomeContainer = styled('div')`
-    padding-left:30px;
-`;
+    padding-left: 30px;
+`
 
 const Header = styled('div')`
     padding: 20px 0;
     border-bottom: 1px solid #989898;
-`;
+`
 
 const FeaturesList = styled('ul')`
     padding: 0;
     margin: 0;
-`;
+`
 
 const FeatureListElement = styled('li')`
-    border-bottom: 1px solid #E3E3E3;
+    border-bottom: 1px solid #e3e3e3;
     position: relative;
     display: flex;
     align-items: center;
 
     &::after {
-        content: "→";
+        content: '→';
         position: absolute;
         right: 30px;
         top: calc(50% - 10px);
         color: #828282;
     }
-`;
+`
 
 const FeatureNameContainer = styled('span')`
     padding: 25px 50px 25px 0px;
@@ -91,10 +90,10 @@ const FeatureNameContainer = styled('span')`
     &:hover {
         cursor: pointer;
     }
-`;
+`
 
 const FeatureName = styled('span')`
-    color: #137CBD;
+    color: #137cbd;
     padding: 0 0 0 2px;
     font-size: 17px;
-`;
+`

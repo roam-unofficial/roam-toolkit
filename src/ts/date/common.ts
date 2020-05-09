@@ -1,4 +1,4 @@
-import dateFormat from 'dateformat';
+import dateFormat from 'dateformat'
 
 export const RoamDate = {
     formatString: `mmmm dS, yyyy`,
@@ -15,7 +15,7 @@ export const RoamDate = {
     },
     formatUS(date: Date) {
         return dateFormat(date, 'mm-dd-yyyy')
-    }
+    },
 }
 
 export const dateFromPageName = (text: string): Date => {
@@ -24,8 +24,8 @@ export const dateFromPageName = (text: string): Date => {
             .slice(2)
             .slice(0, -2)
             .replace(/(th,|nd,|rd,|st,)/, ',')
-    );
-};
+    )
+}
 
 export function addDays(date: Date, days: number) {
     const result = new Date(date)

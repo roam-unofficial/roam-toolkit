@@ -1,16 +1,16 @@
-import { DefaultTheme } from 'styled-components';
+import {DefaultTheme} from 'styled-components'
 
-export type ThemeTypes = 'light' | 'dark';
+export type ThemeTypes = 'light' | 'dark'
 
 export const lightTheme: DefaultTheme = {
-	backgroundColor: '#fff'
-};
+    backgroundColor: '#fff',
+}
 
 export const darkTheme: DefaultTheme = {
-	backgroundColor: '#181818'
-};
+    backgroundColor: '#181818',
+}
 
 export const themes = {
-	light: lightTheme,
-	dark: darkTheme,
-};
+    light: lightTheme,
+    dark: darkTheme,
+}

@@ -20,9 +20,7 @@
     ],
     "manifest_version": 2,
     "background": {
-        "scripts": [
-            "background.js"
-        ],
+        "scripts": ["background.js"],
         "persistent": true
     },
     "browser_action": {
@@ -34,19 +32,19 @@
         "page": "options.html",
         "open_in_tab": true
     },
-    "content_scripts": [{
-        "js": [
-            "shortcuts.js",
-            "srs.js",
-            "inc-dec-value.js",
-            "dispatcher.js",
-            "block-manipulation.js",
-            "custom-css.js",
-            "fuzzy_date.js",
-            "create-block-demo.js"
-        ],
-        "matches": [
-            "*://roamresearch.com/*"
-        ]
-    }]
+    "content_scripts": [
+        {
+            "js": [
+                "shortcuts.js",
+                "srs.js",
+                "inc-dec-value.js",
+                "dispatcher.js",
+                "block-manipulation.js",
+                "custom-css.js",
+                "fuzzy_date.js",
+                "create-block-demo.js"
+            ],
+            "matches": ["*://roamresearch.com/*"]
+        }
+    ]
 }

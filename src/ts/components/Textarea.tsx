@@ -1,33 +1,36 @@
-import * as React from 'react';
-import styled from 'styled-components';
+import * as React from 'react'
+import styled from 'styled-components'
 
-type TextareaProps = { value: string, label?: string, description?: string, onSave: (newValue: string) => void };
+type TextareaProps = {
+    value: string
+    label?: string
+    description?: string
+    onSave: (newValue: string) => void
+}
 
-export const Textarea = ({ value, label, description, onSave }: TextareaProps) => {
-    const [newValue, setValue] = React.useState(value);
-    const [saved, setSave] = React.useState(false);
+export const Textarea = ({value, label, description, onSave}: TextareaProps) => {
+    const [newValue, setValue] = React.useState(value)
+    const [saved, setSave] = React.useState(false)
 
     return (
         <div>
             {label ? <Label>{label}:</Label> : null}
-            <StyledTextarea
-                value={newValue}
-                onChange={e => setValue(e.target.value)}
-            />
+            <StyledTextarea value={newValue} onChange={e => setValue(e.target.value)} />
             {description ? <p>{description}</p> : null}
             <SaveBtn
                 onClick={() => {
-                    onSave(newValue);
-                    setSave(true);
+                    onSave(newValue)
+                    setSave(true)
                     setTimeout(() => {
-                        setSave(false);
-                    }, 1500);
+                        setSave(false)
+                    }, 1500)
                 }}
-            >{saved ? 'Saved ✓' : 'Save'}</SaveBtn>
+            >
+                {saved ? 'Saved ✓' : 'Save'}
+            </SaveBtn>
         </div>
     )
-
-};
+}
 
 const StyledTextarea = styled('textarea')`
     background-color: #fff;
@@ -37,12 +40,12 @@ const StyledTextarea = styled('textarea')`
     width: calc(100% - 45px);
     padding: 0px 6px;
     font-size: 12px;
-`;
+`
 
 const Label = styled('div')`
     font-size: 13px;
     margin-bottom: 2px;
-`;
+`
 
 const SaveBtn = styled('button')`
     padding: 6px 20px;
@@ -50,9 +53,9 @@ const SaveBtn = styled('button')`
     border: none;
     border-radius: 3px;
     font-size: 14px;
-    background: #00BC94;
+    background: #00bc94;
     color: #fff;
-    transition: .3s;
+    transition: 0.3s;
 
     &:hover {
         cursor: pointer;

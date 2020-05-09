@@ -1,6 +1,6 @@
-import {SM2Node} from './SM2Node';
-import {addDays} from '../date/common';
-import {Scheduler, SRSSignal} from './scheduler';
+import {SM2Node} from './SM2Node'
+import {addDays} from '../date/common'
+import {Scheduler, SRSSignal} from './scheduler'
 
 /**
  * Again (1)
@@ -32,19 +32,20 @@ export class AnkiScheduler implements Scheduler {
 
     static maxInterval = 50 * 365
     static minFactor = 1.3
-    static hardFactor = 1.2;
+    static hardFactor = 1.2
 
     schedule(node: SM2Node, signal: SRSSignal): SM2Node {
-        const newParams = this.getNewParameters(node, signal);
+        const newParams = this.getNewParameters(node, signal)
 
         const currentDate = node.listDates()[0] || new Date()
-        return node
-            .withInterval(newParams.interval)
-            .withFactor(newParams.factor)
-            // TODO random jitter, in percentage points of interval
-            .withDate(addDays(currentDate, Math.ceil(newParams.interval)))
+        return (
+            node
+                .withInterval(newParams.interval)
+                .withFactor(newParams.factor)
+                // TODO random jitter, in percentage points of interval
+                .withDate(addDays(currentDate, Math.ceil(newParams.interval)))
+        )
     }
-
 
     getNewParameters(node: SM2Node, signal: SRSSignal) {
         const factor = node.factor || AnkiScheduler.defaultFactor
@@ -78,11 +79,11 @@ export class AnkiScheduler implements Scheduler {
     private static enforceLimits(params: SM2Params) {
         return new SM2Params(
             Math.min(params.interval, AnkiScheduler.maxInterval),
-            Math.max(params.factor, AnkiScheduler.minFactor))
+            Math.max(params.factor, AnkiScheduler.minFactor)
+        )
     }
 }
 
 class SM2Params {
-    constructor(readonly interval: number, readonly factor: number) {
-    }
+    constructor(readonly interval: number, readonly factor: number) {}
 }

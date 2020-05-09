@@ -1,9 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-
-
-export const StyledCheckbox = ({ className = '', checked = false, ...props }) => (
+export const StyledCheckbox = ({className = '', checked = false, ...props}) => (
     <CheckboxContainer className={className}>
         <HiddenCheckbox checked={checked} {...props} />
         <StyledCheckboxInside checked={checked}>
@@ -13,7 +11,6 @@ export const StyledCheckbox = ({ className = '', checked = false, ...props }) =>
         </StyledCheckboxInside>
     </CheckboxContainer>
 )
-
 
 const CheckboxContainer = styled.div`
     display: inline-block;
@@ -26,7 +23,7 @@ const Icon = styled.svg`
     stroke: white;
     stroke-width: 2px;
 `
-const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
+const HiddenCheckbox = styled.input.attrs({type: 'checkbox'})`
     border: 0;
     clip: rect(0 0 0 0);
     clippath: inset(50%);
@@ -44,7 +41,7 @@ const StyledCheckboxInside: any = styled.div`
     width: 13px;
     height: 13px;
     background: ${(props: any) => (props.checked ? '#137cbd' : '#fff')};
-    border: ${(props: any) => props.checked ? '1px solid #137cbd' : '1px solid #a7b6c2'};
+    border: ${(props: any) => (props.checked ? '1px solid #137cbd' : '1px solid #a7b6c2')};
     border-radius: 3px;
     transition: all 150ms;
 
@@ -53,6 +50,6 @@ const StyledCheckboxInside: any = styled.div`
     }
 
     ${Icon} {
-        visibility: ${(props: any) => (props.checked ? 'visible' : 'hidden')}
+        visibility: ${(props: any) => (props.checked ? 'visible' : 'hidden')};
     }
 `

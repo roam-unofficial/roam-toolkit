@@ -1,14 +1,14 @@
-import {Feature, Settings, Shortcut, String} from '../../utils/settings';
-import {getActiveEditElement} from '../../utils/dom';
-import {RoamNode} from '../../roam/roam-node';
-import {Roam} from '../../roam/roam';
+import {Feature, Settings, Shortcut, String} from '../../utils/settings'
+import {getActiveEditElement} from '../../utils/dom'
+import {RoamNode} from '../../roam/roam-node'
+import {Roam} from '../../roam/roam'
 
 const estimateProperty: String = {
     type: 'string',
     id: 'estimate_property',
     label: 'Property to base estimates on',
     initValue: 'estimate',
-};
+}
 
 export const config: Feature = {
     id: 'calculate-estimate',
@@ -20,14 +20,14 @@ export const config: Feature = {
             label: 'Calculate estimate shortcut',
             initValue: 'ctrl+m',
             placeholder: '',
-            onPress: calculateFirstSiblingTotal
+            onPress: calculateFirstSiblingTotal,
         } as Shortcut,
         estimateProperty,
     ],
-};
+}
 
 function getParentElement() {
-    return getActiveEditElement()?.closest('.roam-block-container')?.parentElement;
+    return getActiveEditElement()?.closest('.roam-block-container')?.parentElement
 }
 
 /** I'm still figuring out UX on this one.
@@ -40,20 +40,20 @@ function getParentElement() {
  *
  */
 export async function calculateFirstSiblingTotal() {
-    const attributeName = await Settings.get(config.id, estimateProperty.id);
-    const estimateRegex = new RegExp(`${attributeName}:{1,2}\\s*(\\d+\\.?\\d*)`, 'g');
+    const attributeName = await Settings.get(config.id, estimateProperty.id)
+    const estimateRegex = new RegExp(`${attributeName}:{1,2}\\s*(\\d+\\.?\\d*)`, 'g')
 
-    const queryNode = getParentElement()?.querySelector('.rm-reference-main') as HTMLElement;
-    const queryText = queryNode?.innerText;
-    console.log('Extracting estimate from ' + queryText);
+    const queryNode = getParentElement()?.querySelector('.rm-reference-main') as HTMLElement
+    const queryText = queryNode?.innerText
+    console.log('Extracting estimate from ' + queryText)
 
-    let total = 0;
+    let total = 0
 
-    const nextMatch = () => estimateRegex.exec(queryText);
-    let match = nextMatch();
+    const nextMatch = () => estimateRegex.exec(queryText)
+    let match = nextMatch()
     while (match) {
-        total += parseFloat(match[1]);
-        match = nextMatch();
+        total += parseFloat(match[1])
+        match = nextMatch()
     }
 
     Roam.applyToCurrent(node => new RoamNode(`total_${attributeName}::${total}` + node.text, node.selection))

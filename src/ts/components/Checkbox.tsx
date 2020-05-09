@@ -1,21 +1,25 @@
-import * as React from 'react';
+import * as React from 'react'
 
 import {StyledCheckbox} from './StyledCheckbox'
 
 type CheckboxProps = {
-    checked: boolean, label?: string | React.ReactElement, description?: string,
+    checked: boolean
+    label?: string | React.ReactElement
+    description?: string
     onSave: (newValue: boolean) => void
-};
+}
 
 export const Checkbox = ({checked, label, description, onSave}: CheckboxProps) => {
-    const [newValue, setValue] = React.useState(checked);
-    const styledCheckbox = <StyledCheckbox
-        checked={newValue}
-        onChange={(e: any) => {
-            setValue(e.target.checked)
-            onSave(e.target.checked)
-        }}
-    />;
+    const [newValue, setValue] = React.useState(checked)
+    const styledCheckbox = (
+        <StyledCheckbox
+            checked={newValue}
+            onChange={(e: any) => {
+                setValue(e.target.checked)
+                onSave(e.target.checked)
+            }}
+        />
+    )
 
     if (label) {
         return (
@@ -28,11 +32,6 @@ export const Checkbox = ({checked, label, description, onSave}: CheckboxProps) =
             </>
         )
     } else {
-        return (
-            <label style={{marginTop: '4px', marginRight: '5px'}}>
-                {styledCheckbox}
-            </label>
-        )
+        return <label style={{marginTop: '4px', marginRight: '5px'}}>{styledCheckbox}</label>
     }
-
-};
+}

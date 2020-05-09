@@ -1,4 +1,4 @@
-import {SM2Node} from './SM2Node';
+import {SM2Node} from './SM2Node'
 
 export interface Scheduler {
     schedule(node: SM2Node, signal: SRSSignal): SM2Node

@@ -1,9 +1,9 @@
 import {Feature, Shortcut} from '../../utils/settings'
-import {SRSSignal, SRSSignals} from '../../srs/scheduler';
-import {SM2Node} from '../../srs/SM2Node';
-import {AnkiScheduler} from '../../srs/AnkiScheduler';
-import {RoamNode} from '../../roam/roam-node';
-import {Roam} from '../../roam/roam';
+import {SRSSignal, SRSSignals} from '../../srs/scheduler'
+import {SM2Node} from '../../srs/SM2Node'
+import {AnkiScheduler} from '../../srs/AnkiScheduler'
+import {RoamNode} from '../../roam/roam-node'
+import {Roam} from '../../roam/roam'
 
 export const config: Feature = {
     id: 'srs',
@@ -14,13 +14,17 @@ export const config: Feature = {
             id: 'nextBucketShortcut',
             label: 'Trigger next bucket',
             initValue: 'Ctrl+q',
-            onPress: triggerNextBucket
-        } as Shortcut
-    ].concat(SRSSignals.map(it => ({
-            type: 'shortcut', id: `srs_${SRSSignal[it]}`, label: `SRS: ${SRSSignal[it]}`, initValue: `ctrl+shift+${it}`,
-            onPress: () => rescheduleCurrentNote(it)
-        }
-    )))
+            onPress: triggerNextBucket,
+        } as Shortcut,
+    ].concat(
+        SRSSignals.map(it => ({
+            type: 'shortcut',
+            id: `srs_${SRSSignal[it]}`,
+            label: `SRS: ${SRSSignal[it]}`,
+            initValue: `ctrl+shift+${it}`,
+            onPress: () => rescheduleCurrentNote(it),
+        }))
+    ),
 }
 
 export function rescheduleCurrentNote(signal: SRSSignal) {
@@ -28,14 +32,15 @@ export function rescheduleCurrentNote(signal: SRSSignal) {
     Roam.applyToCurrent(node => scheduler.schedule(new SM2Node(node.text, node.selection), signal))
 }
 
-const bucketExpr = /(?:\[\[\[\[interval]]::(\d+)]])|(?:#Box(\d+))/gi;
-const nextBucket = (nodeStr: string) => `[[[[interval]]::${parseInt(nodeStr) + 1}]]`;
+const bucketExpr = /(?:\[\[\[\[interval]]::(\d+)]])|(?:#Box(\d+))/gi
+const nextBucket = (nodeStr: string) => `[[[[interval]]::${parseInt(nodeStr) + 1}]]`
 
 export function triggerNextBucket() {
     Roam.applyToCurrent(
-        (element =>
+        element =>
             new RoamNode(
-                element.text.replace(bucketExpr,
-                    (_, ...numbers) => nextBucket(numbers.filter(it => it)[0])),
-                element.selection)));
+                element.text.replace(bucketExpr, (_, ...numbers) => nextBucket(numbers.filter(it => it)[0])),
+                element.selection
+            )
+    )
 }
