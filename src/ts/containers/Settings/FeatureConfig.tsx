@@ -1,30 +1,30 @@
-import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
+import * as React from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import styled from 'styled-components'
 
-import { Feature, Setting } from '../../utils/settings';
+import {Feature, Setting} from '../../utils/settings'
 
-import { returnToHome } from '../../background/store/settings/actions';
+import {returnToHome} from '../../background/store/settings/actions'
 
-import { Input } from '../../components/Input';
-import { Checkbox } from '../../components/Checkbox';
-import { Textarea } from '../../components/Textarea';
+import {Input} from '../../components/Input'
+import {Checkbox} from '../../components/Checkbox'
+import {Textarea} from '../../components/Textarea'
 
-type FeatureConfigProps = { feature: Feature };
+type FeatureConfigProps = {feature: Feature}
 
-export const FeatureConfig = ({ feature }: FeatureConfigProps) => {
-    const dispatch = useDispatch();
+export const FeatureConfig = ({feature}: FeatureConfigProps) => {
+    const dispatch = useDispatch()
 
     function getTextarea(value: string, setting: Setting) {
         return (
             <Textarea
                 value={value}
                 label={setting.label}
-                onSave={(v) => {
-                    dispatch(setting.onSave!(v));
+                onSave={v => {
+                    dispatch(setting.onSave!(v))
                 }}
             />
-        );
+        )
     }
 
     function getInput(value: string, setting: Setting) {
@@ -33,54 +33,52 @@ export const FeatureConfig = ({ feature }: FeatureConfigProps) => {
                 value={value}
                 placeholder={setting.placeholder}
                 label={setting.label}
-                onSave={(s) => {
-                    dispatch(setting.onSave!(s));
+                onSave={s => {
+                    dispatch(setting.onSave!(s))
                 }}
             />
-        );
+        )
     }
 
     const settings = feature?.settings?.map((setting, i) => {
-        const value =
-            useSelector((state: any) => state[feature.id][setting.id]) ||
-            setting.initValue;
+        const value = useSelector((state: any) => state[feature.id][setting.id]) || setting.initValue
 
         if (setting.type === 'large_string') {
-            return <Setting key={i}>{getTextarea(value, setting)}</Setting>;
+            return <Setting key={i}>{getTextarea(value, setting)}</Setting>
         } else if (['string', 'shortcut'].includes(setting.type)) {
-            return <Setting key={i}>{getInput(value, setting)}</Setting>;
+            return <Setting key={i}>{getInput(value, setting)}</Setting>
         }
-        return null;
-    });
+        return null
+    })
 
     const featureName = (
         <FeatureNameContainer>
             <FeatureName>
-                <span style={{ color: '#a7b6c2' }}>[[</span>
+                <span style={{color: '#a7b6c2'}}>[[</span>
                 {feature.name}
-                <span style={{ color: '#a7b6c2' }}>]]</span>
+                <span style={{color: '#a7b6c2'}}>]]</span>
             </FeatureName>
         </FeatureNameContainer>
-    );
+    )
 
     const toggleCheckBox = (
         <Checkbox
             checked={useSelector((state: any) => state[feature.id].active)}
             label={featureName}
-            onSave={(checked) => {
-                dispatch(feature.toggle!(checked));
+            onSave={checked => {
+                dispatch(feature.toggle!(checked))
             }}
         />
-    );
+    )
 
-    const header = feature.toggleable ? toggleCheckBox : featureName;
+    const header = feature.toggleable ? toggleCheckBox : featureName
 
     return (
         <FeatureConfigContainer>
             <Header>
                 <Back
                     onClick={() => {
-                        dispatch(returnToHome());
+                        dispatch(returnToHome())
                     }}
                 >
                     ←
@@ -89,18 +87,18 @@ export const FeatureConfig = ({ feature }: FeatureConfigProps) => {
             </Header>
             <ConfigsContainer>{settings}</ConfigsContainer>
         </FeatureConfigContainer>
-    );
-};
+    )
+}
 
 const FeatureConfigContainer = styled('div')`
     padding-left: 30px;
-`;
+`
 
 const Header = styled('div')`
     padding: 20px 0;
     border-bottom: 1px solid #989898;
     margin-bottom: 13px;
-`;
+`
 
 const Back = styled('button')`
     background: none;
@@ -116,17 +114,17 @@ const Back = styled('button')`
     &:hover {
         cursor: pointer;
     }
-`;
+`
 
-const FeatureNameContainer = styled('span')``;
+const FeatureNameContainer = styled('span')``
 
 const FeatureName = styled('span')`
     color: #137cbd;
     font-size: 17px;
-`;
+`
 
-const ConfigsContainer = styled('div')``;
+const ConfigsContainer = styled('div')``
 
 const Setting = styled('div')`
     padding: 10px 0 15px 0;
-`;
+`

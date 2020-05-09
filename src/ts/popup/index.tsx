@@ -1,10 +1,10 @@
-import * as React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { Store } from 'webext-redux';
-import PopupApp from './containers/PopupApp';
+import * as React from 'react'
+import ReactDOM from 'react-dom'
+import {Provider} from 'react-redux'
+import {Store} from 'webext-redux'
+import PopupApp from './containers/PopupApp'
 
-const store = new Store();
+const store = new Store()
 
 store.ready().then(() => {
     ReactDOM.render(
@@ -12,5 +12,5 @@ store.ready().then(() => {
             <PopupApp />
         </Provider>,
         document.getElementById('popup-root')
-    );
-});
+    )
+})

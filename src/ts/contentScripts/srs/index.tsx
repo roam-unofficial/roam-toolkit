@@ -1,9 +1,9 @@
-import { Feature, Shortcut } from '../../utils/settings';
-import { SRSSignal, SRSSignals } from '../../srs/scheduler';
-import { SM2Node } from '../../srs/SM2Node';
-import { AnkiScheduler } from '../../srs/AnkiScheduler';
-import { RoamNode } from '../../roam/roam-node';
-import { Roam } from '../../roam/roam';
+import {Feature, Shortcut} from '../../utils/settings'
+import {SRSSignal, SRSSignals} from '../../srs/scheduler'
+import {SM2Node} from '../../srs/SM2Node'
+import {AnkiScheduler} from '../../srs/AnkiScheduler'
+import {RoamNode} from '../../roam/roam-node'
+import {Roam} from '../../roam/roam'
 
 export const config: Feature = {
     id: 'srs',
@@ -17,7 +17,7 @@ export const config: Feature = {
             onPress: triggerNextBucket,
         } as Shortcut,
     ].concat(
-        SRSSignals.map((it) => ({
+        SRSSignals.map(it => ({
             type: 'shortcut',
             id: `srs_${SRSSignal[it]}`,
             label: `SRS: ${SRSSignal[it]}`,
@@ -25,27 +25,22 @@ export const config: Feature = {
             onPress: () => rescheduleCurrentNote(it),
         }))
     ),
-};
-
-export function rescheduleCurrentNote(signal: SRSSignal) {
-    const scheduler = new AnkiScheduler();
-    Roam.applyToCurrent((node) =>
-        scheduler.schedule(new SM2Node(node.text, node.selection), signal)
-    );
 }
 
-const bucketExpr = /(?:\[\[\[\[interval]]::(\d+)]])|(?:#Box(\d+))/gi;
-const nextBucket = (nodeStr: string) =>
-    `[[[[interval]]::${parseInt(nodeStr) + 1}]]`;
+export function rescheduleCurrentNote(signal: SRSSignal) {
+    const scheduler = new AnkiScheduler()
+    Roam.applyToCurrent(node => scheduler.schedule(new SM2Node(node.text, node.selection), signal))
+}
+
+const bucketExpr = /(?:\[\[\[\[interval]]::(\d+)]])|(?:#Box(\d+))/gi
+const nextBucket = (nodeStr: string) => `[[[[interval]]::${parseInt(nodeStr) + 1}]]`
 
 export function triggerNextBucket() {
     Roam.applyToCurrent(
-        (element) =>
+        element =>
             new RoamNode(
-                element.text.replace(bucketExpr, (_, ...numbers) =>
-                    nextBucket(numbers.filter((it) => it)[0])
-                ),
+                element.text.replace(bucketExpr, (_, ...numbers) => nextBucket(numbers.filter(it => it)[0])),
                 element.selection
             )
-    );
+    )
 }
