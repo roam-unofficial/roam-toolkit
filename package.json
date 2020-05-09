@@ -10,7 +10,8 @@
 		"clean": "rm -rf ./dist",
 		"clean:all": "rm -rf ./dist && rm -rf ./coverage && rm -rf ./node_modules",
 		"test": "jest",
-		"test:coverage": "jest --collect-coverage"
+        "test:coverage": "jest --collect-coverage",
+        "prettify": "prettier --write src/**/*.{ts,tsx,json}"
 	},
 	"license": "MIT",
 	"dependencies": {
@@ -41,6 +42,7 @@
 		"html-webpack-plugin": "^3.2.0",
 		"jest": "^25.1.0",
 		"jest-extended": "^0.11.5",
+		"prettier": "^2.0.5",
 		"react-test-renderer": "^16.12.0",
 		"ts-jest": "^25.0.0",
 		"tslint": "^6.0.0",
