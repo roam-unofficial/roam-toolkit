@@ -141,7 +141,7 @@ export const Roam = {
         return runInPageContext((...args: any[]) => window.roamAlphaAPI.pull(...args), '[*]', dbId)
     },
     query(query: string, ...params: any[]) {
-        //@ts-ignore
+        // @ts-ignore
         return runInPageContext((...args: any[]) => window.roamAlphaAPI.q(...args), query, ...params)
     },
     getPageByName(name: string) {
@@ -152,7 +152,7 @@ export const Roam = {
     },
 
     baseUrl: () => {
-        //https://roamresearch.com/#/app/roam-toolkit/page/03-24-2020
+        // https://roamresearch.com/#/app/roam-toolkit/page/03-24-2020
         const url = new URL(Browser.getActiveTabUrl())
         const parts = url.hash.split('/')
 
