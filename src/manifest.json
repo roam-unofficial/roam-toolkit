@@ -41,6 +41,7 @@
                 "inc-dec-value.js",
                 "dispatcher.js",
                 "block-manipulation.js",
+                "live-preview.js",
                 "custom-css.js",
                 "fuzzy_date.js",
                 "create-block-demo.js"

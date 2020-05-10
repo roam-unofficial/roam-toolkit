@@ -11,7 +11,13 @@ export const Navigation = {
         url.hash = parts.slice(0, 3).concat(['page']).join('/')
         return url
     },
-
+    getPageUrlByName(name: string) {
+        const page = RoamDb.getPageByName(name)
+        return this.getPageUrl(page[':block/uid'])
+    },
+    getPageUrl(uid: string) {
+        return this.baseUrl().toString() + '/' + uid
+    },
     currentPageUid() {
         const parts = Browser.getActiveTabUrl().hash.split('/')
         return parts[parts.length - 1]
@@ -20,7 +26,7 @@ export const Navigation = {
     async goToPageWithName(name: string) {
         const datePage = RoamDb.getPageByName(name)
         if (!datePage) return
-        return Browser.goToPage(this.baseUrl().toString() + '/' + datePage[':block/uid'])
+        return Browser.goToPage(this.getPageUrl(datePage[':block/uid']))
     },
 
     async goToDatePage(date: Date) {
