@@ -1,5 +1,5 @@
 import {Feature, Shortcut} from '../../utils/settings'
-import {dateFromPageName, RoamDate} from '../../date/common'
+import {RoamDate} from '../../date/common'
 import {Roam} from '../../roam/roam'
 import {RoamNode, Selection} from '../../roam/roam-node'
 
@@ -81,7 +81,9 @@ export const modify = (modifier: (input: number) => number) => {
         // e.g. Lorem ipsum [[Janu|ary 3rd, 2020]] 123
         newValue =
             node.text.substring(0, openBracketsLeftIndex(node.text, cursor)) +
-            RoamDate.formatPage(modifyDate(dateFromPageName(nameInsideBrackets(node.text, cursor)), modifier)) +
+            RoamDate.formatPage(
+                modifyDate(RoamDate.parseFromReference(nameInsideBrackets(node.text, cursor)), modifier)
+            ) +
             node.text.substring(closingBracketsRightIndex(node.text, cursor) + 2)
     } else if (cursorPlacedOnNumber(node.text, cursor)) {
         // e.g. Lorem ipsum [[January 3rd, 2020]] 12|3
@@ -97,7 +99,7 @@ export const modify = (modifier: (input: number) => number) => {
         // e.g. Lor|em ipsum [[January 3rd, 2020]] 123
         newValue = node.text.replace(
             datesInContent[0],
-            RoamDate.formatPage(modifyDate(dateFromPageName(datesInContent[0]), modifier))
+            RoamDate.formatPage(modifyDate(RoamDate.parseFromReference(datesInContent[0]), modifier))
         )
     }
     Roam.save(new RoamNode(newValue, new Selection(cursor, cursor)))

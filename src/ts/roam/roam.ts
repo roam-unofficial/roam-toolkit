@@ -2,7 +2,6 @@ import {RoamNode, Selection} from './roam-node'
 import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLevelBlock} from '../utils/dom'
 import {Keyboard} from '../utils/keyboard'
 import {Mouse} from '../utils/mouse'
-import {Browser, runInPageContext} from '../utils/browser'
 
 export const Roam = {
     save(roamNode: RoamNode) {
@@ -134,29 +133,5 @@ export const Roam = {
         const uidLength = 9
         const elementId = Roam.getRoamBlockInput()?.id
         return elementId?.substr(elementId?.length - uidLength)
-    },
-
-    get(dbId: number) {
-        // @ts-ignore
-        return runInPageContext((...args: any[]) => window.roamAlphaAPI.pull(...args), '[*]', dbId)
-    },
-    query(query: string, ...params: any[]) {
-        // @ts-ignore
-        return runInPageContext((...args: any[]) => window.roamAlphaAPI.q(...args), query, ...params)
-    },
-    getPageByName(name: string) {
-        const results = this.query('[:find ?e :in $ ?a :where [?e :node/title ?a]]', name)
-        if (results?.[0].lenght < 1) return null
-
-        return this.get(results[0][0])
-    },
-
-    baseUrl: () => {
-        // https://roamresearch.com/#/app/roam-toolkit/page/03-24-2020
-        const url = new URL(Browser.getActiveTabUrl())
-        const parts = url.hash.split('/')
-
-        url.hash = parts.slice(0, 3).concat(['page']).join('/')
-        return url
     },
 }

@@ -25,7 +25,7 @@ export const runInPageContext = (method: Function, ...args: any[]) => {
 export const Browser = {
     goToPage: (url: string) => (window.location.href = url),
 
-    getActiveTabUrl: () => window.location.href,
+    getActiveTabUrl: () => new URL(window.location.href),
 
     // Does not work from content script
     getActiveTab: () => browser.tabs.query({currentWindow: true, active: true}).then(tabs => tabs[0]),

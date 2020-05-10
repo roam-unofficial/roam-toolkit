@@ -36,6 +36,7 @@
         {
             "js": [
                 "shortcuts.js",
+                "navigation.js",
                 "srs.js",
                 "inc-dec-value.js",
                 "dispatcher.js",

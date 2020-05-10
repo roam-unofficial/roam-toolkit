@@ -16,15 +16,12 @@ export const RoamDate = {
     formatUS(date: Date) {
         return dateFormat(date, 'mm-dd-yyyy')
     },
-}
-
-export const dateFromPageName = (text: string): Date => {
-    return new Date(
-        text
-            .slice(2)
-            .slice(0, -2)
-            .replace(/(th,|nd,|rd,|st,)/, ',')
-    )
+    parse(name: string): Date {
+        return new Date(name.replace(/(th,|nd,|rd,|st,)/, ','))
+    },
+    parseFromReference(name: string): Date {
+        return this.parse(name.slice(2).slice(0, -2))
+    },
 }
 
 export function addDays(date: Date, days: number) {
@@ -32,3 +29,5 @@ export function addDays(date: Date, days: number) {
     result.setDate(result.getDate() + days)
     return result
 }
+
+export const isValid = (date: Date) => !isNaN(date.getTime())

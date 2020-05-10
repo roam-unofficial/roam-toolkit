@@ -1,8 +1,6 @@
 import {Feature, Shortcut} from '../../utils/settings'
 import {RoamNode, Selection} from '../../roam/roam-node'
 import {Roam} from '../../roam/roam'
-import {Browser} from '../../utils/browser'
-import {RoamDate} from '../../date/common'
 
 export const config: Feature = {
     id: 'block_manipulation',
@@ -37,24 +35,7 @@ export const config: Feature = {
             initValue: 'ctrl+meta+c',
             onPress: () => navigator.clipboard.writeText(getCurrentBlockEmbed()),
         } as Shortcut,
-        {
-            type: 'shortcut',
-            id: 'goToTodayPage',
-            label: 'Go to today page',
-            initValue: 'ctrl+shift+`',
-            onPress: () => goToTodayPage(),
-        } as Shortcut,
     ],
-}
-
-const goToTodayPage = async () => {
-    const currentDate = new Date()
-    // Tomorrow starts at 2am for the purposes of this
-    currentDate.setHours(currentDate.getHours() - 2)
-
-    const datePage = Roam.getPageByName(RoamDate.format(currentDate))
-    if (!datePage) return
-    return Browser.goToPage(Roam.baseUrl().toString() + '/' + datePage[':block/uid'])
 }
 
 const getCurrentBlockEmbed = () => `{{embed: ${getCurrentBlockReference()}}}`

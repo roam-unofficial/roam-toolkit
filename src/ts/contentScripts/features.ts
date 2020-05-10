@@ -5,10 +5,18 @@ import {config as customCss} from './custom-css/index'
 import {config as srs} from './srs/index'
 import {config as blockManipulation} from './block-manipulation'
 import {config as estimate} from './estimates/index'
+import {config as navigation} from './navigation/index'
 import {filterAsync, mapAsync} from '../utils/async'
 
 export const Features = {
-    all: prepareSettings([incDec, srs, blockManipulation, estimate, customCss]),
+    all: prepareSettings([
+        incDec, //prettier
+        srs,
+        blockManipulation,
+        estimate,
+        customCss,
+        navigation,
+    ]),
 
     isActive: Settings.isActive,
 
@@ -18,7 +26,7 @@ export const Features = {
 
     getShortcutHandlers: () =>
         getAllShortcuts(Features.all).reduce((acc: any, current) => {
-            acc[current!.id] = current!.onPress
+            acc[current.id] = current.onPress
             return acc
         }, {}),
 

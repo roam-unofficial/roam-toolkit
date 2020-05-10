@@ -1,4 +1,4 @@
-import {dateFromPageName, RoamDate} from './common'
+import {RoamDate} from './common'
 import {Constructor} from '../mixins/common'
 import {RoamNode} from '../roam/roam-node'
 
@@ -9,7 +9,7 @@ export function withDate<T extends Constructor<RoamNode>>(SuperClass: T) {
         }
 
         listDates() {
-            return this.listDatePages().map(dateFromPageName)
+            return this.listDatePages().map(ref => RoamDate.parseFromReference(ref))
         }
 
         /** If has 1 date - replace it, if more then 1 date - append it */
