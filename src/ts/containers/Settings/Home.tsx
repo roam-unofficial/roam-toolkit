@@ -70,6 +70,7 @@ const FeaturesList = styled('ul')`
 const ListElementInner = styled('div')`
     padding-left: 20px;
     height: 70px;
+    width: 100%;
     display: flex;
     align-items: center;
 `
@@ -91,7 +92,11 @@ const FeatureListElement = styled('li')`
     }
 `
 
-const FeatureNameContainer = styled('span')`
+const FeatureNameContainer = styled('div')`
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    width: 100%;
     padding: 0 50px 0 0;
     width: 100%;
     z-index: 1;
@@ -102,8 +107,7 @@ const FeatureNameContainer = styled('span')`
     }
 `
 
-const FeatureName = styled('span')`
+const FeatureName = styled('div')`
     color: #137cbd;
-    padding: 0 0 0 2px;
     font-size: 17px;
 `
