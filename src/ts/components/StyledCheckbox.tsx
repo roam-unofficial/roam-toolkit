@@ -15,7 +15,15 @@ export const StyledCheckbox = ({className = '', checked = false, ...props}) => (
 const CheckboxContainer = styled.div`
     display: inline-block;
     vertical-align: middle;
-    padding-top: 2px;
+    cursor: pointer;
+    padding: 8px;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.1);
+    }
 `
 
 const Icon = styled.svg`

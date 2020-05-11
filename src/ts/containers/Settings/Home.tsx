@@ -44,8 +44,10 @@ export const Home = ({features}: HomeProps) => {
             <FeaturesList>
                 {features.map((feature: Feature) => (
                     <FeatureListElement key={feature.id}>
-                        {feature.toggleable ? getCheckbox(feature) : null}
-                        {getFeatureContainer(feature)}
+                        <ListElementInner>
+                            {feature.toggleable ? getCheckbox(feature) : null}
+                            {getFeatureContainer(feature)}
+                        </ListElementInner>
                     </FeatureListElement>
                 ))}
             </FeaturesList>
@@ -53,18 +55,23 @@ export const Home = ({features}: HomeProps) => {
     )
 }
 
-const HomeContainer = styled('div')`
-    padding-left: 30px;
-`
+const HomeContainer = styled('div')``
 
 const Header = styled('div')`
-    padding: 20px 0;
+    padding: 20px 0 20px 24px;
     border-bottom: 1px solid #989898;
 `
 
 const FeaturesList = styled('ul')`
     padding: 0;
     margin: 0;
+`
+
+const ListElementInner = styled('div')`
+    padding-left: 20px;
+    height: 70px;
+    display: flex;
+    align-items: center;
 `
 
 const FeatureListElement = styled('li')`
@@ -77,15 +84,18 @@ const FeatureListElement = styled('li')`
         content: '→';
         position: absolute;
         right: 30px;
-        top: calc(50% - 10px);
+        font-size: 20px;
+        top: 50%;
         color: #828282;
+        transform: translateY(-50%);
     }
 `
 
 const FeatureNameContainer = styled('span')`
-    padding: 25px 50px 25px 0px;
+    padding: 0 50px 0 0;
     width: 100%;
     z-index: 1;
+    margin-left: 8px;
 
     &:hover {
         cursor: pointer;

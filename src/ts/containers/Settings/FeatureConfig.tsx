@@ -90,12 +90,11 @@ export const FeatureConfig = ({feature}: FeatureConfigProps) => {
     )
 }
 
-const FeatureConfigContainer = styled('div')`
-    padding-left: 30px;
-`
+const FeatureConfigContainer = styled('div')``
 
 const Header = styled('div')`
     padding: 20px 0;
+    padding-left: 24px;
     border-bottom: 1px solid #989898;
     margin-bottom: 13px;
 `
@@ -123,7 +122,9 @@ const FeatureName = styled('span')`
     font-size: 17px;
 `
 
-const ConfigsContainer = styled('div')``
+const ConfigsContainer = styled('div')`
+    padding-left: 24px;
+`
 
 const Setting = styled('div')`
     padding: 10px 0 15px 0;
