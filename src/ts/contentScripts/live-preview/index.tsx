@@ -1,6 +1,7 @@
 import {Feature, Settings} from '../../utils/settings'
 import {RoamDate} from '../../date/common'
 import {Navigation} from '../../roam/navigation'
+import {browser} from 'webextension-polyfill-ts'
 
 export const config: Feature = {
     id: 'live_preview',
@@ -14,6 +15,17 @@ Settings.isActive('live_preview').then(active => {
         enableLivePreview()
     }
 })
+
+browser.runtime.onMessage.addListener(async message => {
+    if (message?.featureId === 'live_preview') {
+        if (message.value) {
+            enableLivePreview()
+        } else {
+            removeLivePreview()
+        }
+    }
+})
+
 const createPreviewIframe = () => {
     const iframe = document.createElement('iframe')
     const currentDate = new Date()
@@ -55,7 +67,6 @@ const createPreviewIframe = () => {
     iframe.onload = (event: Event) => {
         ;(event.target as HTMLIFrameElement).contentDocument?.body.appendChild(styleNode)
     }
-    console.log({iframe})
     document.body.appendChild(iframe)
     return iframe
 }
@@ -110,4 +121,11 @@ const enableLivePreview = () => {
             }
         }
     })
+}
+
+const removeLivePreview = () => {
+    const iframe = document.getElementById('roam-toolkit-preview-iframe')
+    if (iframe) {
+        document.body.removeChild(iframe)
+    }
 }
