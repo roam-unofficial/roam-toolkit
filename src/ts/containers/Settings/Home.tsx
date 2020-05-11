@@ -30,7 +30,7 @@ export const Home = ({features}: HomeProps) => {
         >
             <FeatureName>
                 <span style={{color: '#a7b6c2'}}>[[</span>
-                {feature.name}
+                <span className="title">{feature.name}</span>
                 <span style={{color: '#a7b6c2'}}>]]</span>
             </FeatureName>
         </FeatureNameContainer>
@@ -73,6 +73,10 @@ const ListElementInner = styled('div')`
     width: 100%;
     display: flex;
     align-items: center;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
 `
 
 const FeatureListElement = styled('li')`
@@ -90,6 +94,16 @@ const FeatureListElement = styled('li')`
         color: #828282;
         transform: translateY(-50%);
     }
+    &:hover {
+        &::after {
+            color: #111111;
+        }
+    }
+`
+
+const FeatureName = styled('div')`
+    color: #137cbd;
+    font-size: 17px;
 `
 
 const FeatureNameContainer = styled('div')`
@@ -104,10 +118,8 @@ const FeatureNameContainer = styled('div')`
 
     &:hover {
         cursor: pointer;
+        ${FeatureName} {
+            text-decoration: underline;
+        }
     }
-`
-
-const FeatureName = styled('div')`
-    color: #137cbd;
-    font-size: 17px;
 `
