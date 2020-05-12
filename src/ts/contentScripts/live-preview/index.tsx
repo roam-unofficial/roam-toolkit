@@ -2,6 +2,7 @@ import {Feature, Settings} from '../../utils/settings'
 import {RoamDate} from '../../date/common'
 import {Navigation} from '../../roam/navigation'
 import {browser} from 'webextension-polyfill-ts'
+import {createPopper, Instance} from '@popperjs/core'
 
 export const config: Feature = {
     id: 'live_preview',
@@ -11,13 +12,12 @@ export const config: Feature = {
 
 Settings.isActive('live_preview').then(active => {
     if (active) {
-        console.log('live view active!')
         enableLivePreview()
     }
 })
 
 browser.runtime.onMessage.addListener(async message => {
-    if (message?.featureId === 'live_preview') {
+    if (message?.featureId === 'live_preview' && message?.type === 'toggle') {
         if (message.value) {
             enableLivePreview()
         } else {
@@ -42,6 +42,8 @@ const createPreviewIframe = () => {
     iframe.style.left = '0'
     iframe.style.top = '0'
     iframe.style.opacity = '0'
+    iframe.style.pointerEvents = 'none'
+
     iframe.style.height = '0'
     iframe.style.width = '0'
     iframe.style.border = '0'
@@ -65,6 +67,7 @@ const createPreviewIframe = () => {
         }
     `
     iframe.onload = (event: Event) => {
+        document.body.scrollTop = 0
         ;(event.target as HTMLIFrameElement).contentDocument?.body.appendChild(styleNode)
     }
     document.body.appendChild(iframe)
@@ -72,10 +75,13 @@ const createPreviewIframe = () => {
 }
 const enableLivePreview = () => {
     let hoveredElement: HTMLElement | null
+    let currentElement: HTMLElement | null
     let popupTimeout: ReturnType<typeof setTimeout> | null
+    let popper: Instance | null = null
     const previewIframe = createPreviewIframe()
     document.addEventListener('mouseover', (e: Event) => {
         const target = e.target as HTMLElement
+        currentElement = target
         const isPageRef = target.classList.contains('rm-page-ref')
         if (isPageRef) {
             hoveredElement = target
@@ -83,41 +89,61 @@ const enableLivePreview = () => {
             const isAdded = (pageUrl: string) => !!document.querySelector(`[src="${pageUrl}"]`)
             const isVisible = (pageUrl: string) =>
                 (document.querySelector(`[src="${pageUrl}"]`) as HTMLElement)?.style.opacity === '1'
-            if (!popupTimeout && (!isAdded(url) || !isVisible(url))) {
+            if (hoveredElement && hoveredElement === target && (!isAdded(url) || !isVisible(url)) && previewIframe) {
+                previewIframe.src = url
+                previewIframe.style.height = '500px'
+                previewIframe.style.width = '500px'
+                previewIframe.style.pointerEvents = 'none'
+            }
+            if (!popupTimeout) {
                 popupTimeout = window.setTimeout(() => {
-                    console.log({isVisible: isVisible(url), isAdded: isAdded(url)})
-                    if (
-                        hoveredElement &&
-                        hoveredElement === target &&
-                        (!isAdded(url) || !isVisible(url)) &&
-                        previewIframe
-                    ) {
-                        console.log(hoveredElement, target, previewIframe)
-                        const rect = target.getClientRects()[0]
-                        const x = `${rect.x + rect.width}px`
-                        const y = `${rect.y + rect.height}px`
-                        previewIframe.src = url
-                        previewIframe.style.left = x
-                        previewIframe.style.top = y
-                        previewIframe.style.height = '500px'
-                        previewIframe.style.width = '500px'
+                    if (hoveredElement && hoveredElement === target && previewIframe) {
+                        // previewIframe.style.pointerEvents = 'none'
                         previewIframe.style.opacity = '1'
+                        previewIframe.style.pointerEvents = 'all'
+
+                        popper = createPopper(hoveredElement, previewIframe, {
+                            placement: 'right',
+                            modifiers: [
+                                {
+                                    name: 'preventOverflow',
+                                    options: {
+                                        padding: {top: 48},
+                                    },
+                                },
+                                {
+                                    name: 'flip',
+                                    options: {
+                                        boundary: document.querySelector('#app'),
+                                    },
+                                },
+                            ],
+                        })
                     }
-                }, 400)
+                }, 300)
             }
         }
     })
-    document.addEventListener('mouseout', (e: Event) => {
+    document.addEventListener('mouseout', (e: MouseEvent) => {
         const target = e.target as HTMLElement
-        if (hoveredElement === target) {
+        const relatedTarget = e.relatedTarget as HTMLElement
+        const iframe = document.getElementById('roam-toolkit-preview-iframe')
+        if (
+            (hoveredElement === target && relatedTarget !== iframe) ||
+            (target === iframe && relatedTarget !== hoveredElement)
+        ) {
             hoveredElement = null
             clearTimeout(popupTimeout as ReturnType<typeof setTimeout>)
             popupTimeout = null
-            const iframe = document.getElementById('roam-toolkit-preview-iframe')
             if (iframe) {
+                iframe.style.pointerEvents = 'none'
                 iframe.style.opacity = '0'
                 iframe.style.height = '0'
                 iframe.style.width = '0'
+            }
+            if (popper) {
+                popper.destroy()
+                popper = null
             }
         }
     })
