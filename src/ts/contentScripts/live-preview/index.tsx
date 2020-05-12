@@ -67,10 +67,14 @@ const createPreviewIframe = () => {
         }
     `
     iframe.onload = (event: Event) => {
-        document.body.scrollTop = 0
         ;(event.target as HTMLIFrameElement).contentDocument?.body.appendChild(styleNode)
     }
     document.body.appendChild(iframe)
+    const htmlElement = document.querySelector('html')
+    if (htmlElement) {
+        // to reset scroll after adding iframe
+        htmlElement.scrollTop = 0
+    }
     return iframe
 }
 const enableLivePreview = () => {
@@ -83,9 +87,12 @@ const enableLivePreview = () => {
         const target = e.target as HTMLElement
         currentElement = target
         const isPageRef = target.classList.contains('rm-page-ref')
+        const isPageRefTag = target.classList.contains('rm-page-ref-tag')
+        // remove '#' for page tags
+        const text = isPageRefTag ? target.innerText.slice(1) : target.innerText
         if (isPageRef) {
             hoveredElement = target
-            const url = Navigation.getPageUrlByName(target.innerText)
+            const url = Navigation.getPageUrlByName(text)
             const isAdded = (pageUrl: string) => !!document.querySelector(`[src="${pageUrl}"]`)
             const isVisible = (pageUrl: string) =>
                 (document.querySelector(`[src="${pageUrl}"]`) as HTMLElement)?.style.opacity === '1'
