@@ -98,7 +98,6 @@ const enableLivePreview = () => {
             if (!popupTimeout) {
                 popupTimeout = window.setTimeout(() => {
                     if (previewIframe) {
-                        // previewIframe.style.pointerEvents = 'none'
                         previewIframe.style.opacity = '1'
                         previewIframe.style.pointerEvents = 'all'
 
@@ -127,7 +126,7 @@ const enableLivePreview = () => {
     document.addEventListener('mouseout', (e: MouseEvent) => {
         const target = e.target as HTMLElement
         const relatedTarget = e.relatedTarget as HTMLElement
-        const iframe = document.getElementById('roam-toolkit-preview-iframe')
+        const iframe = document.getElementById('roam-toolkit-preview-iframe') as HTMLIFrameElement
         if (
             (hoveredElement === target && relatedTarget !== iframe) ||
             (target === iframe && relatedTarget !== hoveredElement) ||
@@ -137,6 +136,13 @@ const enableLivePreview = () => {
             clearTimeout(popupTimeout as ReturnType<typeof setTimeout>)
             popupTimeout = null
             if (iframe) {
+                if (iframe.contentDocument) {
+                    // scroll to top when removed
+                    const scrollContainer = iframe.contentDocument.querySelector('.roam-center > div')
+                    if (scrollContainer) {
+                        scrollContainer.scrollTop = 0
+                    }
+                }
                 iframe.style.pointerEvents = 'none'
                 iframe.style.opacity = '0'
                 iframe.style.height = '0'
