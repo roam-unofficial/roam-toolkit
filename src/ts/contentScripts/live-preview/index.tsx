@@ -89,7 +89,7 @@ const enableLivePreview = () => {
             const isAdded = (pageUrl: string) => !!document.querySelector(`[src="${pageUrl}"]`)
             const isVisible = (pageUrl: string) =>
                 (document.querySelector(`[src="${pageUrl}"]`) as HTMLElement)?.style.opacity === '1'
-            if (hoveredElement && hoveredElement === target && (!isAdded(url) || !isVisible(url)) && previewIframe) {
+            if ((!isAdded(url) || !isVisible(url)) && previewIframe) {
                 previewIframe.src = url
                 previewIframe.style.height = '500px'
                 previewIframe.style.width = '500px'
@@ -97,12 +97,12 @@ const enableLivePreview = () => {
             }
             if (!popupTimeout) {
                 popupTimeout = window.setTimeout(() => {
-                    if (hoveredElement && hoveredElement === target && previewIframe) {
+                    if (previewIframe) {
                         // previewIframe.style.pointerEvents = 'none'
                         previewIframe.style.opacity = '1'
                         previewIframe.style.pointerEvents = 'all'
 
-                        popper = createPopper(hoveredElement, previewIframe, {
+                        popper = createPopper(target, previewIframe, {
                             placement: 'right',
                             modifiers: [
                                 {
@@ -130,7 +130,8 @@ const enableLivePreview = () => {
         const iframe = document.getElementById('roam-toolkit-preview-iframe')
         if (
             (hoveredElement === target && relatedTarget !== iframe) ||
-            (target === iframe && relatedTarget !== hoveredElement)
+            (target === iframe && relatedTarget !== hoveredElement) ||
+            !document.body.contains(hoveredElement)
         ) {
             hoveredElement = null
             clearTimeout(popupTimeout as ReturnType<typeof setTimeout>)
@@ -145,6 +146,8 @@ const enableLivePreview = () => {
                 popper.destroy()
                 popper = null
             }
+        } else {
+            console.log('out', target, event)
         }
     })
 }
