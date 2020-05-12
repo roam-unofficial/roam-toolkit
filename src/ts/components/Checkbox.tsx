@@ -1,6 +1,7 @@
 import * as React from 'react'
 
 import {StyledCheckbox} from './StyledCheckbox'
+import styled from 'styled-components'
 
 type CheckboxProps = {
     checked: boolean
@@ -8,6 +9,11 @@ type CheckboxProps = {
     description?: string
     onSave: (newValue: boolean) => void
 }
+
+const Label = styled('label')`
+    display: flex;
+    align-items: center;
+`
 
 export const Checkbox = ({checked, label, description, onSave}: CheckboxProps) => {
     const [newValue, setValue] = React.useState(checked)
@@ -24,10 +30,10 @@ export const Checkbox = ({checked, label, description, onSave}: CheckboxProps) =
     if (label) {
         return (
             <>
-                <label>
+                <Label>
                     {styledCheckbox}
                     <span style={{marginLeft: 8}}>{label}</span>
-                </label>
+                </Label>
                 {description ? <p>{description}</p> : null}
             </>
         )

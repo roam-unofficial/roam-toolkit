@@ -17,8 +17,8 @@ const CheckboxContainer = styled.div`
     vertical-align: middle;
     cursor: pointer;
     padding: 8px;
-    height: 15px;
-    width: 15px;
+    height: 14px;
+    width: 14px;
     border-radius: 50%;
 
     &:hover {

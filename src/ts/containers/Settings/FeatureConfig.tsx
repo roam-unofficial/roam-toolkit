@@ -97,6 +97,8 @@ const Header = styled('div')`
     padding-left: 24px;
     border-bottom: 1px solid #989898;
     margin-bottom: 13px;
+    display: flex;
+    align-items: center;
 `
 
 const Back = styled('button')`
