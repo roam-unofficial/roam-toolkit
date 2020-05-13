@@ -4,6 +4,7 @@ import {guard, replaceFuzzyDate} from '../fuzzy_date'
 import {createDemo} from '../create-block-demo'
 import {updateShortcuts} from '../shortcuts'
 import {Roam} from '../../roam/roam'
+import { getFirstTopLevelBlock, getActiveEditElement } from '../../utils/dom'
 
 /**
  * Be cautious to reference functions on the objects via anonymous functions (e.g. see Roam.deleteBlock)
@@ -23,9 +24,32 @@ browser.runtime.onMessage.addListener(command => dispatchMap.get(command)?.())
 const enhanceNavigation = (event: KeyboardEvent) => {
     const isEditingTitle = event.target?.parentElement instanceof HTMLHeadingElement
     const isNoBlockActive = !Roam.getActiveRoamNode()
+    const isTopBlockActive = getActiveEditElement() === getFirstTopLevelBlock()
 
-    if (event.key === 'Enter' && (isEditingTitle || isNoBlockActive)) {
-        Roam.createBlockAtTop()
+    switch (event.key) {
+        case 'Enter':
+            if (isEditingTitle || isNoBlockActive) {
+                Roam.activateTopBlock()
+            }
+            break
+        case 'ArrowUp':
+            if (isNoBlockActive || isTopBlockActive) {
+                if (event.getModifierState("Shift")) {
+                    // Break to avoid interfering with block selection
+                    break
+                }
+                Roam.activateTitle()
+            }
+            break
+        case 'ArrowDown':
+            if (isEditingTitle || isNoBlockActive) {
+                if (event.getModifierState("Shift")) {
+                    // Break to avoid interfering with block selection
+                    break
+                }
+                Roam.activateTopBlock()
+            }
+            break
     }
 }
 
