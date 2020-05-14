@@ -25,6 +25,10 @@ const enhanceNavigation = (event: KeyboardEvent) => {
     const isEditingTitle = event.target?.parentElement instanceof HTMLHeadingElement
     const isNoBlockActive = !Roam.getActiveRoamNode()
     const isTopBlockActive = getActiveEditElement() === getFirstTopLevelBlock()
+    const isInSearch = event.target instanceof HTMLInputElement
+
+    // Don't mess with arrow nav in search results
+    if (isInSearch) return;
 
     switch (event.key) {
         case 'Enter':
