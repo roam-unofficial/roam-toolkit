@@ -52,6 +52,7 @@ export const Roam = {
 
     async activateTopBlock() {
         await Mouse.leftClick(getFirstTopLevelBlock())
+        this.moveCursorToStart()
     },
 
     async activateBlock(element: HTMLElement) {
