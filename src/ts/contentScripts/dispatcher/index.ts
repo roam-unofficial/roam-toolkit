@@ -20,6 +20,6 @@ const dispatchMap = new Map([
 
 browser.runtime.onMessage.addListener(command => dispatchMap.get(command)?.())
 
-document.addEventListener('keyup', ev => {
+document.addEventListener('keypress', ev => {
     if (ev.key === guard) replaceFuzzyDate()
 })
