@@ -7,6 +7,7 @@ export const config: Feature = {
     id: 'live_preview',
     name: 'Live Preview',
     defaultIsActive: false,
+    warningTooltip: 'Experimental feature; Large databases might see performance issues.',
     settings: [],
 }
 
@@ -76,13 +77,11 @@ const createPreviewIframe = () => {
 }
 const enableLivePreview = () => {
     let hoveredElement: HTMLElement | null
-    let currentElement: HTMLElement | null
     let popupTimeout: ReturnType<typeof setTimeout> | null
     let popper: Instance | null = null
     const previewIframe = createPreviewIframe()
     document.addEventListener('mouseover', (e: Event) => {
         const target = e.target as HTMLElement
-        currentElement = target
         const isPageRef = target.classList.contains('rm-page-ref')
         const isPageRefTag = target.classList.contains('rm-page-ref-tag')
         // remove '#' for page tags

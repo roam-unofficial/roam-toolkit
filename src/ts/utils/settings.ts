@@ -25,6 +25,7 @@ export type Feature = {
     id: string
     name: string
     description?: string
+    warningTooltip?: string
     settings?: Setting[]
     toggleable?: boolean
     defaultIsActive?: boolean
