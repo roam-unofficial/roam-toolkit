@@ -1,5 +1,4 @@
 import {Feature, Settings} from '../../utils/settings'
-import {RoamDate} from '../../date/common'
 import {Navigation} from '../../roam/navigation'
 import {browser} from 'webextension-polyfill-ts'
 import {createPopper, Instance} from '@popperjs/core'
@@ -7,6 +6,7 @@ import {createPopper, Instance} from '@popperjs/core'
 export const config: Feature = {
     id: 'live_preview',
     name: 'Live Preview',
+    defaultIsActive: false,
     settings: [],
 }
 
@@ -28,11 +28,8 @@ browser.runtime.onMessage.addListener(async message => {
 
 const createPreviewIframe = () => {
     const iframe = document.createElement('iframe')
-    const currentDate = new Date()
-    // Tomorrow starts at 2am for the purposes of this
-    currentDate.setHours(currentDate.getHours() - 2)
 
-    const url = Navigation.getPageUrl(RoamDate.format(currentDate))
+    const url = Navigation.getPageUrl('search')
     const isAdded = (pageUrl: string) => !!document.querySelector(`[src="${pageUrl}"]`)
     if (isAdded(url)) {
         return

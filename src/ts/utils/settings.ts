@@ -15,7 +15,7 @@ export interface Setting {
     type: string
     id: string
     label?: string
-    initValue?: string
+    initValue?: string | boolean
     placeholder?: string
     description?: string
     onSave?: (value: string) => void
@@ -27,6 +27,7 @@ export type Feature = {
     description?: string
     settings?: Setting[]
     toggleable?: boolean
+    defaultIsActive?: boolean
     toggle?: (active: boolean) => void
     reducer?: Reducer
 }
@@ -43,17 +44,19 @@ export const Settings = {
 }
 
 export const prepareSettings = (features: Feature[]): Feature[] => {
-    return features.map((feature: any) => {
+    return features.map((feature: Feature) => {
         if (feature.toggleable !== false) {
             feature.toggleable = true
+        }
+        if (feature.defaultIsActive !== false) {
+            feature.defaultIsActive = true
         }
         feature.toggle = (active: boolean) => ({
             type: `${feature.id}_toggle`,
             payload: active,
         })
-
-        const initialState: any = {
-            active: true,
+        const initialState: {[key: string]: string | boolean | undefined} = {
+            active: feature.defaultIsActive,
         }
 
         const reducers: any = {
@@ -65,7 +68,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
         }
 
         feature.settings =
-            feature?.settings.map((setting: Setting) => {
+            feature.settings?.map((setting: Setting) => {
                 initialState[setting.id] = setting.initValue
                 setting.onSave = (payload: any = '') => ({
                     type: `${feature.id}_${setting.id}`,
@@ -87,7 +90,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
 }
 
 const notifySettingsUpdated = () => Browser.sendMessageToActiveTab('settings-updated')
-const notifyToggle = data => Browser.sendMessageToActiveTab(data)
+const notifyToggle = (data: {type: 'toggle'; featureId: string; value: string}) => Browser.sendMessageToActiveTab(data)
 
 const updateSetting = (value: string, featureId: string, settingId: string) =>
     Browser.sendMessageToActiveTab({value, featureId, settingId})
