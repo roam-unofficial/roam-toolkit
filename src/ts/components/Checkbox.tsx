@@ -10,7 +10,7 @@ type CheckboxProps = {
     onSave: (newValue: boolean) => void
 }
 
-const Label = styled('label')`
+const StyledLabel = styled('label')`
     display: flex;
     align-items: center;
 `
@@ -30,10 +30,10 @@ export const Checkbox = ({checked, label, description, onSave}: CheckboxProps) =
     if (label) {
         return (
             <>
-                <Label>
+                <StyledLabel>
                     {styledCheckbox}
                     <span style={{marginLeft: 8}}>{label}</span>
-                </Label>
+                </StyledLabel>
                 {description ? <p>{description}</p> : null}
             </>
         )
