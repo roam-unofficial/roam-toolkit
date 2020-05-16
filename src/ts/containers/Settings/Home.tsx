@@ -34,7 +34,7 @@ export const Home = ({features}: HomeProps) => {
                 {feature.name}
                 <span style={{color: '#a7b6c2'}}>]]</span>
             </FeatureName>
-            <WarningIcon warningTooltip={feature.warningTooltip} />
+            <WarningIcon warning={feature.warning} />
         </FeatureNameContainer>
     )
 

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Tooltip from './Tooltip'
 
 type WarningIconProps = {
-    warningTooltip?: string
+    warning?: string
 }
 const IconWrap = styled('div')`
     display: flex;
@@ -28,11 +28,11 @@ const WarningIconSvg = (props: {fill: string}) => {
     )
 }
 export const WarningIcon = (props: WarningIconProps) => {
-    if (!props.warningTooltip) {
+    if (!props.warning) {
         return null
     }
     return (
-        <Tooltip tooltip={props.warningTooltip}>
+        <Tooltip tooltip={props.warning}>
             <IconWrap>
                 <WarningIconSvg fill="orange" />
             </IconWrap>

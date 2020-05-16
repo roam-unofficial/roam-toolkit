@@ -25,10 +25,9 @@ export type Feature = {
     id: string
     name: string
     description?: string
-    warningTooltip?: string
+    warning?: string
     settings?: Setting[]
     toggleable?: boolean
-    defaultIsActive?: boolean
     toggle?: (active: boolean) => void
     reducer?: Reducer
 }
@@ -49,15 +48,13 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
         if (feature.toggleable !== false) {
             feature.toggleable = true
         }
-        if (feature.defaultIsActive !== false) {
-            feature.defaultIsActive = true
-        }
         feature.toggle = (active: boolean) => ({
             type: `${feature.id}_toggle`,
             payload: active,
         })
-        const initialState: {[key: string]: string | boolean | undefined} = {
-            active: feature.defaultIsActive,
+
+        const initialState: any = {
+            active: true,
         }
 
         const reducers: any = {
@@ -69,7 +66,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
         }
 
         feature.settings =
-            feature.settings?.map((setting: Setting) => {
+            feature?.settings.map((setting: Setting) => {
                 initialState[setting.id] = setting.initValue
                 setting.onSave = (payload: any = '') => ({
                     type: `${feature.id}_${setting.id}`,

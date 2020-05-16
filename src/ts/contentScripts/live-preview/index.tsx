@@ -6,8 +6,7 @@ import {createPopper, Instance} from '@popperjs/core'
 export const config: Feature = {
     id: 'live_preview',
     name: 'Live Preview',
-    defaultIsActive: false,
-    warningTooltip: 'Experimental feature; Large databases might see performance issues.',
+    warning: 'Experimental feature; Large databases might see performance issues.',
     settings: [],
 }
 
