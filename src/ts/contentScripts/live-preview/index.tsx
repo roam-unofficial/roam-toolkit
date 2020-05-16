@@ -9,47 +9,241 @@ export const config: Feature = {
     warning: 'Experimental feature; Large databases might see performance issues.',
     enabledByDefault: false,
 }
-
-Settings.isActive('live_preview').then(active => {
-    if (active) {
-        enableLivePreview()
-    }
-})
+const checkSettingsAndSetupIframe = () => {
+    Settings.isActive('live_preview').then(active => {
+        setupIframe(active)
+    })
+}
+checkSettingsAndSetupIframe()
 
 browser.runtime.onMessage.addListener(async message => {
-    if (message?.featureId === 'live_preview' && message?.type === 'toggle') {
-        if (message.value) {
-            enableLivePreview()
-        } else {
-            removeLivePreview()
-        }
+    if (message === 'settings-updated') {
+        checkSettingsAndSetupIframe()
     }
 })
 
-const createPreviewIframe = () => {
-    const iframe = document.createElement('iframe')
+let iframeInstance: PreviewIframe | null = null
 
-    const url = Navigation.getPageUrl('search')
-    const isAdded = (pageUrl: string) => !!document.querySelector(`[src="${pageUrl}"]`)
-    if (isAdded(url)) {
-        return
+const setupIframe = (active: boolean) => {
+    if (!iframeInstance) {
+        iframeInstance = new PreviewIframe()
     }
-    iframe.src = url
-    iframe.style.position = 'absolute'
-    iframe.style.left = '0'
-    iframe.style.top = '0'
-    iframe.style.opacity = '0'
-    iframe.style.pointerEvents = 'none'
+    if (active) {
+        iframeInstance.activate()
+    } else {
+        iframeInstance.destroy()
+    }
+}
 
-    iframe.style.height = '0'
-    iframe.style.width = '0'
-    iframe.style.border = '0'
-    iframe.style.boxShadow = '0 0 4px 5px rgba(0, 0, 0, 0.2)'
-    iframe.style.borderRadius = '4px'
-    iframe.id = 'roam-toolkit-preview-iframe'
+class PreviewIframe {
+    iframeId = 'roam-toolkit-iframe-preview'
+    iframe: HTMLIFrameElement | null = null
+    popupTimeout: ReturnType<typeof setTimeout> | null = null
+    hoveredElement: HTMLElement | null = null
+    popper: Instance | null = null
+    popupTimeoutDuration = 300
+    activate() {
+        this.iframe = this.initPreviewIframe()
+    }
+    destroy() {
+        this.removeIframe()
+        this.clearPopupTimeout()
+    }
+    clearPopupTimeout() {
+        if (this.popupTimeout) {
+            clearTimeout(this.popupTimeout)
+            this.popupTimeout = null
+        }
+    }
 
-    const styleNode = document.createElement('style')
-    styleNode.innerHTML = `
+    removeIframe() {
+        if (this.iframe && document.body.contains(this.iframe)) {
+            document.body.removeChild(this.iframe)
+            this.iframe = null
+        }
+    }
+
+    getIFrameByUrl(url: string): HTMLIFrameElement | null {
+        return document.querySelector(`iframe[src="${url}"]`)
+    }
+    getIsIFrameVisibleByUrl(url: string): boolean {
+        return this.getIFrameByUrl(url)?.style.opacity === '1'
+    }
+
+    initPreviewIframe() {
+        let iframe = document.createElement('iframe')
+        const url = Navigation.getPageUrl('search')
+        const existingIframe = this.getIFrameByUrl(url)
+        if (existingIframe) {
+            return existingIframe
+        }
+        iframe = this.setupHiddenIframe(iframe, url)
+        iframe = this.appendStylesToIFrameOnLoad(iframe)
+        // add iframe to dom
+        document.body.appendChild(iframe)
+        this.scrollToTopHack()
+        this.attachMouseListeners(iframe)
+        return iframe
+    }
+
+    attachMouseListeners(iframe: HTMLIFrameElement) {
+        this.attachMouseOverListener(iframe)
+        this.attachMouseOutListener(iframe)
+    }
+
+    attachMouseOverListener(iframe: HTMLIFrameElement) {
+        document.addEventListener('mouseover', (e: Event) => {
+            const target = e.target as HTMLElement
+            const isPageRef = this.isTargetPageRef(target)
+            if (isPageRef) {
+                const text = this.getTargetInnerText(target)
+                this.hoveredElement = target
+                const url = Navigation.getPageUrlByName(text)
+                if ((!this.getIFrameByUrl(url) || !this.getIsIFrameVisibleByUrl(url)) && iframe) {
+                    iframe = this.prepIframeForDisplay(iframe, url)
+                }
+                iframe = this.setTimerForPopup(iframe, target)
+            }
+        })
+    }
+
+    private setTimerForPopup(iframe: HTMLIFrameElement, target: HTMLElement) {
+        if (!this.popupTimeout) {
+            this.popupTimeout = window.setTimeout(() => {
+                if (iframe) {
+                    iframe = this.showIframe(iframe)
+                    this.makePopper(target, iframe)
+                }
+            }, this.popupTimeoutDuration)
+        }
+        return iframe
+    }
+
+    private getTargetInnerText(target: HTMLElement) {
+        // remove '#' for page tags
+        const isPageRefTag = this.isTargetPageRefTag(target)
+        return isPageRefTag ? target.innerText.slice(1) : target.innerText
+    }
+
+    private isTargetPageRefTag(target: HTMLElement) {
+        return target.classList.contains('rm-page-ref-tag')
+    }
+
+    private isTargetPageRef(target: HTMLElement) {
+        return target.classList.contains('rm-page-ref')
+    }
+
+    attachMouseOutListener(iframe: HTMLIFrameElement) {
+        document.addEventListener('mouseout', (e: MouseEvent) => {
+            const target = e.target as HTMLElement
+            const relatedTarget = e.relatedTarget as HTMLElement
+            if (
+                this.isHoveredOutFromTarget(target, relatedTarget, iframe) ||
+                this.isHoveredOutFromIframe(target, relatedTarget, iframe) ||
+                !this.isHoveredElementPresentInBody()
+            ) {
+                this.hoveredElement = null
+                this.clearPopupTimeout()
+                this.resetIframeForNextHover(iframe)
+                this.destroyPopper()
+            }
+        })
+    }
+    private destroyPopper() {
+        if (this.popper) {
+            this.popper.destroy()
+            this.popper = null
+        }
+    }
+
+    private resetIframeForNextHover(iframe: HTMLIFrameElement) {
+        if (iframe) {
+            if (iframe.contentDocument) {
+                // scroll to top when removed, so the next popup is not scrolled
+                const scrollContainer = iframe.contentDocument.querySelector('.roam-center > div')
+                if (scrollContainer) {
+                    scrollContainer.scrollTop = 0
+                }
+            }
+            iframe.style.pointerEvents = 'none'
+            iframe.style.opacity = '0'
+            iframe.style.height = '0'
+            iframe.style.width = '0'
+        }
+    }
+
+    private isHoveredElementPresentInBody(): boolean {
+        return document.body.contains(this.hoveredElement)
+    }
+
+    private isHoveredOutFromIframe(target: HTMLElement, relatedTarget: HTMLElement, iframe: HTMLIFrameElement) {
+        const isIframeHovered = target === iframe
+        const isNextTargetHovered = relatedTarget === this.hoveredElement
+        // if the iframe is hovered, & next target is not the hovered element
+        return isIframeHovered && !isNextTargetHovered
+    }
+    private isHoveredOutFromTarget(target: HTMLElement, relatedTarget: HTMLElement, iframe: HTMLIFrameElement) {
+        const isTargetHovered = this.hoveredElement === target
+        const isNextTargetIframe = relatedTarget === iframe
+        // if the target is hovered, & next target is not iframe
+        return isTargetHovered && !isNextTargetIframe
+    }
+
+    private showIframe(iframe: HTMLIFrameElement) {
+        iframe.style.opacity = '1'
+        iframe.style.pointerEvents = 'all'
+        return iframe
+    }
+    private prepIframeForDisplay(iframe: HTMLIFrameElement, url: string) {
+        // this pre-loads the iframe, (which is shown after a 300ms delay)
+        iframe.src = url
+        iframe.style.height = '500px'
+        iframe.style.width = '500px'
+        iframe.style.pointerEvents = 'none'
+        return iframe
+    }
+
+    private makePopper(target: HTMLElement, iframe: HTMLIFrameElement) {
+        this.popper = createPopper(target, iframe, {
+            placement: 'right',
+            modifiers: [
+                {
+                    name: 'preventOverflow',
+                    options: {
+                        padding: {top: 48},
+                    },
+                },
+                {
+                    name: 'flip',
+                    options: {
+                        boundary: document.querySelector('#app'),
+                    },
+                },
+            ],
+        })
+    }
+
+    private setupHiddenIframe = (iframe: HTMLIFrameElement, url: string) => {
+        iframe.src = url
+        iframe.style.position = 'absolute'
+        iframe.style.left = '0'
+        iframe.style.top = '0'
+        iframe.style.opacity = '0'
+        iframe.style.pointerEvents = 'none'
+        iframe.style.height = '0'
+        iframe.style.width = '0'
+        iframe.style.border = '0'
+
+        // styles
+        iframe.style.boxShadow = '0 0 4px 5px rgba(0, 0, 0, 0.2)'
+        iframe.style.borderRadius = '4px'
+        iframe.id = this.iframeId
+        return iframe
+    }
+
+    private appendStylesToIFrameOnLoad = (iframe: HTMLIFrameElement) => {
+        const styleNode = document.createElement('style')
+        styleNode.innerHTML = `
         .roam-topbar {
             display: none !important;
         }
@@ -63,106 +257,16 @@ const createPreviewIframe = () => {
             display: none !important;
         }
     `
-    iframe.onload = (event: Event) => {
-        ;(event.target as HTMLIFrameElement).contentDocument?.body.appendChild(styleNode)
-    }
-    document.body.appendChild(iframe)
-    const htmlElement = document.querySelector('html')
-    if (htmlElement) {
-        // to reset scroll after adding iframe
-        htmlElement.scrollTop = 0
-    }
-    return iframe
-}
-const enableLivePreview = () => {
-    let hoveredElement: HTMLElement | null
-    let popupTimeout: ReturnType<typeof setTimeout> | null
-    let popper: Instance | null = null
-    const previewIframe = createPreviewIframe()
-    document.addEventListener('mouseover', (e: Event) => {
-        const target = e.target as HTMLElement
-        const isPageRef = target.classList.contains('rm-page-ref')
-        const isPageRefTag = target.classList.contains('rm-page-ref-tag')
-        // remove '#' for page tags
-        const text = isPageRefTag ? target.innerText.slice(1) : target.innerText
-        if (isPageRef) {
-            hoveredElement = target
-            const url = Navigation.getPageUrlByName(text)
-            const isAdded = (pageUrl: string) => !!document.querySelector(`[src="${pageUrl}"]`)
-            const isVisible = (pageUrl: string) =>
-                (document.querySelector(`[src="${pageUrl}"]`) as HTMLElement)?.style.opacity === '1'
-            if ((!isAdded(url) || !isVisible(url)) && previewIframe) {
-                previewIframe.src = url
-                previewIframe.style.height = '500px'
-                previewIframe.style.width = '500px'
-                previewIframe.style.pointerEvents = 'none'
-            }
-            if (!popupTimeout) {
-                popupTimeout = window.setTimeout(() => {
-                    if (previewIframe) {
-                        previewIframe.style.opacity = '1'
-                        previewIframe.style.pointerEvents = 'all'
-
-                        popper = createPopper(target, previewIframe, {
-                            placement: 'right',
-                            modifiers: [
-                                {
-                                    name: 'preventOverflow',
-                                    options: {
-                                        padding: {top: 48},
-                                    },
-                                },
-                                {
-                                    name: 'flip',
-                                    options: {
-                                        boundary: document.querySelector('#app'),
-                                    },
-                                },
-                            ],
-                        })
-                    }
-                }, 300)
-            }
+        iframe.onload = (event: Event) => {
+            ;(event.target as HTMLIFrameElement).contentDocument?.body.appendChild(styleNode)
         }
-    })
-    document.addEventListener('mouseout', (e: MouseEvent) => {
-        const target = e.target as HTMLElement
-        const relatedTarget = e.relatedTarget as HTMLElement
-        const iframe = document.getElementById('roam-toolkit-preview-iframe') as HTMLIFrameElement
-        if (
-            (hoveredElement === target && relatedTarget !== iframe) ||
-            (target === iframe && relatedTarget !== hoveredElement) ||
-            !document.body.contains(hoveredElement)
-        ) {
-            hoveredElement = null
-            clearTimeout(popupTimeout as ReturnType<typeof setTimeout>)
-            popupTimeout = null
-            if (iframe) {
-                if (iframe.contentDocument) {
-                    // scroll to top when removed
-                    const scrollContainer = iframe.contentDocument.querySelector('.roam-center > div')
-                    if (scrollContainer) {
-                        scrollContainer.scrollTop = 0
-                    }
-                }
-                iframe.style.pointerEvents = 'none'
-                iframe.style.opacity = '0'
-                iframe.style.height = '0'
-                iframe.style.width = '0'
-            }
-            if (popper) {
-                popper.destroy()
-                popper = null
-            }
-        } else {
-            console.log('out', target, event)
+        return iframe
+    }
+    private scrollToTopHack = () => {
+        const htmlElement = document.querySelector('html')
+        if (htmlElement) {
+            // HACK:to reset scroll after adding iframe
+            htmlElement.scrollTop = 0
         }
-    })
-}
-
-const removeLivePreview = () => {
-    const iframe = document.getElementById('roam-toolkit-preview-iframe')
-    if (iframe) {
-        document.body.removeChild(iframe)
     }
 }

@@ -61,7 +61,6 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
         let reducers: any = {
             [`${feature.id}_toggle`]: (state: any, action: any) => {
                 notifySettingsUpdated()
-                notifyToggle({type: 'toggle', featureId: feature.id, value: action.payload})
                 return {...state, active: action.payload}
             },
         }
@@ -89,7 +88,6 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
 }
 
 const notifySettingsUpdated = () => Browser.sendMessageToActiveTab('settings-updated')
-const notifyToggle = (data: {type: 'toggle'; featureId: string; value: string}) => Browser.sendMessageToActiveTab(data)
 
 const updateSetting = (value: string, featureId: string, settingId: string) =>
     Browser.sendMessageToActiveTab({value, featureId, settingId})
