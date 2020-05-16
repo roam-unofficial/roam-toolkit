@@ -269,8 +269,6 @@ class PreviewIframe {
         iframe.style.height = '0'
         iframe.style.width = '0'
         iframe.style.border = '0'
-
-        // styles
         iframe.style.boxShadow = '0 0 4px 5px rgba(0, 0, 0, 0.2)'
         iframe.style.borderRadius = '4px'
         iframe.id = this.iframeId
