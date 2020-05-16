@@ -60,8 +60,14 @@ class PreviewIframe {
     }
 
     private removeIframe() {
-        if (this.iframe && document.body.contains(this.iframe)) {
+        const isCurrentIframePresent = document.body.contains(this.iframe)
+        if (!this.iframe || !isCurrentIframePresent) {
+            return
+        }
+        if (isCurrentIframePresent) {
             document.body.removeChild(this.iframe)
+        }
+        if (this.iframe) {
             this.iframe = null
         }
     }
