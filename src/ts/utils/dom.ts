@@ -19,6 +19,10 @@ export function getActiveEditElement(): ValueElement {
     return element as ValueElement
 }
 
+export function getTitleElement() {
+    return document.querySelector('.rm-title-display') as HTMLElement
+}
+
 export function getTopLevelBlocks() {
     return document.querySelector('.roam-article div .flex-v-box') as HTMLElement
 }

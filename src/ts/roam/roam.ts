@@ -1,7 +1,7 @@
 import {RoamNode, Selection} from './roam-node'
-import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLevelBlock} from '../utils/dom'
 import {Keyboard} from '../utils/keyboard'
 import {Mouse} from '../utils/mouse'
+import { getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLevelBlock, getTitleElement } from '../utils/dom'
 
 export const Roam = {
     save(roamNode: RoamNode) {
@@ -44,6 +44,15 @@ export const Roam = {
             return Keyboard.pressEsc()
         }
         return Promise.reject("We're currently not inside roam block")
+    },
+
+    async activateTitle() {
+        await Mouse.leftClick(getTitleElement())
+    },
+
+    async activateTopBlock() {
+        await Mouse.leftClick(getFirstTopLevelBlock())
+        this.moveCursorToStart()
     },
 
     async activateBlock(element: HTMLElement) {
