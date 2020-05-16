@@ -107,17 +107,16 @@ class PreviewIframe {
             const text = this.getTargetInnerText(target)
             this.hoveredElement = target
             const url = Navigation.getPageUrlByName(text)
-            if (this.iframe) {
+            if (this.iframe && url) {
                 this.prepIframeForDisplay(url)
+                this.setTimerForPopup(target)
             }
-            this.setTimerForPopup(target)
         }
     }
 
     private mouseOutListener = (e: MouseEvent) => {
-        const target = e.target as HTMLElement
         const nextTarget = e.relatedTarget as HTMLElement
-        if (this.shouldRemoveOnMouseOut(target, nextTarget)) {
+        if (this.shouldRemoveOnMouseOut(nextTarget)) {
             this.hidePreview()
         }
     }
@@ -129,20 +128,14 @@ class PreviewIframe {
         this.destroyPopper()
     }
 
-    /**
-     * should remove
-     * 1. when target -> nextTarget is not hoveredElement -> iframe
-     * 2. when target -> nextTarget is not iframe -> hoveredElement
-     * 3. When the hovered element is not present in the body
-     * @param target
-     * @param nextTarget
-     */
-    private shouldRemoveOnMouseOut(target: HTMLElement, nextTarget: HTMLElement) {
-        return (
-            this.isHoveredOutFromTarget(target, nextTarget) ||
-            this.isHoveredOutFromIframe(target, nextTarget) ||
-            !this.isHoveredElementPresentInBody()
-        )
+    private shouldRemoveOnMouseOut(nextTarget: HTMLElement) {
+        const isNotHoveringOverTarget = nextTarget !== this.hoveredElement
+        const isNotHoveringOverIframe = nextTarget !== this.iframe
+        console.log(isNotHoveringOverIframe, isNotHoveringOverTarget, nextTarget, this.hoveredElement, this.iframe)
+        return (isNotHoveringOverIframe && isNotHoveringOverTarget) || !this.isHoveredElementPresentInBody()
+    }
+    private isHoveredElementPresentInBody(): boolean {
+        return document.body.contains(this.hoveredElement)
     }
 
     private setTimerForPopup(target: HTMLElement) {
@@ -195,23 +188,6 @@ class PreviewIframe {
                 scrollContainer.scrollTop = 0
             }
         }
-    }
-
-    private isHoveredElementPresentInBody(): boolean {
-        return document.body.contains(this.hoveredElement)
-    }
-
-    private isHoveredOutFromIframe(target: HTMLElement, nextTarget: HTMLElement) {
-        const isIframeHovered = target === this.iframe
-        const isNextTargetHovered = nextTarget === this.hoveredElement
-        // if the iframe is hovered, & next target is not the hovered element
-        return isIframeHovered && !isNextTargetHovered
-    }
-    private isHoveredOutFromTarget(target: HTMLElement, nextTarget: HTMLElement) {
-        const isTargetHovered = this.hoveredElement === target
-        const isNextTargetIframe = nextTarget === this.iframe
-        // if the target is hovered, & next target is not iframe
-        return isTargetHovered && !isNextTargetIframe
     }
 
     private showPreview() {

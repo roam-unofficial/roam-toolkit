@@ -18,6 +18,11 @@ export const Navigation = {
     },
     getPageUrlByName(name: string) {
         const page = RoamDb.getPageByName(name)
+        if (!page) {
+            // due to data issues,
+            // even tagged pages might not have URLs
+            return null
+        }
         return this.getPageUrl(page[':block/uid'])
     },
     getPageUrl(uid?: string) {
