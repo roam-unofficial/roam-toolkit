@@ -77,6 +77,20 @@ export const Roam = {
         this.applyToCurrent(node => node.withCursorAtTheEnd())
     },
 
+    async replace(element: HTMLElement, mod: { (orig: string): string }) {
+        const textarea = await Roam.activateBlock(element) as HTMLTextAreaElement
+        if (!textarea) {
+            console.log("🚨 NO TEXTAREA returned from ", element)
+            return
+        }
+
+        const newText = mod(textarea.value)
+
+        Roam.save(new RoamNode(newText))
+        Keyboard.pressEsc()
+        Keyboard.pressEsc()
+    },
+
     writeText(text: string) {
         this.applyToCurrent(node => new RoamNode(text, node.selection))
         return this.getActiveRoamNode()?.text === text

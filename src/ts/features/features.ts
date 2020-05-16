@@ -4,6 +4,7 @@ import {config as incDec} from './inc-dec-value'
 import {config as customCss} from './custom-css'
 import {config as srs} from '../srs/srs'
 import {config as blockManipulation} from './block-manipulation'
+import {config as batchEditing} from './batch-editing'
 import {config as estimate} from './estimates'
 import {config as navigation} from './navigation'
 import {filterAsync, mapAsync} from '../utils/async'
@@ -13,6 +14,7 @@ export const Features = {
         incDec, // prettier
         srs,
         blockManipulation,
+        batchEditing,
         estimate,
         customCss,
         navigation,
