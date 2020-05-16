@@ -263,10 +263,16 @@ class PreviewIframe {
         }
         return iframe
     }
+    /**
+     * HACK: to reset scroll after adding iframe to DOM.
+     * Since the `overflow` is not set to `hidden` for the HTML tag,
+     * on adding iframe, the body scrolls down,
+     * causing the loader to not be centerd.
+     * This fixes it by setting the scrollTop to 0
+     */
     private scrollToTopHack = () => {
         const htmlElement = document.querySelector('html')
         if (htmlElement) {
-            // HACK:to reset scroll after adding iframe
             htmlElement.scrollTop = 0
         }
     }
