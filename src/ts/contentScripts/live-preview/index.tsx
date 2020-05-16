@@ -132,14 +132,15 @@ class PreviewIframe {
     /**
      * should remove
      * 1. when target -> nextTarget is not hoveredElement -> iframe
-     * 2. when target -> nextTarget is not iframe -> iframe
+     * 2. when target -> nextTarget is not iframe -> hoveredElement
      * 3. When the hovered element is not present in the body
      * @param target
      * @param nextTarget
      */
     private shouldRemoveOnMouseOut(target: HTMLElement, nextTarget: HTMLElement) {
         return (
-            (!this.isHoveredOutFromTarget(target, nextTarget) && !this.isHoveredOutFromIframe(target, nextTarget)) ||
+            this.isHoveredOutFromTarget(target, nextTarget) ||
+            this.isHoveredOutFromIframe(target, nextTarget) ||
             !this.isHoveredElementPresentInBody()
         )
     }
@@ -209,6 +210,7 @@ class PreviewIframe {
     private isHoveredOutFromTarget(target: HTMLElement, nextTarget: HTMLElement) {
         const isTargetHovered = this.hoveredElement === target
         const isNextTargetIframe = nextTarget === this.iframe
+        console.log(target, nextTarget, isNextTargetIframe)
         // if the target is hovered, & next target is not iframe
         return isTargetHovered && !isNextTargetIframe
     }
