@@ -50,28 +50,28 @@ class PreviewIframe {
         this.removeIframe()
         this.clearPopupTimeout()
     }
-    clearPopupTimeout() {
+    private clearPopupTimeout() {
         if (this.popupTimeout) {
             clearTimeout(this.popupTimeout)
             this.popupTimeout = null
         }
     }
 
-    removeIframe() {
+    private removeIframe() {
         if (this.iframe && document.body.contains(this.iframe)) {
             document.body.removeChild(this.iframe)
             this.iframe = null
         }
     }
 
-    getIFrameByUrl(url: string): HTMLIFrameElement | null {
+    private getIFrameByUrl(url: string): HTMLIFrameElement | null {
         return document.querySelector(`iframe[src="${url}"]`)
     }
-    getIsIFrameVisibleByUrl(url: string): boolean {
+    private getIsIFrameVisibleByUrl(url: string): boolean {
         return this.getIFrameByUrl(url)?.style.opacity === '1'
     }
 
-    initPreviewIframe() {
+    private initPreviewIframe() {
         let iframe = document.createElement('iframe')
         const url = Navigation.getPageUrl('search')
         const existingIframe = this.getIFrameByUrl(url)
@@ -87,12 +87,12 @@ class PreviewIframe {
         return iframe
     }
 
-    attachMouseListeners(iframe: HTMLIFrameElement) {
+    private attachMouseListeners(iframe: HTMLIFrameElement) {
         this.attachMouseOverListener(iframe)
         this.attachMouseOutListener(iframe)
     }
 
-    attachMouseOverListener(iframe: HTMLIFrameElement) {
+    private attachMouseOverListener(iframe: HTMLIFrameElement) {
         document.addEventListener('mouseover', (e: Event) => {
             const target = e.target as HTMLElement
             const isPageRef = this.isTargetPageRef(target)
@@ -104,6 +104,23 @@ class PreviewIframe {
                     iframe = this.prepIframeForDisplay(iframe, url)
                 }
                 this.setTimerForPopup(iframe, target)
+            }
+        })
+    }
+
+    private attachMouseOutListener(iframe: HTMLIFrameElement) {
+        document.addEventListener('mouseout', (e: MouseEvent) => {
+            const target = e.target as HTMLElement
+            const relatedTarget = e.relatedTarget as HTMLElement
+            if (
+                this.isHoveredOutFromTarget(target, relatedTarget, iframe) ||
+                this.isHoveredOutFromIframe(target, relatedTarget, iframe) ||
+                !this.isHoveredElementPresentInBody()
+            ) {
+                this.hoveredElement = null
+                this.clearPopupTimeout()
+                this.resetIframeForNextHover(iframe)
+                this.destroyPopper()
             }
         })
     }
@@ -133,22 +150,6 @@ class PreviewIframe {
         return target.classList.contains('rm-page-ref')
     }
 
-    attachMouseOutListener(iframe: HTMLIFrameElement) {
-        document.addEventListener('mouseout', (e: MouseEvent) => {
-            const target = e.target as HTMLElement
-            const relatedTarget = e.relatedTarget as HTMLElement
-            if (
-                this.isHoveredOutFromTarget(target, relatedTarget, iframe) ||
-                this.isHoveredOutFromIframe(target, relatedTarget, iframe) ||
-                !this.isHoveredElementPresentInBody()
-            ) {
-                this.hoveredElement = null
-                this.clearPopupTimeout()
-                this.resetIframeForNextHover(iframe)
-                this.destroyPopper()
-            }
-        })
-    }
     private destroyPopper() {
         if (this.popper) {
             this.popper.destroy()
