@@ -210,7 +210,6 @@ class PreviewIframe {
     private isHoveredOutFromTarget(target: HTMLElement, nextTarget: HTMLElement) {
         const isTargetHovered = this.hoveredElement === target
         const isNextTargetIframe = nextTarget === this.iframe
-        console.log(target, nextTarget, isNextTargetIframe)
         // if the target is hovered, & next target is not iframe
         return isTargetHovered && !isNextTargetIframe
     }
