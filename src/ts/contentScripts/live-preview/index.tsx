@@ -131,11 +131,7 @@ class PreviewIframe {
     private shouldRemoveOnMouseOut(nextTarget: HTMLElement) {
         const isNotHoveringOverTarget = nextTarget !== this.hoveredElement
         const isNotHoveringOverIframe = nextTarget !== this.iframe
-        console.log(isNotHoveringOverIframe, isNotHoveringOverTarget, nextTarget, this.hoveredElement, this.iframe)
-        return (isNotHoveringOverIframe && isNotHoveringOverTarget) || !this.isHoveredElementPresentInBody()
-    }
-    private isHoveredElementPresentInBody(): boolean {
-        return document.body.contains(this.hoveredElement)
+        return isNotHoveringOverIframe && isNotHoveringOverTarget
     }
 
     private setTimerForPopup(target: HTMLElement) {
