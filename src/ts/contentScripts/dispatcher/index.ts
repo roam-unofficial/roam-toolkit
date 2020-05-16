@@ -21,5 +21,5 @@ const dispatchMap = new Map([
 browser.runtime.onMessage.addListener(command => dispatchMap.get(command)?.())
 
 document.addEventListener('keypress', ev => {
-    if (ev.key === guard) setTimeout(function(){ replaceFuzzyDate() },0)
+    if (ev.key === guard) setTimeout(replaceFuzzyDate, 0)
 })
