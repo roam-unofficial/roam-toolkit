@@ -32,6 +32,7 @@ const setupIframe = (active: boolean) => {
         iframeInstance.activate()
     } else {
         iframeInstance.destroy()
+        iframeInstance = null
     }
 }
 
@@ -102,7 +103,7 @@ class PreviewIframe {
                 if ((!this.getIFrameByUrl(url) || !this.getIsIFrameVisibleByUrl(url)) && iframe) {
                     iframe = this.prepIframeForDisplay(iframe, url)
                 }
-                iframe = this.setTimerForPopup(iframe, target)
+                this.setTimerForPopup(iframe, target)
             }
         })
     }
@@ -116,7 +117,6 @@ class PreviewIframe {
                 }
             }, this.popupTimeoutDuration)
         }
-        return iframe
     }
 
     private getTargetInnerText(target: HTMLElement) {
