@@ -15,7 +15,15 @@ export const StyledCheckbox = ({className = '', checked = false, ...props}) => (
 const CheckboxContainer = styled.div`
     display: inline-block;
     vertical-align: middle;
-    padding-top: 2px;
+    cursor: pointer;
+    padding: 8px;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.1);
+    }
 `
 
 const Icon = styled.svg`
@@ -46,7 +54,7 @@ const StyledCheckboxInside: any = styled.div`
     transition: all 150ms;
 
     ${HiddenCheckbox}:focus + & {
-        box-shadow: 0 0 0 3px pink;
+        box-shadow: 0 0 0 5px #c0cbff;
     }
 
     ${Icon} {
