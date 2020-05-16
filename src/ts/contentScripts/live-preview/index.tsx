@@ -44,11 +44,13 @@ class PreviewIframe {
     popper: Instance | null = null
     popupTimeoutDuration = 300
     activate() {
-        this.iframe = this.initPreviewIframe()
+        this.initPreviewIframe()
     }
     destroy() {
         this.removeIframe()
         this.clearPopupTimeout()
+        this.destroyPopper()
+        this.destoryMouseListeners()
     }
     private clearPopupTimeout() {
         if (this.popupTimeout) {
@@ -67,70 +69,87 @@ class PreviewIframe {
     private getIFrameByUrl(url: string): HTMLIFrameElement | null {
         return document.querySelector(`iframe[src="${url}"]`)
     }
-    private getIsIFrameVisibleByUrl(url: string): boolean {
-        return this.getIFrameByUrl(url)?.style.opacity === '1'
+    private getVisibleIframeByUrl(url: string): HTMLIFrameElement | null {
+        const iframe = this.getIFrameByUrl(url)
+        return iframe?.style.opacity === '1' ? iframe : null
     }
 
     private initPreviewIframe() {
-        let iframe = document.createElement('iframe')
         const url = Navigation.getPageUrl()
         const existingIframe = this.getIFrameByUrl(url)
         if (existingIframe) {
-            return existingIframe
+            this.iframe = existingIframe
+            return
         }
-        iframe = this.setupHiddenIframe(iframe, url)
-        iframe = this.appendStylesToIFrameOnLoad(iframe)
-        // add iframe to dom
-        document.body.appendChild(iframe)
+        this.iframe = this.setupHiddenIframe(url)
+        this.addIframeToBody()
         this.scrollToTopHack()
-        this.attachMouseListeners(iframe)
-        return iframe
+        this.attachMouseListeners()
     }
 
-    private attachMouseListeners(iframe: HTMLIFrameElement) {
-        this.attachMouseOverListener(iframe)
-        this.attachMouseOutListener(iframe)
+    private addIframeToBody() {
+        if (this.iframe) document.body.appendChild(this.iframe)
     }
 
-    private attachMouseOverListener(iframe: HTMLIFrameElement) {
-        document.addEventListener('mouseover', (e: Event) => {
-            const target = e.target as HTMLElement
-            const isPageRef = this.isTargetPageRef(target)
-            if (isPageRef) {
-                const text = this.getTargetInnerText(target)
-                this.hoveredElement = target
-                const url = Navigation.getPageUrlByName(text)
-                if ((!this.getIFrameByUrl(url) || !this.getIsIFrameVisibleByUrl(url)) && iframe) {
-                    iframe = this.prepIframeForDisplay(iframe, url)
-                }
-                this.setTimerForPopup(iframe, target)
+    private attachMouseListeners() {
+        document.addEventListener('mouseover', this.mouseOverListener)
+        document.addEventListener('mouseout', this.mouseOutListener)
+    }
+    private destoryMouseListeners() {
+        document.removeEventListener('mouseover', this.mouseOverListener)
+        document.removeEventListener('mouseout', this.mouseOutListener)
+    }
+
+    private mouseOverListener = (e: Event) => {
+        const target = e.target as HTMLElement
+        const isPageRef = this.isTargetPageRef(target)
+        if (isPageRef) {
+            const text = this.getTargetInnerText(target)
+            this.hoveredElement = target
+            const url = Navigation.getPageUrlByName(text)
+            if (this.iframe) {
+                this.prepIframeForDisplay(url)
             }
-        })
+            this.setTimerForPopup(target)
+        }
     }
 
-    private attachMouseOutListener(iframe: HTMLIFrameElement) {
-        document.addEventListener('mouseout', (e: MouseEvent) => {
-            const target = e.target as HTMLElement
-            const relatedTarget = e.relatedTarget as HTMLElement
-            if (
-                this.isHoveredOutFromTarget(target, relatedTarget, iframe) ||
-                this.isHoveredOutFromIframe(target, relatedTarget, iframe) ||
-                !this.isHoveredElementPresentInBody()
-            ) {
-                this.hoveredElement = null
-                this.clearPopupTimeout()
-                this.resetIframeForNextHover(iframe)
-                this.destroyPopper()
-            }
-        })
+    private mouseOutListener = (e: MouseEvent) => {
+        const target = e.target as HTMLElement
+        const nextTarget = e.relatedTarget as HTMLElement
+        if (this.shouldRemoveOnMouseOut(target, nextTarget)) {
+            this.hidePreview()
+        }
     }
 
-    private setTimerForPopup(iframe: HTMLIFrameElement, target: HTMLElement) {
+    private hidePreview() {
+        this.hoveredElement = null
+        this.clearPopupTimeout()
+        this.resetIframeForNextHover()
+        this.destroyPopper()
+    }
+
+    /**
+     * should remove
+     * 1. when target -> nextTarget is not hoveredElement -> iframe
+     * 2. when target -> nextTarget is not iframe -> iframe
+     * 3. When the hovered element is not present in the body
+     * @param target
+     * @param nextTarget
+     */
+    private shouldRemoveOnMouseOut(target: HTMLElement, nextTarget: HTMLElement) {
+        return (
+            (!this.isHoveredOutFromTarget(target, nextTarget) && !this.isHoveredOutFromIframe(target, nextTarget)) ||
+            !this.isHoveredElementPresentInBody()
+        )
+    }
+
+    private setTimerForPopup(target: HTMLElement) {
         if (!this.popupTimeout) {
             this.popupTimeout = window.setTimeout(() => {
-                if (iframe) {
-                    iframe = this.showIframe(iframe)
-                    this.makePopper(target, iframe)
+                if (this.iframe) {
+                    this.showPreview()
+                    this.makePopper(target)
                 }
             }, this.popupTimeoutDuration)
         }
@@ -157,19 +176,23 @@ class PreviewIframe {
         }
     }
 
-    private resetIframeForNextHover(iframe: HTMLIFrameElement) {
-        if (iframe) {
-            if (iframe.contentDocument) {
-                // scroll to top when removed, so the next popup is not scrolled
-                const scrollContainer = iframe.contentDocument.querySelector('.roam-center > div')
-                if (scrollContainer) {
-                    scrollContainer.scrollTop = 0
-                }
+    private resetIframeForNextHover() {
+        if (this.iframe) {
+            this.scrollToTopOnMouseOut()
+            this.iframe.style.pointerEvents = 'none'
+            this.iframe.style.opacity = '0'
+            this.iframe.style.height = '0'
+            this.iframe.style.width = '0'
+        }
+    }
+
+    private scrollToTopOnMouseOut() {
+        if (this.iframe?.contentDocument) {
+            // scroll to top when removed, so the next popup is not scrolled
+            const scrollContainer = this.iframe.contentDocument.querySelector('.roam-center > div')
+            if (scrollContainer) {
+                scrollContainer.scrollTop = 0
             }
-            iframe.style.pointerEvents = 'none'
-            iframe.style.opacity = '0'
-            iframe.style.height = '0'
-            iframe.style.width = '0'
         }
     }
 
@@ -177,35 +200,46 @@ class PreviewIframe {
         return document.body.contains(this.hoveredElement)
     }
 
-    private isHoveredOutFromIframe(target: HTMLElement, relatedTarget: HTMLElement, iframe: HTMLIFrameElement) {
-        const isIframeHovered = target === iframe
-        const isNextTargetHovered = relatedTarget === this.hoveredElement
+    private isHoveredOutFromIframe(target: HTMLElement, nextTarget: HTMLElement) {
+        const isIframeHovered = target === this.iframe
+        const isNextTargetHovered = nextTarget === this.hoveredElement
         // if the iframe is hovered, & next target is not the hovered element
         return isIframeHovered && !isNextTargetHovered
     }
-    private isHoveredOutFromTarget(target: HTMLElement, relatedTarget: HTMLElement, iframe: HTMLIFrameElement) {
+    private isHoveredOutFromTarget(target: HTMLElement, nextTarget: HTMLElement) {
         const isTargetHovered = this.hoveredElement === target
-        const isNextTargetIframe = relatedTarget === iframe
+        const isNextTargetIframe = nextTarget === this.iframe
         // if the target is hovered, & next target is not iframe
         return isTargetHovered && !isNextTargetIframe
     }
 
-    private showIframe(iframe: HTMLIFrameElement) {
-        iframe.style.opacity = '1'
-        iframe.style.pointerEvents = 'all'
-        return iframe
+    private showPreview() {
+        if (this.iframe) {
+            this.iframe.style.opacity = '1'
+            this.iframe.style.pointerEvents = 'all'
+        }
     }
-    private prepIframeForDisplay(iframe: HTMLIFrameElement, url: string) {
-        // this pre-loads the iframe, (which is shown after a 300ms delay)
-        iframe.src = url
-        iframe.style.height = '500px'
-        iframe.style.width = '500px'
-        iframe.style.pointerEvents = 'none'
-        return iframe
+    private prepIframeForDisplay(url: string) {
+        if (!this.iframe) {
+            return
+        }
+        const visibleIframe = this.getVisibleIframeByUrl(url)
+        if (visibleIframe) {
+            // if visible, just return the iframe
+            return
+        }
+        // this pre-loads the iframe, (which is shown after a delay)
+        this.iframe.src = url
+        this.iframe.style.height = '500px'
+        this.iframe.style.width = '500px'
+        this.iframe.style.pointerEvents = 'none'
     }
 
-    private makePopper(target: HTMLElement, iframe: HTMLIFrameElement) {
-        this.popper = createPopper(target, iframe, {
+    private makePopper(target: HTMLElement) {
+        if (!this.iframe) {
+            return
+        }
+        this.popper = createPopper(target, this.iframe, {
             placement: 'right',
             modifiers: [
                 {
@@ -224,7 +258,8 @@ class PreviewIframe {
         })
     }
 
-    private setupHiddenIframe = (iframe: HTMLIFrameElement, url: string) => {
+    private setupHiddenIframe = (url: string) => {
+        let iframe = document.createElement('iframe')
         iframe.src = url
         iframe.style.position = 'absolute'
         iframe.style.left = '0'
@@ -239,6 +274,8 @@ class PreviewIframe {
         iframe.style.boxShadow = '0 0 4px 5px rgba(0, 0, 0, 0.2)'
         iframe.style.borderRadius = '4px'
         iframe.id = this.iframeId
+        iframe = this.appendStylesToIFrameOnLoad(iframe)
+
         return iframe
     }
 
