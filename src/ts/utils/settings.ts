@@ -43,6 +43,12 @@ export const Settings = {
         (await getStateFromStorage())[featureId][settingId] || defaultValue,
     isActive: async (featureId: string) => (await getStateFromStorage())[featureId]?.active,
 }
+const initDefaultState = (feature: Feature): {active: boolean} => {
+    const active = feature.enabledByDefault === false ? false : true
+    return {
+        active,
+    }
+}
 
 export const prepareSettings = (features: Feature[]): Feature[] => {
     return features.map((feature: Feature) => {
@@ -54,9 +60,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
             payload: active,
         })
 
-        const initialState: any = {
-            active: feature.enabledByDefault === false ? false : true,
-        }
+        const initialState: any = initDefaultState(feature)
 
         let reducers: any = {
             [`${feature.id}_toggle`]: (state: any, action: any) => {
