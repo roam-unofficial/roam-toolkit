@@ -5,7 +5,6 @@ import styled from 'styled-components'
 type Props = {
     children: any
     tooltip?: string
-    hideArrow?: boolean
 }
 const StyledTooltipContent = styled('div')`
     max-width: 140px;

@@ -7,7 +7,7 @@ export const config: Feature = {
     id: 'live_preview',
     name: 'Live Preview',
     warning: 'Experimental feature; Large databases might see performance issues.',
-    settings: [],
+    enabledByDefault: false,
 }
 
 Settings.isActive('live_preview').then(active => {

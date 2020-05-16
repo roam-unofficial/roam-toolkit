@@ -28,6 +28,7 @@ export type Feature = {
     warning?: string
     settings?: Setting[]
     toggleable?: boolean
+    enabledByDefault?: boolean
     toggle?: (active: boolean) => void
     reducer?: Reducer
 }
@@ -54,10 +55,10 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
         })
 
         const initialState: any = {
-            active: true,
+            active: feature.enabledByDefault === false ? false : true,
         }
 
-        const reducers: any = {
+        let reducers: any = {
             [`${feature.id}_toggle`]: (state: any, action: any) => {
                 notifySettingsUpdated()
                 notifyToggle({type: 'toggle', featureId: feature.id, value: action.payload})
@@ -66,7 +67,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
         }
 
         feature.settings =
-            feature?.settings.map((setting: Setting) => {
+            feature.settings?.map((setting: Setting) => {
                 initialState[setting.id] = setting.initValue
                 setting.onSave = (payload: any = '') => ({
                     type: `${feature.id}_${setting.id}`,
