@@ -31,7 +31,7 @@ export const Home = ({features}: HomeProps) => {
         >
             <FeatureName>
                 <span style={{color: '#a7b6c2'}}>[[</span>
-                {feature.name}
+                <span className="title">{feature.name}</span>
                 <span style={{color: '#a7b6c2'}}>]]</span>
             </FeatureName>
             <WarningIcon warning={feature.warning} />
@@ -46,8 +46,10 @@ export const Home = ({features}: HomeProps) => {
             <FeaturesList>
                 {features.map((feature: Feature) => (
                     <FeatureListElement key={feature.id}>
-                        {feature.toggleable ? getCheckbox(feature) : null}
-                        {getFeatureContainer(feature)}
+                        <ListElementInner>
+                            {feature.toggleable ? getCheckbox(feature) : null}
+                            {getFeatureContainer(feature)}
+                        </ListElementInner>
                     </FeatureListElement>
                 ))}
             </FeaturesList>
@@ -55,18 +57,28 @@ export const Home = ({features}: HomeProps) => {
     )
 }
 
-const HomeContainer = styled('div')`
-    padding-left: 30px;
-`
+const HomeContainer = styled('div')``
 
 const Header = styled('div')`
-    padding: 20px 0;
+    padding: 20px 0 20px 24px;
     border-bottom: 1px solid #989898;
 `
 
 const FeaturesList = styled('ul')`
     padding: 0;
     margin: 0;
+`
+
+const ListElementInner = styled('div')`
+    padding-left: 20px;
+    height: 70px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
 `
 
 const FeatureListElement = styled('li')`
@@ -79,26 +91,38 @@ const FeatureListElement = styled('li')`
         content: '→';
         position: absolute;
         right: 30px;
-        top: calc(50% - 10px);
+        font-size: 20px;
+        top: 50%;
         color: #828282;
+        transform: translateY(-50%);
     }
-`
-
-const FeatureNameContainer = styled('span')`
-    display: flex;
-    align-items: center;
-    padding: 25px 50px 25px 0px;
-    width: 100%;
-    z-index: 1;
-
     &:hover {
-        cursor: pointer;
+        &::after {
+            color: #111111;
+        }
     }
 `
-
 const FeatureName = styled('span')`
     color: #137cbd;
     padding: 0 0 0 2px;
     font-size: 17px;
     margin-right: 8px;
+`
+
+const FeatureNameContainer = styled('div')`
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    width: 100%;
+    padding: 0 50px 0 0;
+    width: 100%;
+    z-index: 1;
+    margin-left: 8px;
+
+    &:hover {
+        cursor: pointer;
+        ${FeatureName} {
+            text-decoration: underline;
+        }
+    }
 `
