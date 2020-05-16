@@ -9,22 +9,22 @@ export const config: Feature = {
     warning: 'Experimental feature; Large databases might see performance issues.',
     enabledByDefault: false,
 }
-const checkSettingsAndSetupIframe = () => {
+const checkSettingsAndSetupIframeToggle = () => {
     Settings.isActive('live_preview').then(active => {
-        setupIframe(active)
+        toggleIframe(active)
     })
 }
-checkSettingsAndSetupIframe()
+checkSettingsAndSetupIframeToggle()
 
 browser.runtime.onMessage.addListener(async message => {
     if (message === 'settings-updated') {
-        checkSettingsAndSetupIframe()
+        checkSettingsAndSetupIframeToggle()
     }
 })
 
 let iframeInstance: PreviewIframe | null = null
 
-const setupIframe = (active: boolean) => {
+const toggleIframe = (active: boolean) => {
     if (!iframeInstance) {
         iframeInstance = new PreviewIframe()
     }
