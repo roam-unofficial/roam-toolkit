@@ -1,19 +1,13 @@
 import {browser} from 'webextension-polyfill-ts'
-import {triggerNextBucket} from '../srs'
 import {guard, replaceFuzzyDate} from '../fuzzy_date'
 import {createDemo} from '../create-block-demo'
 import {updateShortcuts} from '../shortcuts'
-import {Roam} from '../../roam/roam'
 
 /**
  * Be cautious to reference functions on the objects via anonymous functions (e.g. see Roam.deleteBlock)
  * Otherwise they won't be called properly on the object
  */
 const dispatchMap = new Map([
-    ['srs-next-bucket', triggerNextBucket],
-    ['delete-current-block', () => Roam.deleteBlock()],
-    ['duplicate-current-block', () => Roam.duplicateBlock()],
-    ['replace-fuzzy-date', replaceFuzzyDate],
     ['create-block-demo', createDemo],
     ['settings-updated', updateShortcuts],
 ])
