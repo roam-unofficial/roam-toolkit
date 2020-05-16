@@ -3,20 +3,28 @@ import {addDays, isValid, RoamDate} from '../date/common'
 import {RoamDb} from './roam-db'
 
 export const Navigation = {
-    baseUrl: () => {
+    baseUrl() {
         // https://roamresearch.com/#/app/roam-toolkit/page/03-24-2020
         const url = Browser.getActiveTabUrl()
         const parts = url.hash.split('/')
 
-        url.hash = parts.slice(0, 3).concat(['page']).join('/')
+        url.hash = parts.slice(0, 3).join('/')
+        return url
+    },
+    basePageUrl() {
+        const url = this.baseUrl()
+        url.hash = url.hash.concat('/page')
         return url
     },
     getPageUrlByName(name: string) {
         const page = RoamDb.getPageByName(name)
         return this.getPageUrl(page[':block/uid'])
     },
-    getPageUrl(uid: string) {
-        return this.baseUrl().toString() + '/' + uid
+    getPageUrl(uid?: string) {
+        if (!uid) {
+            return this.baseUrl().toString()
+        }
+        return this.basePageUrl().toString() + '/' + uid
     },
     currentPageUid() {
         const parts = Browser.getActiveTabUrl().hash.split('/')

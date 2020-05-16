@@ -73,7 +73,7 @@ class PreviewIframe {
 
     private initPreviewIframe() {
         let iframe = document.createElement('iframe')
-        const url = Navigation.getPageUrl('search')
+        const url = Navigation.getPageUrl()
         const existingIframe = this.getIFrameByUrl(url)
         if (existingIframe) {
             return existingIframe
