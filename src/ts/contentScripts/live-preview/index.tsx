@@ -25,12 +25,10 @@ browser.runtime.onMessage.addListener(async message => {
 let iframeInstance: PreviewIframe | null = null
 
 const toggleIframe = (active: boolean) => {
-    if (!iframeInstance) {
+    if (active && !iframeInstance) {
         iframeInstance = new PreviewIframe()
-    }
-    if (active) {
         iframeInstance.activate()
-    } else {
+    } else if (iframeInstance) {
         iframeInstance.destroy()
         iframeInstance = null
     }
@@ -38,11 +36,14 @@ const toggleIframe = (active: boolean) => {
 
 class PreviewIframe {
     iframeId = 'roam-toolkit-iframe-preview'
-    iframe: HTMLIFrameElement | null = null
+    iframe: HTMLIFrameElement
     popupTimeout: ReturnType<typeof setTimeout> | null = null
     hoveredElement: HTMLElement | null = null
     popper: Instance | null = null
     popupTimeoutDuration = 300
+    constructor() {
+        this.iframe = document.createElement('iframe')
+    }
     activate() {
         this.initPreviewIframe()
     }
@@ -61,40 +62,34 @@ class PreviewIframe {
 
     private removeIframe() {
         const isCurrentIframePresent = document.body.contains(this.iframe)
-        if (!this.iframe || !isCurrentIframePresent) {
+        if (!isCurrentIframePresent) {
             return
         }
-        if (isCurrentIframePresent) {
-            document.body.removeChild(this.iframe)
-        }
-        if (this.iframe) {
-            this.iframe = null
-        }
-    }
 
-    private getIFrameByUrl(url: string): HTMLIFrameElement | null {
-        return document.querySelector(`iframe[src="${url}"]`)
+        document.body.removeChild(this.iframe)
     }
-    private getVisibleIframeByUrl(url: string): HTMLIFrameElement | null {
-        const iframe = this.getIFrameByUrl(url)
-        return iframe?.style.opacity === '1' ? iframe : null
+    /**
+     * HACK: needed because the instance is created thrice onload/toggle.
+     * Remove this check to see the issue
+     */
+    private getExisitingIframe(): HTMLIFrameElement | null {
+        return document.getElementById(this.iframeId) ? this.iframe : null
     }
 
     private initPreviewIframe() {
         const url = Navigation.getPageUrl()
-        const existingIframe = this.getIFrameByUrl(url)
+        const existingIframe = this.getExisitingIframe()
         if (existingIframe) {
-            this.iframe = existingIframe
             return
         }
-        this.iframe = this.setupHiddenIframe(url)
+        this.setupHiddenIframe(url)
         this.addIframeToBody()
         this.scrollToTopHack()
         this.attachMouseListeners()
     }
 
     private addIframeToBody() {
-        if (this.iframe) document.body.appendChild(this.iframe)
+        document.body.appendChild(this.iframe)
     }
 
     private attachMouseListeners() {
@@ -113,7 +108,7 @@ class PreviewIframe {
             const text = this.getTargetInnerText(target)
             this.hoveredElement = target
             const url = Navigation.getPageUrlByName(text)
-            if (this.iframe && url) {
+            if (url) {
                 this.prepIframeForDisplay(url)
                 this.setTimerForPopup(target)
             }
@@ -143,10 +138,8 @@ class PreviewIframe {
     private setTimerForPopup(target: HTMLElement) {
         if (!this.popupTimeout) {
             this.popupTimeout = window.setTimeout(() => {
-                if (this.iframe) {
-                    this.showPreview()
-                    this.makePopper(target)
-                }
+                this.showPreview()
+                this.makePopper(target)
             }, this.popupTimeoutDuration)
         }
     }
@@ -173,17 +166,15 @@ class PreviewIframe {
     }
 
     private resetIframeForNextHover() {
-        if (this.iframe) {
-            this.scrollToTopOnMouseOut()
-            this.iframe.style.pointerEvents = 'none'
-            this.iframe.style.opacity = '0'
-            this.iframe.style.height = '0'
-            this.iframe.style.width = '0'
-        }
+        this.scrollToTopOnMouseOut()
+        this.iframe.style.pointerEvents = 'none'
+        this.iframe.style.opacity = '0'
+        this.iframe.style.height = '0'
+        this.iframe.style.width = '0'
     }
 
     private scrollToTopOnMouseOut() {
-        if (this.iframe?.contentDocument) {
+        if (this.iframe.contentDocument) {
             // scroll to top when removed, so the next popup is not scrolled
             const scrollContainer = this.iframe.contentDocument.querySelector('.roam-center > div')
             if (scrollContainer) {
@@ -193,20 +184,10 @@ class PreviewIframe {
     }
 
     private showPreview() {
-        if (this.iframe) {
-            this.iframe.style.opacity = '1'
-            this.iframe.style.pointerEvents = 'all'
-        }
+        this.iframe.style.opacity = '1'
+        this.iframe.style.pointerEvents = 'all'
     }
     private prepIframeForDisplay(url: string) {
-        if (!this.iframe) {
-            return
-        }
-        const visibleIframe = this.getVisibleIframeByUrl(url)
-        if (visibleIframe) {
-            // if visible, just return the iframe
-            return
-        }
         // this pre-loads the iframe, (which is shown after a delay)
         this.iframe.src = url
         this.iframe.style.height = '500px'
@@ -215,9 +196,6 @@ class PreviewIframe {
     }
 
     private makePopper(target: HTMLElement) {
-        if (!this.iframe) {
-            return
-        }
         this.popper = createPopper(target, this.iframe, {
             placement: 'right',
             modifiers: [
@@ -238,25 +216,22 @@ class PreviewIframe {
     }
 
     private setupHiddenIframe = (url: string) => {
-        let iframe = document.createElement('iframe')
-        iframe.src = url
-        iframe.style.position = 'absolute'
-        iframe.style.left = '0'
-        iframe.style.top = '0'
-        iframe.style.opacity = '0'
-        iframe.style.pointerEvents = 'none'
-        iframe.style.height = '0'
-        iframe.style.width = '0'
-        iframe.style.border = '0'
-        iframe.style.boxShadow = '0 0 4px 5px rgba(0, 0, 0, 0.2)'
-        iframe.style.borderRadius = '4px'
-        iframe.id = this.iframeId
-        iframe = this.appendStylesToIFrameOnLoad(iframe)
-
-        return iframe
+        this.iframe.src = url
+        this.iframe.style.position = 'absolute'
+        this.iframe.style.left = '0'
+        this.iframe.style.top = '0'
+        this.iframe.style.opacity = '0'
+        this.iframe.style.pointerEvents = 'none'
+        this.iframe.style.height = '0'
+        this.iframe.style.width = '0'
+        this.iframe.style.border = '0'
+        this.iframe.style.boxShadow = '0 0 4px 5px rgba(0, 0, 0, 0.2)'
+        this.iframe.style.borderRadius = '4px'
+        this.iframe.id = this.iframeId
+        this.appendStylesToIFrameOnLoad()
     }
 
-    private appendStylesToIFrameOnLoad = (iframe: HTMLIFrameElement) => {
+    private appendStylesToIFrameOnLoad = () => {
         const styleNode = document.createElement('style')
         styleNode.innerHTML = `
         .roam-topbar {
@@ -272,10 +247,9 @@ class PreviewIframe {
             display: none !important;
         }
     `
-        iframe.onload = (event: Event) => {
+        this.iframe.onload = (event: Event) => {
             ;(event.target as HTMLIFrameElement).contentDocument?.body.appendChild(styleNode)
         }
-        return iframe
     }
     /**
      * HACK: to reset scroll after adding iframe to DOM.
