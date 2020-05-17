@@ -2,6 +2,7 @@ import {Selectors} from '../../roam/roam-selectors'
 import {getFocusedPanel, jumpBlocksInFocusedPanel, selectedBlock, state} from './blockNavigation'
 import {injectStyle} from '../../scripts/dom'
 import {Mouse} from '../../utils/mouse'
+import {updateBlockNavigationHintView} from './blockNavigationHintView'
 
 const isElementVisible = (element: Element) => {
     const {x, y} = element.getBoundingClientRect()
@@ -38,6 +39,8 @@ export const updateBlockNavigationView = () => {
     // Visually fake selection using css instead. Then, lazily focus them during manipulation.
     clearHighlights()
     block.classList.add(HIGHLIGHT_CSS_CLASS)
+
+    updateBlockNavigationHintView(block);
 
     viewMoreDailyLogIfPossible()
 

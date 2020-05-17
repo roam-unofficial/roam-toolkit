@@ -1,55 +1,17 @@
-import {Feature, Settings, Shortcut} from '../../utils/settings'
+import {Feature, Settings} from '../../utils/settings'
 import {
     blurEverything,
     jumpUntilSelectedBlockIsVisible,
     scrollFocusedPanel,
-    scrollUntilSelectedBlockIsVisible,
-    updateBlockNavigationView,
+    scrollUntilSelectedBlockIsVisible, updateBlockNavigationView
 } from './blockNavigationView'
 import {jumpBlocksInFocusedPanel, selectedBlock, state} from './blockNavigation'
 import {Selectors} from '../../roam/roam-selectors'
-import {isEditing} from '../../utils/dom'
 import {Mouse} from '../../utils/mouse'
 import {initializeBlockNavigationMode} from './blockNavigationInit'
-
-const getMode = () => (isEditing() ? 'INSERT' : 'NORMAL')
-
-type BlockNavigationModeSetting = {
-    id: string
-    label: string
-    key: string
-    onPress: () => void
-}
-
-const map = ({id, label, key, onPress}: BlockNavigationModeSetting): Shortcut => ({
-    type: 'shortcut',
-    id: `blockNavigationMode_${id}`,
-    label,
-    initValue: key,
-    onPress,
-})
-
-const imap = (settings: BlockNavigationModeSetting): Shortcut =>
-    map({
-        ...settings,
-        onPress: () => {
-            if (getMode() == 'INSERT') {
-                settings.onPress()
-                updateBlockNavigationView()
-            }
-        },
-    })
-
-const nmap = (settings: BlockNavigationModeSetting): Shortcut =>
-    map({
-        ...settings,
-        onPress: () => {
-            if (getMode() == 'NORMAL') {
-                settings.onPress()
-                updateBlockNavigationView()
-            }
-        },
-    })
+import {imap, map, nmap} from './vim'
+import {getHint, HINTS} from './blockNavigationHintView'
+import {delay} from '../../utils/async'
 
 export const config: Feature = {
     id: 'block_navigation_mode',
@@ -94,6 +56,24 @@ export const config: Feature = {
             label: 'Select Many Blocks Down',
             onPress: () => {
                 jumpBlocksInFocusedPanel(8)
+                scrollUntilSelectedBlockIsVisible()
+            },
+        }),
+        nmap({
+            id: 'pageTop',
+            key: 'g', // g g messes up the other shortcuts for some reason
+            label: 'Select First Block',
+            onPress: () => {
+                jumpBlocksInFocusedPanel(-100)
+                scrollUntilSelectedBlockIsVisible()
+            },
+        }),
+        nmap({
+            id: 'pageBottom',
+            key: 'Shift+g',
+            label: 'Select Last Block',
+            onPress: () => {
+                jumpBlocksInFocusedPanel(100)
                 scrollUntilSelectedBlockIsVisible()
             },
         }),
@@ -160,7 +140,7 @@ export const config: Feature = {
             key: 'Control+w',
             label: 'Close Page in Side Bar',
             onPress: () => {
-                console.log('CLOSE');
+                console.log('CLOSE')
                 const block = selectedBlock()
                 if (block) {
                     const pageContainer = block.closest(`${Selectors.sidebarContent} > div`)
@@ -171,7 +151,32 @@ export const config: Feature = {
                 }
             },
         }),
-    ],
+    ].concat(
+        HINTS.flatMap(n => [
+            nmap({
+                id: `hint${n}`,
+                key: n.toString(),
+                label: `Click Hint ${n}`,
+                onPress: () => {
+                    const hint = getHint(n)
+                    if (hint) {
+                        Mouse.leftClick(hint)
+                    }
+                },
+            }),
+            nmap({
+                id: `hint${n}Shift`,
+                key: `Shift+${n.toString()}`,
+                label: `Shift Click Hint ${n}`,
+                onPress: () => {
+                    const hint = getHint(n)
+                    if (hint) {
+                        Mouse.leftClick(hint, true)
+                    }
+                },
+            }),
+        ])
+    ),
 }
 
 Settings.isActive('block_navigation_mode').then(active => {

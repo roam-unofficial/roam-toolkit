@@ -7,7 +7,7 @@ export const onSelectorChange = (
     handleChange: () => void,
     observeChildren: boolean = false,
 ): DisconnectFn => {
-    const waitForLoad = new MutationObserver(mutations => {
+    const waitForLoad = new MutationObserver(() => {
         handleChange()
     })
 
