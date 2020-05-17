@@ -1,9 +1,9 @@
 import * as chrono from 'chrono-node'
-import {afterClosingBrackets} from '../../utils/brackets'
-import {RoamDate} from '../../date/common'
-import {RoamNode, Selection} from '../../roam/roam-node'
-import {Roam} from '../../roam/roam'
-import {NodeWithDate} from '../../date/withDate'
+import {afterClosingBrackets} from '../utils/brackets'
+import {RoamDate} from '../date/common'
+import {RoamNode, Selection} from '../roam/roam-node'
+import {Roam} from '../roam/roam'
+import {NodeWithDate} from '../date/withDate'
 
 export const guard = ';'
 const dateContainerExpr = /;(.{3,}?);/gm
@@ -33,3 +33,14 @@ export function replaceFuzzyDate() {
         return replaceMode ? newNode.withDate(date) : newNode
     })
 }
+
+/**
+ * We use `keypress`, since `keyup` is sometimes firing for individual keys instead of the pressed key
+ * when the guard character is requiring a multi-key stroke.
+ *
+ * `setTimeout` is used to put the callback to the end of the event queue,
+ * since the input is not yet changed when keypress is firing.
+ */
+document.addEventListener('keypress', ev => {
+    if (ev.key === guard) setTimeout(replaceFuzzyDate, 0)
+})

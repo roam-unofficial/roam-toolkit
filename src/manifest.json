@@ -34,17 +34,7 @@
     },
     "content_scripts": [
         {
-            "js": [
-                "shortcuts.js",
-                "navigation.js",
-                "srs.js",
-                "inc-dec-value.js",
-                "dispatcher.js",
-                "block-manipulation.js",
-                "custom-css.js",
-                "fuzzy_date.js",
-                "create-block-demo.js"
-            ],
+            "js": ["entry.js"],
             "matches": ["*://roamresearch.com/*"]
         }
     ]
