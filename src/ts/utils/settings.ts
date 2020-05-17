@@ -60,7 +60,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
             payload: active,
         })
 
-        const initialState: any = initDefaultState(feature)
+        const initialState = initDefaultState(feature)
 
         let reducers: any = {
             [`${feature.id}_toggle`]: (state: any, action: any) => {
