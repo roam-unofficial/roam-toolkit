@@ -25,10 +25,10 @@ export const Navigation = {
         }
         return this.getPageUrl(page[':block/uid'])
     },
-    getPageUrl(uid?: string) {
-        if (!uid) {
-            return this.baseUrl().toString()
-        }
+    getDailyNotesUrl() {
+        return this.baseUrl().toString()
+    },
+    getPageUrl(uid: string) {
         return this.basePageUrl().toString() + '/' + uid
     },
     currentPageUid() {

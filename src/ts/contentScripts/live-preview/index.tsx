@@ -77,7 +77,7 @@ class PreviewIframe {
     }
 
     private initPreviewIframe() {
-        const url = Navigation.getPageUrl()
+        const url = Navigation.getDailyNotesUrl()
         const existingIframe = this.getExisitingIframe()
         if (existingIframe) {
             return
