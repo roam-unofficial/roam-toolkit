@@ -10,7 +10,7 @@ import {filterAsync, mapAsync} from '../utils/async'
 
 export const Features = {
     all: prepareSettings([
-        incDec, //prettier
+        incDec, // prettier
         srs,
         blockManipulation,
         estimate,

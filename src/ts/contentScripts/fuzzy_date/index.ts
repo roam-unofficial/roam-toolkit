@@ -33,3 +33,14 @@ export function replaceFuzzyDate() {
         return replaceMode ? newNode.withDate(date) : newNode
     })
 }
+
+/**
+ * We use `keypress`, since `keyup` is sometimes firing for individual keys instead of the pressed key
+ * when the guard character is requiring a multi-key stroke.
+ *
+ * `setTimeout` is used to put the callback to the end of the event queue,
+ * since the input is not yet changed when keypress is firing.
+ */
+document.addEventListener('keypress', ev => {
+    if (ev.key === guard) setTimeout(replaceFuzzyDate, 0)
+})
