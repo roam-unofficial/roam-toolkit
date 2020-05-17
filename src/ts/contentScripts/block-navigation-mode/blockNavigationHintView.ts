@@ -58,7 +58,7 @@ export const updateBlockNavigationHintView = (block: HTMLElement) => {
     })
 }
 
-const clearHints = () => {
+export const clearHints = () => {
     const priorHints = document.querySelectorAll(`.${HINT_CSS_CLASS}, a`)
     if (priorHints.length > 0) {
         priorHints.forEach(selection =>

@@ -11,6 +11,7 @@ export const Selectors = {
 
     leftPanel: '.roam-sidebar-container',
 
+    highlight: '.block-highlight-blue',
     button: '.bp3-button',
     closeButton: '.bp3-icon-cross',
     logButton: '.log-button',

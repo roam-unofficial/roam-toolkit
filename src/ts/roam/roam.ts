@@ -39,11 +39,16 @@ export const Roam = {
         this.save(action(node))
     },
 
-    async selectBlock() {
+    async selectBlock(element?: HTMLElement) {
         if (this.getRoamBlockInput()) {
             return Keyboard.pressEsc()
         }
-        return Promise.reject("We're currently not inside roam block")
+        if (element) {
+            await this.activateBlock(element)
+            this.moveCursorToStart()
+            return Keyboard.simulateKey(Keyboard.UP_ARROW, 0, {shiftKey: true})
+        }
+        return Promise.reject("No block was specified, and we're not inside a block")
     },
 
     async activateBlock(element: HTMLElement) {
@@ -91,9 +96,13 @@ export const Roam = {
         }
     },
 
-    async createSiblingBelow() {
+    async createBlockBelow() {
         this.moveCursorToEnd()
         await Keyboard.pressEnter()
+    },
+
+    async createSiblingBelow() {
+        await this.createBlockBelow()
         await Keyboard.pressShiftTab(Keyboard.BASE_DELAY)
     },
 

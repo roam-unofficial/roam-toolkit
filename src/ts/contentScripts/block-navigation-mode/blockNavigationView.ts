@@ -2,7 +2,7 @@ import {Selectors} from '../../roam/roam-selectors'
 import {getFocusedPanel, jumpBlocksInFocusedPanel, selectedBlock, state} from './blockNavigation'
 import {injectStyle} from '../../scripts/dom'
 import {Mouse} from '../../utils/mouse'
-import {updateBlockNavigationHintView} from './blockNavigationHintView'
+import {clearHints, updateBlockNavigationHintView} from './blockNavigationHintView'
 
 const isElementVisible = (element: Element) => {
     const {x, y} = element.getBoundingClientRect()
@@ -10,7 +10,7 @@ const isElementVisible = (element: Element) => {
 }
 
 const BLUR_PIXEL = 'roam-toolkit-block-mode--unfocus-pixel'
-const HIGHLIGHT_CSS_CLASS = 'block-highlight-blue'
+const HIGHLIGHT_CSS_CLASS = 'roam-toolkit-block-mode--highlight'
 injectStyle(
     `
     #${BLUR_PIXEL} {
@@ -21,9 +21,17 @@ injectStyle(
         height: 1px;
         background-color: rgba(0,0,0,0); 
     }
+    .${HIGHLIGHT_CSS_CLASS} {
+        background-color: wheat; 
+    }
     `,
     'roam-toolkit-block-mode'
 )
+
+export const clearBlockNavigationView = () => {
+    clearHighlights();
+    clearHints();
+}
 
 export const updateBlockNavigationView = () => {
     const {mainBlockId, sideBlockId, panel} = state
@@ -57,8 +65,8 @@ const clearHighlights = () => {
 const SCROLL_PADDING_TOP = 100
 const SCROLL_PADDING_BOTTOM = 100
 
-export const scrollUntilSelectedBlockIsVisible = () => {
-    scrollFocusedPanel(blockScrollNeededToBeVisible())
+export const scrollUntilBlockIsVisible = (block: HTMLElement | null = null) => {
+    scrollFocusedPanel(blockScrollNeededToBeVisible(block))
 }
 
 export const jumpUntilSelectedBlockIsVisible = () => {
@@ -66,8 +74,8 @@ export const jumpUntilSelectedBlockIsVisible = () => {
     jumpUntilBlockIsVisible(-Math.sign(blockScrollNeededToBeVisible()))
 }
 
-const blockScrollNeededToBeVisible = (): number => {
-    const block = selectedBlock()
+const blockScrollNeededToBeVisible = (block: HTMLElement | null = null): number => {
+    block = block || selectedBlock()
     if (!block) {
         return 0
     }

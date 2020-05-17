@@ -1,31 +1,49 @@
 import {Shortcut} from '../../utils/settings'
 import {updateBlockNavigationView} from './blockNavigationView'
 import {isEditing} from '../../utils/dom'
+import {Selectors} from '../../roam/roam-selectors'
 
-const getMode = () => (isEditing() ? 'INSERT' : 'NORMAL')
+export type Mode = 'INSERT' | 'VISUAL' | 'NORMAL'
+
+export const getMode = () => {
+    if (isEditing()) {
+        return 'INSERT'
+    }
+
+    if (document.querySelector(Selectors.highlight)) {
+        return 'VISUAL'
+    }
+
+    return 'NORMAL'
+}
 
 type BlockNavigationModeSetting = {
     id: string
     label: string
     key: string
-    onPress: () => void
+    updateView?: boolean,
+    onPress: (mode: Mode) => void
 }
 
-export const map = ({id, label, key, onPress}: BlockNavigationModeSetting): Shortcut => ({
+export const map = ({id, label, key, onPress, updateView = true }: BlockNavigationModeSetting): Shortcut => ({
     type: 'shortcut',
     id: `blockNavigationMode_${id}`,
     label,
     initValue: key,
-    onPress,
+    onPress: async () => {
+        await onPress(getMode())
+        if (updateView) {
+            updateBlockNavigationView()
+        }
+    },
 })
 
 export const imap = (settings: BlockNavigationModeSetting): Shortcut =>
     map({
         ...settings,
-        onPress: () => {
-            if (getMode() == 'INSERT') {
-                settings.onPress()
-                updateBlockNavigationView()
+        onPress: async (mode) => {
+            if (mode === 'INSERT') {
+                await settings.onPress(mode)
             }
         },
     })
@@ -33,10 +51,19 @@ export const imap = (settings: BlockNavigationModeSetting): Shortcut =>
 export const nmap = (settings: BlockNavigationModeSetting): Shortcut =>
     map({
         ...settings,
-        onPress: () => {
-            if (getMode() == 'NORMAL') {
-                settings.onPress()
-                updateBlockNavigationView()
+        onPress: async (mode) => {
+            if (mode == 'NORMAL') {
+                await settings.onPress(mode)
+            }
+        },
+    })
+
+export const nvmap = (settings: BlockNavigationModeSetting): Shortcut =>
+    map({
+        ...settings,
+        onPress: async (mode) => {
+            if (mode == 'NORMAL' || mode == 'VISUAL') {
+                await settings.onPress(mode)
             }
         },
     })

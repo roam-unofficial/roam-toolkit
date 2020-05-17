@@ -74,6 +74,16 @@ const blockIdRelative = (block: HTMLElement, blocksToJump: number, panel: Elemen
     return blocks[destinationBlockIndex].id
 }
 
+export const firstNativelyHighlightedBlock = (): HTMLElement | null => {
+    const blocks = document.querySelectorAll(`${Selectors.highlight} ${Selectors.block}`)
+    return (blocks[0] as HTMLElement) || null;
+}
+
+export const lastNativelyHighlightedBlock = (): HTMLElement | null => {
+    const blocks = document.querySelectorAll(`${Selectors.highlight} ${Selectors.block}`)
+    return (blocks[blocks.length - 1] as HTMLElement) || null;
+}
+
 export const jumpBlocksInFocusedPanel = (blocksToJump: number) => {
     const block = assumeExists(selectedBlock(), 'blocks should be focused as soon as the first block becomes visible')
     setSelectedBlockId(blockIdRelative(block, blocksToJump, getFocusedPanel()))
