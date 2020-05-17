@@ -4,6 +4,7 @@ import {config as incDec} from './inc-dec-value/index'
 import {config as customCss} from './custom-css/index'
 import {config as srs} from './srs/index'
 import {config as blockManipulation} from './block-manipulation'
+import {config as blockNavigationMode} from './block-navigation-mode'
 import {config as estimate} from './estimates/index'
 import {config as navigation} from './navigation/index'
 import {filterAsync, mapAsync} from '../utils/async'
@@ -13,6 +14,7 @@ export const Features = {
         incDec, //prettier
         srs,
         blockManipulation,
+        blockNavigationMode,
         estimate,
         customCss,
         navigation,

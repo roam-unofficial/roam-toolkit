@@ -9,7 +9,7 @@ export const Keyboard = {
     BASE_DELAY: 20,
 
     async simulateKey(code: number, delayOverride: number = 0, opts?: KeyboardEventInit) {
-        ;['keydown', 'keyup'].forEach(eventType =>
+        ['keydown', 'keyup'].forEach(eventType =>
             document?.activeElement?.dispatchEvent(getKeyboardEvent(eventType, code, opts))
         )
         return delay(delayOverride || this.BASE_DELAY)

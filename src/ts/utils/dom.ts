@@ -19,6 +19,15 @@ export function getActiveEditElement(): ValueElement {
     return element as ValueElement
 }
 
+export function isEditing(): boolean {
+    const element = getActiveEditElement();
+    return (
+        element.tagName === 'INPUT' ||
+        element.tagName === 'TEXTAREA' ||
+        element.tagName === 'SELECT'
+    )
+}
+
 export function getTopLevelBlocks() {
     return document.querySelector('.roam-article div .flex-v-box') as HTMLElement
 }
