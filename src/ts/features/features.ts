@@ -6,6 +6,7 @@ import {config as srs} from '../srs/srs'
 import {config as blockManipulation} from './block-manipulation'
 import {config as estimate} from './estimates'
 import {config as navigation} from './navigation'
+import {config as livePreview} from './livePreview'
 import {filterAsync, mapAsync} from '../utils/async'
 
 export const Features = {
@@ -16,6 +17,7 @@ export const Features = {
         estimate,
         customCss,
         navigation,
+        livePreview,
     ]),
 
     isActive: Settings.isActive,

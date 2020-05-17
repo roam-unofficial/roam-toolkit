@@ -6,6 +6,7 @@ import {setFeatureId} from '../../background/store/settings/actions'
 import {Feature} from '../../utils/settings'
 
 import {Checkbox} from '../../components/Checkbox'
+import {WarningIcon} from '../../components/WarningIcon'
 
 type HomeProps = {features: Feature[]}
 export const Home = ({features}: HomeProps) => {
@@ -33,6 +34,7 @@ export const Home = ({features}: HomeProps) => {
                 <span className="title">{feature.name}</span>
                 <span style={{color: '#a7b6c2'}}>]]</span>
             </FeatureName>
+            <WarningIcon warning={feature.warning} />
         </FeatureNameContainer>
     )
 
@@ -100,10 +102,11 @@ const FeatureListElement = styled('li')`
         }
     }
 `
-
-const FeatureName = styled('div')`
+const FeatureName = styled('span')`
     color: #137cbd;
+    padding: 0 0 0 2px;
     font-size: 17px;
+    margin-right: 8px;
 `
 
 const FeatureNameContainer = styled('div')`
