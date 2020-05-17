@@ -43,10 +43,9 @@ export const Settings = {
         (await getStateFromStorage())[featureId][settingId] || defaultValue,
     isActive: async (featureId: string) => (await getStateFromStorage())[featureId]?.active,
 }
-const initDefaultState = (feature: Feature): {active: boolean} => {
-    const active = feature.enabledByDefault === false ? false : true
+const initDefaultState = (feature: Feature): { active: boolean } => {
     return {
-        active,
+        active: feature.enabledByDefault !== false,
     }
 }
 
@@ -60,7 +59,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
             payload: active,
         })
 
-        const initialState = initDefaultState(feature)
+        const initialState: any = initDefaultState(feature)
 
         let reducers: any = {
             [`${feature.id}_toggle`]: (state: any, action: any) => {
