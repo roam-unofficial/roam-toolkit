@@ -5,10 +5,11 @@ import {
     scrollUntilSelectedBlockIsVisible,
     updateBlockNavigationView
 } from './blockNavigationView'
-import {jumpBlocksInFocusedPanel, selectedBlock, state} from './blockNavigation'
+import {jumpBlocksInFocusedPanel, selectedBlock, setSelectedBlockId, state} from './blockNavigation'
 import {Selectors} from '../../roam/roam-selectors'
 import {isEditing} from '../../utils/dom'
 import {Mouse} from '../../utils/mouse'
+import {delay} from '../../utils/async'
 
 
 const getMode = () => isEditing() ? 'INSERT' : 'NORMAL';
@@ -158,3 +159,14 @@ export const config: Feature = {
     ],
 }
 
+
+// Update selection when clicking
+document.addEventListener('focusout', event => {
+    const element = event.target as HTMLElement;
+    if (element.classList.contains('rm-block-input')) {
+        state.panel = element.closest(Selectors.mainPanel) ? 'MAIN' : 'SIDEBAR';
+        setSelectedBlockId(element.id)
+        // wait for blur to finish, then restore the highlight
+        delay(1).then(updateBlockNavigationView)
+    }
+})
