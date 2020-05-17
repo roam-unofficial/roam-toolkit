@@ -1,5 +1,6 @@
 import {getFirstTopLevelBlock} from '../../utils/dom'
 import {Roam} from '../../roam/roam'
+console.log('create-block-demo!')
 
 export const createDemo = async () => {
     await Roam.createBlockAtBottom()

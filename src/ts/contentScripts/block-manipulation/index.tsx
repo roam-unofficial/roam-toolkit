@@ -1,6 +1,7 @@
 import {Feature, Shortcut} from '../../utils/settings'
 import {RoamNode, Selection} from '../../roam/roam-node'
 import {Roam} from '../../roam/roam'
+console.log('block manipulation!')
 
 export const config: Feature = {
     id: 'block_manipulation',

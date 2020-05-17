@@ -5,6 +5,7 @@ import {RoamNode, Selection} from '../../roam/roam-node'
 import {Roam} from '../../roam/roam'
 import {NodeWithDate} from '../../date/withDate'
 
+console.log('fuzzy date')
 export const guard = ';'
 const dateContainerExpr = /;(.{3,}?);/gm
 

@@ -2,6 +2,7 @@ import {Feature, Settings, Shortcut, String} from '../../utils/settings'
 import {getActiveEditElement} from '../../utils/dom'
 import {RoamNode} from '../../roam/roam-node'
 import {Roam} from '../../roam/roam'
+console.log('estimates!')
 
 const estimateProperty: String = {
     type: 'string',

@@ -4,6 +4,7 @@ import {SM2Node} from '../../srs/SM2Node'
 import {AnkiScheduler} from '../../srs/AnkiScheduler'
 import {RoamNode} from '../../roam/roam-node'
 import {Roam} from '../../roam/roam'
+console.log('srss!')
 
 export const config: Feature = {
     id: 'srs',

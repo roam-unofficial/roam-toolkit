@@ -1,6 +1,7 @@
 import {browser} from 'webextension-polyfill-ts'
 import {Feature, Settings} from '../../utils/settings'
 
+console.log('custom css!')
 export const config: Feature = {
     id: 'custom-css',
     name: 'Custom CSS',
