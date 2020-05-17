@@ -57,7 +57,11 @@ const appendTag = () => {
     if (!text || text === '') return
 
     withHighlightedBlocks(originalString => {
-        return `${originalString} #${text}`
+        if (text.includes(' ')) {
+            return `${originalString} #[[${text}]]`
+        } else {
+            return `${originalString} #${text}`
+        }
     })
 }
 
