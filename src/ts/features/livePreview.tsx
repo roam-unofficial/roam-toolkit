@@ -25,12 +25,16 @@ browser.runtime.onMessage.addListener(async message => {
 let iframeInstance: PreviewIframe | null = null
 
 const toggleIframe = (active: boolean) => {
-    if (active && !iframeInstance) {
-        iframeInstance = new PreviewIframe()
-        iframeInstance.activate()
-    } else if (iframeInstance) {
-        iframeInstance.destroy()
-        iframeInstance = null
+    if (active) {
+        if (!iframeInstance) {
+            iframeInstance = new PreviewIframe()
+            iframeInstance.activate()
+        }
+    } else {
+        if (iframeInstance) {
+            iframeInstance.destroy()
+            iframeInstance = null
+        }
     }
 }
 
@@ -68,23 +72,12 @@ class PreviewIframe {
 
         document.body.removeChild(this.iframe)
     }
-    /**
-     * HACK: needed because the instance is created thrice onload/toggle.
-     * Remove this check to see the issue
-     */
-    private getExisitingIframe(): HTMLIFrameElement | null {
-        return document.getElementById(this.iframeId) ? this.iframe : null
-    }
 
     private initPreviewIframe() {
         const url = Navigation.getDailyNotesUrl()
-        const existingIframe = this.getExisitingIframe()
-        if (existingIframe) {
-            return
-        }
         this.setupHiddenIframe(url)
         this.addIframeToBody()
-        this.scrollToTopHack()
+        this.scrollToTopOnPageLoad()
         this.attachMouseListeners()
     }
 
@@ -166,21 +159,11 @@ class PreviewIframe {
     }
 
     private resetIframeForNextHover() {
-        this.scrollToTopOnMouseOut()
+        this.scrollIframeToTopOnMouseOut()
         this.iframe.style.pointerEvents = 'none'
         this.iframe.style.opacity = '0'
         this.iframe.style.height = '0'
         this.iframe.style.width = '0'
-    }
-
-    private scrollToTopOnMouseOut() {
-        if (this.iframe.contentDocument) {
-            // scroll to top when removed, so the next popup is not scrolled
-            const scrollContainer = this.iframe.contentDocument.querySelector('.roam-center > div')
-            if (scrollContainer) {
-                scrollContainer.scrollTop = 0
-            }
-        }
     }
 
     private showPreview() {
@@ -252,16 +235,30 @@ class PreviewIframe {
         }
     }
     /**
+     * Sets the iframe's scrollTop to 0,
+     * so the next popup is in the correct scroll position
+     */
+    private scrollIframeToTopOnMouseOut() {
+        if (this.iframe.contentDocument) {
+            const scrollContainer = this.iframe.contentDocument.querySelector('.roam-center > div')
+            this.scrollToTopForElement(scrollContainer)
+        }
+    }
+
+    /**
      * HACK: to reset scroll after adding iframe to DOM.
      * Since the `overflow` is not set to `hidden` for the HTML tag,
      * on adding iframe, the body scrolls down,
      * causing the loader to not be centerd.
      * This fixes it by setting the scrollTop to 0
      */
-    private scrollToTopHack = () => {
-        const htmlElement = document.querySelector('html')
-        if (htmlElement) {
-            htmlElement.scrollTop = 0
+    private scrollToTopOnPageLoad = () => {
+        this.scrollToTopForElement(document.querySelector('html'))
+    }
+
+    private scrollToTopForElement = (element: Element | null) => {
+        if (element) {
+            element.scrollTop = 0
         }
     }
 }
