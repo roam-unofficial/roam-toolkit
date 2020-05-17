@@ -1,6 +1,6 @@
 import {browser} from 'webextension-polyfill-ts'
-import {createDemo} from '../create-block-demo'
-import {updateShortcuts} from '../shortcuts'
+import {createDemo} from './create-block-demo'
+import {updateShortcuts} from './shortcuts'
 
 /**
  * Be cautious to reference functions on the objects via anonymous functions (e.g. see Roam.deleteBlock)

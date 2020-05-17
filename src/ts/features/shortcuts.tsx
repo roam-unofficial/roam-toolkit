@@ -1,4 +1,4 @@
-import {Features} from '../features'
+import {Features} from './features'
 import {configure, GlobalHotKeys} from 'react-hotkeys'
 import React from 'react'
 import ReactDOM from 'react-dom'
