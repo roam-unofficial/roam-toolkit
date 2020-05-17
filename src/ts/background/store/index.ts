@@ -1,7 +1,7 @@
 import {combineReducers} from 'redux'
 import settings, {IAppSettings} from './settings/reducer'
 
-import {Features} from '../../contentScripts/features'
+import {Features} from '../../features/features'
 
 import 'redux'
 // Enhance the Action interface with the option of a payload.

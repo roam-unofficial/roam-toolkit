@@ -1,7 +1,7 @@
-import {Feature, Settings, Shortcut, String} from '../../utils/settings'
-import {getActiveEditElement} from '../../utils/dom'
-import {RoamNode} from '../../roam/roam-node'
-import {Roam} from '../../roam/roam'
+import {Feature, Settings, Shortcut, String} from '../utils/settings'
+import {getActiveEditElement} from '../utils/dom'
+import {RoamNode} from '../roam/roam-node'
+import {Roam} from '../roam/roam'
 
 const estimateProperty: String = {
     type: 'string',

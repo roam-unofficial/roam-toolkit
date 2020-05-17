@@ -1,6 +1,6 @@
-import {Feature, Shortcut} from '../../utils/settings'
-import {RoamNode, Selection} from '../../roam/roam-node'
-import {Roam} from '../../roam/roam'
+import {Feature, Shortcut} from '../utils/settings'
+import {RoamNode, Selection} from '../roam/roam-node'
+import {Roam} from '../roam/roam'
 
 export const config: Feature = {
     id: 'block_manipulation',
