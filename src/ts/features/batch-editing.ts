@@ -28,6 +28,14 @@ export const config: Feature = {
             initValue: 'Ctrl+shift+meta+t',
             onPress: () => removeLastTag(),
         } as Shortcut,
+        {
+            type: 'shortcut',
+            id: 'regexSearchAndReplace',
+            label:
+                'Roll your own complex search and replace by providing a search string or regex plus a replacement string',
+            initValue: 'Ctrl+shift+f',
+            onPress: () => regexSearchAndReplace(),
+        } as Shortcut,
     ],
 }
 
@@ -72,6 +80,19 @@ const removeLastTag = () => {
     withHighlightedBlocks(originalString => {
         const regex = new RegExp(`(.*) (#.*)`)
         return originalString.replace(regex, '$1')
+    })
+}
+
+const regexSearchAndReplace = () => {
+    const userRegex = prompt('Enter a search string or regex to find in each selected block')
+    if (!userRegex || userRegex === '') return
+
+    const replacement = prompt('Enter a replacement string (can include $&, $1, and other group matchers)')
+    if (!replacement || replacement === '') return
+
+    withHighlightedBlocks(originalString => {
+        const regex = new RegExp(userRegex, 'g')
+        return originalString.replace(regex, replacement)
     })
 }
 
