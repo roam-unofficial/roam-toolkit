@@ -1,25 +1,25 @@
-import {Feature, Shortcut} from '../../utils/settings'
+import {Feature, Settings, Shortcut} from '../../utils/settings'
 import {
-    blurEverything, jumpUntilSelectedBlockIsVisible,
+    blurEverything,
+    jumpUntilSelectedBlockIsVisible,
     scrollFocusedPanel,
     scrollUntilSelectedBlockIsVisible,
-    updateBlockNavigationView
+    updateBlockNavigationView,
 } from './blockNavigationView'
-import {jumpBlocksInFocusedPanel, selectedBlock, setSelectedBlockId, state} from './blockNavigation'
+import {jumpBlocksInFocusedPanel, selectedBlock, state} from './blockNavigation'
 import {Selectors} from '../../roam/roam-selectors'
 import {isEditing} from '../../utils/dom'
 import {Mouse} from '../../utils/mouse'
-import {delay} from '../../utils/async'
+import {initializeBlockNavigationMode} from './blockNavigationInit'
 
-
-const getMode = () => isEditing() ? 'INSERT' : 'NORMAL';
+const getMode = () => (isEditing() ? 'INSERT' : 'NORMAL')
 
 type BlockNavigationModeSetting = {
-    id: string,
-    label: string,
-    key: string,
-    onPress: () => void,
-};
+    id: string
+    label: string
+    key: string
+    onPress: () => void
+}
 
 const map = ({id, label, key, onPress}: BlockNavigationModeSetting): Shortcut => ({
     type: 'shortcut',
@@ -29,38 +29,37 @@ const map = ({id, label, key, onPress}: BlockNavigationModeSetting): Shortcut =>
     onPress,
 })
 
-const imap = (settings: BlockNavigationModeSetting): Shortcut => map({
-    ...settings,
-    onPress: () => {
-        if (getMode() == 'INSERT') {
-            settings.onPress()
-            updateBlockNavigationView()
-        }
-    },
-})
+const imap = (settings: BlockNavigationModeSetting): Shortcut =>
+    map({
+        ...settings,
+        onPress: () => {
+            if (getMode() == 'INSERT') {
+                settings.onPress()
+                updateBlockNavigationView()
+            }
+        },
+    })
 
-const nmap = (settings: BlockNavigationModeSetting): Shortcut => map({
-    ...settings,
-    onPress: () => {
-        if (getMode() == 'NORMAL') {
-            settings.onPress()
-            updateBlockNavigationView()
-        }
-    },
-})
+const nmap = (settings: BlockNavigationModeSetting): Shortcut =>
+    map({
+        ...settings,
+        onPress: () => {
+            if (getMode() == 'NORMAL') {
+                settings.onPress()
+                updateBlockNavigationView()
+            }
+        },
+    })
 
 export const config: Feature = {
     id: 'block_navigation_mode',
-    name: 'Vim-like Block Navigation',
+    name: 'Vim-like Block Navigation (Requires Refresh)',
     settings: [
         imap({
             id: 'exitToNormalMode',
             key: 'Escape',
             label: 'Exit to Normal Mode and close all popups',
-            onPress: () => {
-                blurEverything()
-                console.log('EXIT');
-            },
+            onPress: blurEverything,
         }),
         nmap({
             id: 'up',
@@ -129,7 +128,7 @@ export const config: Feature = {
             key: 'l',
             label: 'Select Panel Right',
             onPress: () => {
-                if (document.querySelector(Selectors.rightPanel)) {
+                if (document.querySelector(Selectors.sidebarContent)) {
                     state.panel = 'SIDEBAR'
                 }
             },
@@ -156,17 +155,27 @@ export const config: Feature = {
                 }
             },
         }),
+        map({
+            id: 'closeSplitPage',
+            key: 'Control+w',
+            label: 'Close Page in Side Bar',
+            onPress: () => {
+                console.log('CLOSE');
+                const block = selectedBlock()
+                if (block) {
+                    const pageContainer = block.closest(`${Selectors.sidebarContent} > div`)
+                    const closeButton = pageContainer?.querySelector(Selectors.closeButton)
+                    if (closeButton) {
+                        Mouse.leftClick(closeButton as HTMLElement)
+                    }
+                }
+            },
+        }),
     ],
 }
 
-
-// Update selection when clicking
-document.addEventListener('focusout', event => {
-    const element = event.target as HTMLElement;
-    if (element.classList.contains('rm-block-input')) {
-        state.panel = element.closest(Selectors.mainPanel) ? 'MAIN' : 'SIDEBAR';
-        setSelectedBlockId(element.id)
-        // wait for blur to finish, then restore the highlight
-        delay(1).then(updateBlockNavigationView)
+Settings.isActive('block_navigation_mode').then(active => {
+    if (active) {
+        initializeBlockNavigationMode()
     }
 })

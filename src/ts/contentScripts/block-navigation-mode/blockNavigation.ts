@@ -15,32 +15,50 @@ export const state: State = {
     panel: 'MAIN',
 }
 
-export const getFocusedPanel = (): Element => {
+export const getFocusedPanel = (): HTMLElement => {
     if (state.panel === 'MAIN') {
-        const articleElement = assumeExists(document.querySelector(Selectors.mainPanel))
-        return assumeExists(articleElement.parentElement);
+        const articleElement = assumeExists(document.querySelector(Selectors.mainContent))
+        return assumeExists(articleElement.parentElement)
     }
     if (state.panel === 'SIDEBAR') {
-        return assumeExists(document.querySelector(Selectors.rightPanel))
+        return assumeExists(document.querySelector(Selectors.sidebarContent))
     }
     throw new Error(`Unexpected panel ${state.panel}`)
 }
 
-const firstBlockInPanel = () => assumeExists(getFocusedPanel().querySelector(Selectors.block), `Panel doesn't have any blocks`)
-
-const blockIdRelative = (blockId: string | null, blocksToJump: number, panel: Element): string => {
-    const block = getBlock(blockId)
-    if (!block) {
-        // Select the first block by default, if no block is selected yet,
-        return firstBlockInPanel().id
+const getPanel = (panel?: Panel): HTMLElement | null => {
+    if (!panel) {
+        return getFocusedPanel()
     }
+    return panel === 'MAIN' ? mainPanel() : rightPanel()
+}
+
+const rightPanel = (): HTMLElement | null => document.querySelector(Selectors.sidebarContent)
+
+const mainPanel = (): HTMLElement | null => document.querySelector(Selectors.mainContent)?.parentElement || null
+
+export const ensureMainPanelHasBlockSelected = () => {
+    const mainPanel = assumeExists(getPanel('MAIN'))
+    if (!getBlock(state.mainBlockId)) {
+        state.mainBlockId = mainPanel.querySelector(Selectors.block)?.id || null
+    }
+}
+
+export const ensureRightPanelHasBlockSelected = () => {
+    const rightPanel = getPanel('SIDEBAR')
+    if (rightPanel && !getBlock(state.sideBlockId)) {
+        state.sideBlockId = rightPanel.querySelector(Selectors.block)?.id || null
+    }
+}
+
+const blockIdRelative = (block: HTMLElement, blocksToJump: number, panel: Element): string => {
     const blocks = panel.querySelectorAll(Selectors.block)
 
     let blockIndex
     // @ts-ignore NodeList.entries() does exist in Chrome/FF:
     // https://developer.mozilla.org/en-US/docs/Web/API/NodeList/entries
-    for (let [i, block] of blocks.entries()) {
-        if (block.id === blockId) {
+    for (let [i, _block] of blocks.entries()) {
+        if (_block.id === block.id) {
             blockIndex = i
             break
         }
@@ -57,10 +75,11 @@ const blockIdRelative = (blockId: string | null, blocksToJump: number, panel: El
 }
 
 export const jumpBlocksInFocusedPanel = (blocksToJump: number) => {
-    setSelectedBlockId(blockIdRelative(selectedBlockId(), blocksToJump, getFocusedPanel()))
+    const block = assumeExists(selectedBlock(), 'blocks should be focused as soon as the first block becomes visible')
+    setSelectedBlockId(blockIdRelative(block, blocksToJump, getFocusedPanel()))
 }
 
-export const getBlock = (blockId: string | null): Element | null => {
+export const getBlock = (blockId: string | null): HTMLElement | null => {
     if (!blockId) {
         return null
     }
@@ -74,16 +93,21 @@ export const getBlock = (blockId: string | null): Element | null => {
     return block
 }
 
-export const selectedBlock = (): Element | null => getBlock(selectedBlockId())
+export const selectedBlock = (): HTMLElement | null => getBlock(selectedBlockId())
 
-export const setSelectedBlockId = (blockId: string) => {
-    if (state.panel === 'MAIN') {
+export const setSelectedBlockId = (blockId: string, panel?: Panel) => {
+    panel = panel || state.panel
+    if (panel === 'MAIN') {
         state.mainBlockId = blockId
-    } else if (state.panel === 'SIDEBAR') {
+    } else if (panel === 'SIDEBAR') {
         state.sideBlockId = blockId
     } else {
         throw new Error(`Unrecognized Panel ${state.panel}`)
     }
 }
 
-export const selectedBlockId = (): string | null => (state.panel === 'MAIN' ? state.mainBlockId : state.sideBlockId)
+const selectedBlockId = (): string =>
+    assumeExists(
+        state.panel === 'MAIN' ? state.mainBlockId : state.sideBlockId,
+        'blocks should be focused as soon as the first block becomes visible'
+    )

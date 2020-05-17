@@ -9,7 +9,7 @@ const isElementVisible = (element: Element) => {
 }
 
 const BLUR_PIXEL = 'roam-toolkit-block-mode--unfocus-pixel'
-const HIGHLIGHT_CSS_CLASS = 'roam-toolkit-block-mode--highlight'
+const HIGHLIGHT_CSS_CLASS = 'block-highlight-blue'
 injectStyle(
     `
     #${BLUR_PIXEL} {
@@ -20,9 +20,7 @@ injectStyle(
         height: 1px;
         background-color: rgba(0,0,0,0); 
     }
-    .${HIGHLIGHT_CSS_CLASS} {
-        background-color: #7cccff;
-    }`,
+    `,
     'roam-toolkit-block-mode'
 )
 
