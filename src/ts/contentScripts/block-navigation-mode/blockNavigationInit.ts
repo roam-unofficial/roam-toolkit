@@ -76,6 +76,7 @@ export const initializeBlockNavigationMode = async () => {
     // in order to not avoid excessive irrelevant observations
     selectFirstBlockWheneverRightPanelOpens()
     selectFirstBlockWheneverNavigatingBetweenDailyNotes()
+    selectFirstBlockWheneverChangingPage()
 
     ensureMainPanelHasBlockSelected()
     updateBlockNavigationView()
