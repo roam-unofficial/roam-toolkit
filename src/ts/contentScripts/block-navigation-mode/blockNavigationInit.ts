@@ -4,7 +4,7 @@ import {
     ensureMainPanelHasBlockSelected,
     ensureRightPanelHasBlockSelected,
     setSelectedBlockId,
-    state,
+    state
 } from './blockNavigation'
 import {updateBlockNavigationView} from './blockNavigationView'
 import {delay} from '../../utils/async'

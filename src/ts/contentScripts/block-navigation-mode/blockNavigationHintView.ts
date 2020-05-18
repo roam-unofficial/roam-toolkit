@@ -23,7 +23,8 @@ const hintCss = async (n: number) => {
 
 Promise.all(HINTS.map(hintCss)).then(cssClasses => {
     injectStyle(
-        cssClasses.join('\n') + `
+        cssClasses.join('\n') +
+            `
         .${HINT_CSS_CLASS}::after {
             position: relative;
             top: 5px;
@@ -51,7 +52,9 @@ export const updateBlockNavigationHintView = (block: HTMLElement) => {
     // 'input' is for checkboxes
     // 'a' is for external links
     // button is for reference counts
-    const links = block.querySelectorAll(`${Selectors.link}, a, .check-container, ${Selectors.button}`)
+    const links = block.querySelectorAll(
+        `${Selectors.link}, a, .check-container, ${Selectors.button}, ${Selectors.blockReference}`
+    )
     clearHints()
     links.forEach((link, i) => {
         link.classList.add(HINT_CSS_CLASS, hintCssClass(i))
@@ -61,11 +64,8 @@ export const updateBlockNavigationHintView = (block: HTMLElement) => {
 export const clearHints = () => {
     const priorHints = document.querySelectorAll(`.${HINT_CSS_CLASS}, a`)
     if (priorHints.length > 0) {
-        priorHints.forEach(selection =>
-            selection.classList.remove(HINT_CSS_CLASS, ...HINT_CSS_CLASSES)
-        )
+        priorHints.forEach(selection => selection.classList.remove(HINT_CSS_CLASS, ...HINT_CSS_CLASSES))
     }
 }
 
-export const getHint = (n: number): HTMLElement | null =>
-    document.querySelector(`.${hintCssClass(n)}`)
+export const getHint = (n: number): HTMLElement | null => document.querySelector(`.${hintCssClass(n)}`)

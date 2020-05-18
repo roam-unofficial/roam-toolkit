@@ -1,13 +1,9 @@
 import {Selectors} from '../../roam/roam-selectors'
-import {getFocusedPanel, jumpBlocksInFocusedPanel, selectedBlock, state} from './blockNavigation'
+import {state} from './blockNavigation'
 import {injectStyle} from '../../scripts/dom'
 import {Mouse} from '../../utils/mouse'
 import {clearHints, updateBlockNavigationHintView} from './blockNavigationHintView'
-
-const isElementVisible = (element: Element) => {
-    const {x, y} = element.getBoundingClientRect()
-    return x >= 0 && y >= 0 && x <= window.innerWidth && y <= window.innerHeight
-}
+import {isElementVisible} from '../../utils/dom'
 
 const BLUR_PIXEL = 'roam-toolkit-block-mode--unfocus-pixel'
 const HIGHLIGHT_CSS_CLASS = 'roam-toolkit-block-mode--highlight'
@@ -61,51 +57,6 @@ const clearHighlights = () => {
         priorSelections.forEach(selection => selection.classList.remove(HIGHLIGHT_CSS_CLASS))
     }
 }
-
-const SCROLL_PADDING_TOP = 100
-const SCROLL_PADDING_BOTTOM = 100
-
-export const scrollUntilBlockIsVisible = (block: HTMLElement | null = null) => {
-    scrollFocusedPanel(blockScrollNeededToBeVisible(block))
-}
-
-export const jumpUntilSelectedBlockIsVisible = () => {
-    // positive blockScrollNeededToBeVisible means
-    jumpUntilBlockIsVisible(-Math.sign(blockScrollNeededToBeVisible()))
-}
-
-const blockScrollNeededToBeVisible = (block: HTMLElement | null = null): number => {
-    block = block || selectedBlock()
-    if (!block) {
-        return 0
-    }
-
-    const {top, height} = block.getBoundingClientRect()
-    // Overflow top
-    const overflowTop = SCROLL_PADDING_TOP - top
-    if (overflowTop > 0) {
-        return -overflowTop
-    }
-    // Overflow bottom
-    const overflowBottom = top + height + SCROLL_PADDING_BOTTOM - window.innerHeight
-    if (overflowBottom > 0) {
-        return overflowBottom
-    }
-
-    return 0
-}
-
-const MAX_JUMPS_BEFORE_GIVING_UP = 10
-const jumpUntilBlockIsVisible = (stepSize: number) => {
-    for (let i = 0; i < MAX_JUMPS_BEFORE_GIVING_UP; i++) {
-        jumpBlocksInFocusedPanel(stepSize)
-        if (blockScrollNeededToBeVisible() === 0) {
-            return
-        }
-    }
-}
-
-export const scrollFocusedPanel = (scrollPx: number) => (getFocusedPanel().scrollTop += scrollPx)
 
 const viewMoreDailyLogIfPossible = () => {
     const viewMore = document.querySelector(Selectors.viewMore)

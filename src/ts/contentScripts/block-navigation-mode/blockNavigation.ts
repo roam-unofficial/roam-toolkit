@@ -38,8 +38,8 @@ const rightPanel = (): HTMLElement | null => document.querySelector(Selectors.si
 const mainPanel = (): HTMLElement | null => document.querySelector(Selectors.mainContent)?.parentElement || null
 
 export const ensureMainPanelHasBlockSelected = () => {
-    const mainPanel = assumeExists(getPanel('MAIN'))
     if (!getBlock(state.mainBlockId)) {
+        const mainPanel = assumeExists(getPanel('MAIN'))
         state.mainBlockId = mainPanel.querySelector(Selectors.block)?.id || null
     }
 }
@@ -121,3 +121,49 @@ const selectedBlockId = (): string =>
         state.panel === 'MAIN' ? state.mainBlockId : state.sideBlockId,
         'blocks should be focused as soon as the first block becomes visible'
     )
+
+// Roughly two lines on either side
+// top padding is more, to account for top bar
+const SCROLL_PADDING_TOP = 100
+const SCROLL_PADDING_BOTTOM = 60
+
+export const scrollUntilBlockIsVisible = (block: HTMLElement | null = null) => {
+    scrollFocusedPanel(blockScrollNeededToBeVisible(block))
+}
+
+export const jumpUntilSelectedBlockIsVisible = () =>
+    jumpUntilBlockIsVisible(-Math.sign(blockScrollNeededToBeVisible()))
+
+const blockScrollNeededToBeVisible = (block: HTMLElement | null = null): number => {
+    block = block || selectedBlock()
+    if (!block) {
+        return 0
+    }
+
+    const {top, height} = block.getBoundingClientRect()
+    // Overflow top
+    const overflowTop = SCROLL_PADDING_TOP - top
+    if (overflowTop > 0) {
+        return -overflowTop
+    }
+    // Overflow bottom
+    const overflowBottom = top + height + SCROLL_PADDING_BOTTOM - window.innerHeight
+    if (overflowBottom > 0) {
+        return overflowBottom
+    }
+
+    return 0
+}
+
+const MAX_JUMPS_BEFORE_GIVING_UP = 10
+
+const jumpUntilBlockIsVisible = (stepSize: number) => {
+    for (let i = 0; i < MAX_JUMPS_BEFORE_GIVING_UP; i++) {
+        jumpBlocksInFocusedPanel(stepSize)
+        if (blockScrollNeededToBeVisible() === 0) {
+            return
+        }
+    }
+}
+
+export const scrollFocusedPanel = (scrollPx: number) => (getFocusedPanel().scrollTop += scrollPx)

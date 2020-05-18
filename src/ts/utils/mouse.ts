@@ -9,11 +9,12 @@ export const Mouse = {
         })
         return delay(delayOverride || this.BASE_DELAY)
     },
-    hover(element: HTMLElement) {
-        const mouseClickEvents = ['mouseover', 'mouseout']
+    hover(element: HTMLElement, delayOverride: number = 0) {
+        const mouseClickEvents = ['mouseover']
         mouseClickEvents.forEach(mouseEventType => {
             element.dispatchEvent(getMouseEvent(mouseEventType, 1))
         })
+        return delay(delayOverride || this.BASE_DELAY)
     },
     leftClick(element: HTMLElement, shiftKey: boolean = false, additionalDelay: number = 0) {
         return this.simulateClick(1, element, shiftKey, additionalDelay)

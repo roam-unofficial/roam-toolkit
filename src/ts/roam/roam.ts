@@ -2,6 +2,8 @@ import {RoamNode, Selection} from './roam-node'
 import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLevelBlock} from '../utils/dom'
 import {Keyboard} from '../utils/keyboard'
 import {Mouse} from '../utils/mouse'
+import {Selectors} from './roam-selectors'
+import {assumeExists} from '../utils/assert'
 
 export const Roam = {
     save(roamNode: RoamNode) {
@@ -135,6 +137,14 @@ export const Roam = {
         if (this.getActiveRoamNode()?.text || forceCreation) {
             await this.createSiblingBelow()
         }
+    },
+
+    async toggleFoldBlock(block: HTMLElement) {
+        const foldButton = assumeExists(
+            assumeExists(block.parentElement).querySelector(Selectors.foldButton)
+        );
+        await Mouse.hover(foldButton as HTMLElement);
+        await Mouse.leftClick(foldButton as HTMLElement);
     },
 
     getCurrentBlockUid(): string | undefined {

@@ -2,16 +2,14 @@ import {Feature, Settings} from '../../utils/settings'
 import {
     blurEverything,
     clearBlockNavigationView,
-    jumpUntilSelectedBlockIsVisible,
-    scrollFocusedPanel,
-    scrollUntilBlockIsVisible,
+
 } from './blockNavigationView'
 import {
     jumpBlocksInFocusedPanel,
     firstNativelyHighlightedBlock,
     lastNativelyHighlightedBlock,
     selectedBlock,
-    state,
+    state, scrollFocusedPanel, jumpUntilSelectedBlockIsVisible, scrollUntilBlockIsVisible
 } from './blockNavigation'
 import {Selectors} from '../../roam/roam-selectors'
 import {Mouse} from '../../utils/mouse'
@@ -28,6 +26,7 @@ const _jumpBlocksInFocusedPanel = async (mode: Mode, blocksToJump: number) => {
     }
     if (mode == 'VISUAL') {
         for (let i = 0; i < Math.abs(blocksToJump); i++) {
+            // TODO figure out why simulating 50 key presses doesn't really work for visual mode
             await Keyboard.simulateKey(blocksToJump > 0 ? Keyboard.DOWN_ARROW : Keyboard.UP_ARROW, 0, {shiftKey: true})
         }
         scrollUntilBlockIsVisible(blocksToJump > 0 ? lastNativelyHighlightedBlock() : firstNativelyHighlightedBlock())
@@ -78,10 +77,11 @@ export const config: Feature = {
         }),
         nmap({
             id: 'pageTop',
-            key: 'g', // key sequences like 'g g' mess up the other shortcuts for some reason
+            // TODO figure out why key sequences like 'g g' mess up the other shortcuts
+            key: 'g',
             label: 'Select First Block',
             onPress: async mode => {
-                await _jumpBlocksInFocusedPanel(mode, -50)
+                await _jumpBlocksInFocusedPanel(mode, -200)
             },
         }),
         nmap({
@@ -89,10 +89,10 @@ export const config: Feature = {
             key: 'Shift+g',
             label: 'Select Last Block',
             onPress: async mode => {
-                await _jumpBlocksInFocusedPanel(mode, 50)
+                await _jumpBlocksInFocusedPanel(mode, 200)
             },
         }),
-        nmap({
+        map({
             id: 'scrollUp',
             key: 'Control+y',
             label: 'Scroll Up',
@@ -101,7 +101,7 @@ export const config: Feature = {
                 jumpUntilSelectedBlockIsVisible()
             },
         }),
-        nmap({
+        map({
             id: 'scrollDown',
             key: 'Control+e',
             label: 'Scroll Down',
@@ -136,6 +136,20 @@ export const config: Feature = {
                 const block = selectedBlock()
                 if (block) {
                     Mouse.leftClick(block as HTMLElement)
+                }
+            },
+        }),
+        nmap({
+            id: 'clickSelectionAndGotoEnd',
+            // TODO this clobbers keyboard shortcuts like cmd-a for selecting all
+            // Figure out how to map plain keys, without clobbering their modifier shortcuts
+            key: 'a',
+            label: 'Click Selection and Go-to End of Line',
+            onPress: async () => {
+                const block = selectedBlock()
+                if (block) {
+                    await Mouse.leftClick(block as HTMLElement)
+                    Roam.moveCursorToEnd()
                 }
             },
         }),
@@ -180,8 +194,19 @@ export const config: Feature = {
             },
         }),
         nmap({
+            id: 'toggleFold',
+            key: 'Control+z',
+            label: 'Toggle Fold Block',
+            onPress: async () => {
+                const block = selectedBlock()
+                if (block) {
+                    await Roam.toggleFoldBlock(block)
+                }
+            },
+        }),
+        nmap({
             id: 'enterVisualMode',
-            key: 'v',
+            key: 'Shift+v',
             label: 'Enter Visual Mode',
             onPress: async () => {
                 const block = selectedBlock()
@@ -218,6 +243,14 @@ export const config: Feature = {
         ])
     ),
 }
+
+/**
+ * TODO implement other basic operations
+ * u - Undo
+ * d - Delete line
+ * shift+o - Insert line before
+ */
+
 
 Settings.isActive('block_navigation_mode').then(active => {
     if (active) {
