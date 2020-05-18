@@ -18,6 +18,7 @@ import {map, Mode, nmap, nvmap} from './vim'
 import {getHint, HINTS} from './blockNavigationHintView'
 import {Roam} from '../../roam/roam'
 import {Keyboard} from '../../utils/keyboard'
+import {delay} from '../../utils/async'
 
 const _jumpBlocksInFocusedPanel = async (mode: Mode, blocksToJump: number) => {
     if (mode == 'NORMAL') {
@@ -50,7 +51,12 @@ export const config: Feature = {
             id: 'exitToNormalMode',
             key: 'Escape',
             label: 'Exit to Normal Mode and close all popups',
-            onPress: blurEverything,
+            onPress: async () => {
+                blurEverything()
+                await delay(0)
+                // Clear the native highlight you normally get after blurring a block
+                blurEverything()
+            },
         }),
         nvmap({
             id: 'up',
