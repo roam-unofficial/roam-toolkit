@@ -33,7 +33,7 @@ export type Feature = {
 
 export interface Shortcut extends Setting {
     type: 'shortcut'
-    onPress: () => void
+    onPress: (event: KeyboardEvent) => void
 }
 
 export const Settings = {

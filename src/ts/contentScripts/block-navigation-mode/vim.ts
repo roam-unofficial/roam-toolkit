@@ -30,7 +30,14 @@ export const map = ({id, label, key, onPress, updateView = true }: BlockNavigati
     id: `blockNavigationMode_${id}`,
     label,
     initValue: key,
-    onPress: async () => {
+    onPress: async (event) => {
+        if (!key.includes('+')) {
+            // Plain keys bindings like `i` should not run if a modified version like `shift+i` is pressed
+            if (event.altKey || event.metaKey || event.shiftKey) {
+                return;
+            }
+        }
+
         await onPress(getMode())
         if (updateView) {
             updateBlockNavigationView()

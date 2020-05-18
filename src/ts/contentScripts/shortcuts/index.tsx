@@ -6,6 +6,8 @@ import ReactDOM from 'react-dom'
 configure({
     ignoreTags: [],
     ignoreRepeatedEventsWhenKeyHeldDown: false,
+    // Plain key bindings like `u` shouldn't clobber shortcuts like `cmd+u`
+    stopEventPropagationAfterHandling: false,
 })
 
 const shortcutContainer = document.createElement('div')

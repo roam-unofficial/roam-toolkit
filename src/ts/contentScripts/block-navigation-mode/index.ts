@@ -152,8 +152,6 @@ export const config: Feature = {
         }),
         nmap({
             id: 'clickSelectionAndGotoEnd',
-            // TODO this clobbers keyboard shortcuts like cmd-a for selecting all
-            // Figure out how to map plain keys, without clobbering their modifier shortcuts
             key: 'a',
             label: 'Click Selection and Go-to End of Line',
             onPress: async () => {
