@@ -209,7 +209,7 @@ export const config: Feature = {
         }),
         nmap({
             id: 'toggleFold',
-            key: 'Control+z',
+            key: 'z',
             label: 'Toggle Fold Block',
             onPress: async () => {
                 const block = selectedBlock()
