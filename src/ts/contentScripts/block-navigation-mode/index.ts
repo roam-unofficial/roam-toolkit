@@ -307,14 +307,6 @@ export const config: Feature = {
     ),
 }
 
-/**
- * TODO implement other basic operations
- * u - Undo
- * d - Delete line
- * shift+o - Insert line before
- */
-
-
 Settings.isActive('block_navigation_mode').then(active => {
     if (active) {
         initializeBlockNavigationMode()
