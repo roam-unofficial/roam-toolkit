@@ -1,6 +1,7 @@
 export const Selectors = {
     link: '.rm-page-ref',
     block: '.roam-block',
+    blockContainer: '.roam-block-container',
     blockReference: '.rm-block-ref',
     title: '.rm-title-display',
 

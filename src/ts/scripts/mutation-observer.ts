@@ -6,12 +6,13 @@ export const onSelectorChange = (
     selector: string,
     handleChange: () => void,
     observeChildren: boolean = false,
+    observeInside?: HTMLElement,
 ): DisconnectFn => {
     const waitForLoad = new MutationObserver(() => {
         handleChange()
     })
 
-    waitForLoad.observe(assumeExists(document.querySelector(selector)), {
+    waitForLoad.observe(observeInside ||assumeExists(document.querySelector(selector)), {
         childList: true,
         attributes: true,
         subtree: observeChildren,
@@ -20,21 +21,23 @@ export const onSelectorChange = (
     return () => waitForLoad.disconnect()
 }
 
-export const waitForSelectorToExist = (selector: string) => {
-    if (document.querySelector(selector)) {
+export const waitForSelectorToExist = (selector: string, observeInside = document.body) => {
+    if (observeInside.querySelector(selector)) {
+        console.log('ALREADY')
         return Promise.resolve()
     }
 
     return new Promise(resolve => {
         const disconnect = onSelectorChange(
-            'body',
+            selector,
             () => {
                 if (document.querySelector(selector)) {
                     disconnect()
                     resolve()
                 }
             },
-            true
+            true,
+            observeInside,
         )
     })
 }

@@ -4,10 +4,11 @@ import {
     ensureMainPanelHasBlockSelected,
     ensureRightPanelHasBlockSelected,
     setSelectedBlockId,
-    state
+    state,
 } from './blockNavigation'
 import {updateBlockNavigationView} from './blockNavigationView'
 import {delay} from '../../utils/async'
+import {assumeExists} from '../../utils/assert'
 
 const selectBlockWheneverClicked = () => {
     document.addEventListener('focusin', event => {
@@ -15,13 +16,20 @@ const selectBlockWheneverClicked = () => {
         if (element.classList.contains('rm-block-input')) {
             state.panel = element.closest(Selectors.mainContent) ? 'MAIN' : 'SIDEBAR'
             setSelectedBlockId(element.id)
+            updateBlockNavigationView()
         }
     })
     document.addEventListener('focusout', event => {
         const element = event.target as HTMLElement
         if (element.classList.contains('rm-block-input')) {
             // Wait for textarea to turn back into a div
-            delay(1).then(updateBlockNavigationView)
+            const blockId = element.id
+            const container = assumeExists(element.closest(Selectors.blockContainer)) as HTMLElement
+            waitForSelectorToExist(`${Selectors.block}#${blockId}`, container).then(() => {
+                updateBlockNavigationView()
+            })
+            // Delay doesn't work very well, because 'mouseup' is actually the one to trigger to re-render
+
         }
     })
 }
