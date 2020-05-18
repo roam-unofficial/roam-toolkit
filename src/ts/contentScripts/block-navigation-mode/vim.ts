@@ -48,6 +48,16 @@ export const imap = (settings: BlockNavigationModeSetting): Shortcut =>
         },
     })
 
+export const vmap = (settings: BlockNavigationModeSetting): Shortcut =>
+    map({
+        ...settings,
+        onPress: async (mode) => {
+            if (mode == 'VISUAL') {
+                await settings.onPress(mode)
+            }
+        },
+    })
+
 export const nmap = (settings: BlockNavigationModeSetting): Shortcut =>
     map({
         ...settings,

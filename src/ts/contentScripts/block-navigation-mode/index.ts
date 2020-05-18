@@ -27,9 +27,18 @@ const _jumpBlocksInFocusedPanel = async (mode: Mode, blocksToJump: number) => {
     if (mode == 'VISUAL') {
         for (let i = 0; i < Math.abs(blocksToJump); i++) {
             // TODO figure out why simulating 50 key presses doesn't really work for visual mode
+            // there's probably a better way
             await Keyboard.simulateKey(blocksToJump > 0 ? Keyboard.DOWN_ARROW : Keyboard.UP_ARROW, 0, {shiftKey: true})
         }
         scrollUntilBlockIsVisible(blocksToJump > 0 ? lastNativelyHighlightedBlock() : firstNativelyHighlightedBlock())
+    }
+}
+
+async function insertBlockAfter() {
+    const block = selectedBlock()
+    if (block) {
+        await Roam.activateBlock(block)
+        await Roam.createBlockBelow()
     }
 }
 
@@ -80,16 +89,16 @@ export const config: Feature = {
             // TODO figure out why key sequences like 'g g' mess up the other shortcuts
             key: 'g',
             label: 'Select First Block',
-            onPress: async mode => {
-                await _jumpBlocksInFocusedPanel(mode, -200)
+            onPress: async () => {
+                await _jumpBlocksInFocusedPanel('NORMAL', -200)
             },
         }),
         nmap({
             id: 'pageBottom',
             key: 'Shift+g',
             label: 'Select Last Block',
-            onPress: async mode => {
-                await _jumpBlocksInFocusedPanel(mode, 200)
+            onPress: async () => {
+                await _jumpBlocksInFocusedPanel('NORMAL', 200)
             },
         }),
         map({
@@ -182,15 +191,20 @@ export const config: Feature = {
             },
         }),
         nmap({
+            id: 'insertBlockBefore',
+            key: 'Shift+o',
+            label: 'Insert Block Before',
+            onPress: async (mode) => {
+                await _jumpBlocksInFocusedPanel(mode, -1)
+                await insertBlockAfter()
+            },
+        }),
+        nmap({
             id: 'insertBlockAfter',
             key: 'o',
             label: 'Insert Block After',
             onPress: async () => {
-                const block = selectedBlock()
-                if (block) {
-                    await Roam.activateBlock(block)
-                    await Roam.createBlockBelow()
-                }
+                await insertBlockAfter()
             },
         }),
         nmap({
@@ -214,6 +228,65 @@ export const config: Feature = {
                     await Roam.selectBlock(block)
                     clearBlockNavigationView()
                 }
+            },
+        }),
+        nmap({
+            id: 'undo',
+            key: 'u',
+            label: 'Undo',
+            onPress: async () => {
+                // z
+                await Keyboard.simulateKey(90, 0, { key: 'z', metaKey: true })
+            },
+        }),
+        nmap({
+            id: 'redo',
+            key: 'Control+r',
+            label: 'Redo',
+            onPress: async () => {
+                // z
+                await Keyboard.simulateKey(90, 0, { key: 'z', shiftKey: true, metaKey: true })
+            },
+        }),
+        nmap({
+            id: 'paste',
+            key: 'p',
+            label: 'Paste',
+            onPress: async () => {
+                // TODO: This doesn't work. Browsers may ban clipboard commands because they're a security vulnerability
+                // The native block cut/paste uses the System's cut/paste shortcuts (the ones you can remap in Mac OSX's Keyboard preferences)
+                // May have to figure out another way to cut (using the right click menu for example)
+                await insertBlockAfter()
+                await Keyboard.simulateKey(86, 0, { key: 'v', metaKey: true })
+            },
+        }),
+        nmap({
+            id: 'pasteBefore',
+            key: 'Shift+p',
+            label: 'Paste Before',
+            onPress: async () => {
+                // TODO: This doesn't work. Browsers may ban clipboard commands because they're a security vulnerability
+                await _jumpBlocksInFocusedPanel('NORMAL', -1)
+                await insertBlockAfter()
+                await Keyboard.simulateKey(86, 0, { key: 'v', metaKey: true })
+            },
+        }),
+        nvmap({
+            id: 'copy',
+            key: 'y',
+            label: 'Copy',
+            onPress: async () => {
+                // TODO: This doesn't work. Browsers may ban clipboard commands because they're a security vulnerability
+                await Keyboard.simulateKey(67, 0, { key: 'c', metaKey: true })
+            },
+        }),
+        nvmap({
+            id: 'cut',
+            key: 'd',
+            label: 'Cut',
+            onPress: async () => {
+                // TODO: This doesn't work. Browsers may ban clipboard commands because they're a security vulnerability
+                await Keyboard.simulateKey(88, 0, { key: 'x', metaKey: true })
             },
         }),
     ].concat(
