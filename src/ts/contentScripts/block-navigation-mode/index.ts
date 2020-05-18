@@ -101,7 +101,7 @@ export const config: Feature = {
                 await _jumpBlocksInFocusedPanel('NORMAL', 200)
             },
         }),
-        map({
+        nvmap({
             id: 'scrollUp',
             key: 'Control+y',
             label: 'Scroll Up',
@@ -110,7 +110,9 @@ export const config: Feature = {
                 jumpUntilSelectedBlockIsVisible()
             },
         }),
-        map({
+        // ctrl-e is normally used to go to the end of line, avoid messing with this
+        // in insert mode
+        nvmap({
             id: 'scrollDown',
             key: 'Control+e',
             label: 'Scroll Down',
