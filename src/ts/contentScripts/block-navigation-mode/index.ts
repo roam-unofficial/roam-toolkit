@@ -143,10 +143,11 @@ export const config: Feature = {
             id: 'clickSelection',
             key: 'i',
             label: 'Click Selection',
-            onPress: () => {
+            onPress: async () => {
                 const block = selectedBlock()
                 if (block) {
-                    Mouse.leftClick(block as HTMLElement)
+                    await Mouse.leftClick(block as HTMLElement)
+                    Roam.moveCursorToStart()
                 }
             },
         }),
@@ -159,17 +160,6 @@ export const config: Feature = {
                 if (block) {
                     await Mouse.leftClick(block as HTMLElement)
                     Roam.moveCursorToEnd()
-                }
-            },
-        }),
-        nmap({
-            id: 'shiftClickSelection',
-            key: 'Shift+i',
-            label: 'Shift Click Selection',
-            onPress: () => {
-                const block = selectedBlock()
-                if (block) {
-                    Mouse.leftClick(block as HTMLElement, true)
                 }
             },
         }),
