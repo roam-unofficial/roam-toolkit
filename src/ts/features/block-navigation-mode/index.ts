@@ -46,6 +46,7 @@ async function insertBlockAfter() {
 export const config: Feature = {
     id: 'block_navigation_mode',
     name: 'Vim-like Block Navigation (Requires Refresh)',
+    enabledByDefault: false,
     settings: [
         map({
             id: 'exitToNormalMode',
