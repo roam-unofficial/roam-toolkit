@@ -2,6 +2,7 @@ import {Feature, Settings} from '../utils/settings'
 import {Navigation} from '../roam/navigation'
 import {browser} from 'webextension-polyfill-ts'
 import {createPopper, Instance} from '@popperjs/core'
+import {delay} from '../utils/async';
 
 export const config: Feature = {
     id: 'live_preview',
@@ -45,18 +46,22 @@ class PreviewIframe {
     hoveredElement: HTMLElement | null = null
     popper: Instance | null = null
     popupTimeoutDuration = 300
+
     constructor() {
         this.iframe = document.createElement('iframe')
     }
+
     activate() {
         this.initPreviewIframe()
     }
+
     destroy() {
         this.removeIframe()
         this.clearPopupTimeout()
         this.destroyPopper()
-        this.destoryMouseListeners()
+        this.destroyMouseListeners()
     }
+
     private clearPopupTimeout() {
         if (this.popupTimeout) {
             clearTimeout(this.popupTimeout)
@@ -89,7 +94,8 @@ class PreviewIframe {
         document.addEventListener('mouseover', this.mouseOverListener)
         document.addEventListener('mouseout', this.mouseOutListener)
     }
-    private destoryMouseListeners() {
+
+    private destroyMouseListeners() {
         document.removeEventListener('mouseover', this.mouseOverListener)
         document.removeEventListener('mouseout', this.mouseOutListener)
     }
@@ -170,12 +176,22 @@ class PreviewIframe {
         this.iframe.style.opacity = '1'
         this.iframe.style.pointerEvents = 'all'
     }
-    private prepIframeForDisplay(url: string) {
+
+    private async prepIframeForDisplay(url: string) {
+        if (!await this.stillHoveringOverSameObjectAfterDelay()) return
+
         // this pre-loads the iframe, (which is shown after a delay)
         this.iframe.src = url
         this.iframe.style.height = '500px'
         this.iframe.style.width = '500px'
         this.iframe.style.pointerEvents = 'none'
+    }
+
+    private async stillHoveringOverSameObjectAfterDelay(millis: number = 100) {
+        const hoverTargetAtCallTime = this.hoveredElement
+        await delay(millis)
+
+        return hoverTargetAtCallTime === this.hoveredElement;
     }
 
     private makePopper(target: HTMLElement) {
@@ -234,6 +250,7 @@ class PreviewIframe {
             ;(event.target as HTMLIFrameElement).contentDocument?.body.appendChild(styleNode)
         }
     }
+
     /**
      * Sets the iframe's scrollTop to 0,
      * so the next popup is in the correct scroll position
