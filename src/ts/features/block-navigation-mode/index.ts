@@ -231,7 +231,6 @@ export const config: Feature = {
             key: 'u',
             label: 'Undo',
             onPress: async () => {
-                // z
                 await Keyboard.simulateKey(90, 0, {key: 'z', metaKey: true})
             },
         }),
@@ -240,7 +239,6 @@ export const config: Feature = {
             key: 'Control+r',
             label: 'Redo',
             onPress: async () => {
-                // z
                 await Keyboard.simulateKey(90, 0, {key: 'z', shiftKey: true, metaKey: true})
             },
         }),
