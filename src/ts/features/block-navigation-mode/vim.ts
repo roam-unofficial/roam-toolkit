@@ -1,7 +1,8 @@
 import {Shortcut} from '../../utils/settings'
-import {updateBlockNavigationView} from './blockNavigationView'
+import {blurEverything, updateBlockNavigationView} from './blockNavigationView'
 import {isEditing} from '../../utils/dom'
 import {Selectors} from '../../roam/roam-selectors'
+import {delay} from '../../utils/async'
 
 export type Mode = 'INSERT' | 'VISUAL' | 'NORMAL'
 
@@ -23,6 +24,13 @@ type BlockNavigationModeSetting = {
     key: string
     updateView?: boolean,
     onPress: (mode: Mode) => void
+}
+
+export const returnToNormalMode = async () => {
+    blurEverything()
+    await delay(0)
+    // Clear the native highlight you normally get after blurring a block
+    blurEverything()
 }
 
 export const map = ({id, label, key, onPress, updateView = true }: BlockNavigationModeSetting): Shortcut => ({

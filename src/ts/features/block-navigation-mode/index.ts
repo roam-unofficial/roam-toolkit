@@ -1,23 +1,22 @@
 import {Feature, Settings} from '../../utils/settings'
-import {blurEverything, clearBlockNavigationView} from './blockNavigationView'
+import {clearBlockNavigationView} from './blockNavigationView'
 import {
-    jumpBlocksInFocusedPanel,
     firstNativelyHighlightedBlock,
-    lastNativelyHighlightedBlock,
-    selectedBlock,
-    state,
-    scrollFocusedPanel,
+    jumpBlocksInFocusedPanel,
     jumpUntilSelectedBlockIsVisible,
+    lastNativelyHighlightedBlock,
+    scrollFocusedPanel,
     scrollUntilBlockIsVisible,
+    selectedBlock,
+    state
 } from './blockNavigation'
 import {Selectors} from '../../roam/roam-selectors'
 import {Mouse} from '../../utils/mouse'
 import {initializeBlockNavigationMode} from './blockNavigationInit'
-import {map, Mode, nimap, nmap, nvmap} from './vim'
+import {map, Mode, nimap, nmap, nvmap, returnToNormalMode} from './vim'
 import {getHint, HINT_IDS, HINT_KEYS} from './blockNavigationHintView'
 import {Roam} from '../../roam/roam'
 import {Keyboard} from '../../utils/keyboard'
-import {delay} from '../../utils/async'
 
 const _jumpBlocksInFocusedPanel = async (mode: Mode, blocksToJump: number) => {
     if (mode == 'NORMAL') {
@@ -51,12 +50,7 @@ export const config: Feature = {
             id: 'exitToNormalMode',
             key: 'Escape',
             label: 'Exit to Normal Mode and close all popups',
-            onPress: async () => {
-                blurEverything()
-                await delay(0)
-                // Clear the native highlight you normally get after blurring a block
-                blurEverything()
-            },
+            onPress: returnToNormalMode,
         }),
         nvmap({
             id: 'up',
@@ -232,6 +226,7 @@ export const config: Feature = {
             label: 'Undo',
             onPress: async () => {
                 await Keyboard.simulateKey(90, 0, {key: 'z', metaKey: true})
+                await returnToNormalMode()
             },
         }),
         nmap({
@@ -240,6 +235,7 @@ export const config: Feature = {
             label: 'Redo',
             onPress: async () => {
                 await Keyboard.simulateKey(90, 0, {key: 'z', shiftKey: true, metaKey: true})
+                await returnToNormalMode()
             },
         }),
         nmap({
@@ -249,6 +245,7 @@ export const config: Feature = {
             onPress: async () => {
                 await insertBlockAfter()
                 document.execCommand('paste')
+                await returnToNormalMode()
             },
         }),
         nmap({
@@ -259,6 +256,7 @@ export const config: Feature = {
                 await _jumpBlocksInFocusedPanel('NORMAL', -1)
                 await insertBlockAfter()
                 document.execCommand('paste')
+                await returnToNormalMode()
             },
         }),
         nvmap({
@@ -271,6 +269,7 @@ export const config: Feature = {
                     await Roam.selectBlock(block)
                 }
                 document.execCommand('copy')
+                await returnToNormalMode()
             },
         }),
         nvmap({
@@ -283,6 +282,7 @@ export const config: Feature = {
                     await Roam.selectBlock(block)
                 }
                 document.execCommand('cut')
+                await returnToNormalMode()
             },
         }),
         nvmap({
