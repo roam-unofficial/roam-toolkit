@@ -59,7 +59,7 @@ export const vmap = (settings: BlockNavigationModeSetting): Shortcut =>
     map({
         ...settings,
         onPress: async (mode) => {
-            if (mode == 'VISUAL') {
+            if (mode === 'VISUAL') {
                 await settings.onPress(mode)
             }
         },
@@ -69,7 +69,17 @@ export const nmap = (settings: BlockNavigationModeSetting): Shortcut =>
     map({
         ...settings,
         onPress: async (mode) => {
-            if (mode == 'NORMAL') {
+            if (mode === 'NORMAL') {
+                await settings.onPress(mode)
+            }
+        },
+    })
+
+export const nimap = (settings: BlockNavigationModeSetting): Shortcut =>
+    map({
+        ...settings,
+        onPress: async (mode) => {
+            if (mode === 'NORMAL' || mode === 'INSERT') {
                 await settings.onPress(mode)
             }
         },
@@ -79,7 +89,7 @@ export const nvmap = (settings: BlockNavigationModeSetting): Shortcut =>
     map({
         ...settings,
         onPress: async (mode) => {
-            if (mode == 'NORMAL' || mode == 'VISUAL') {
+            if (mode === 'NORMAL' || mode === 'VISUAL') {
                 await settings.onPress(mode)
             }
         },

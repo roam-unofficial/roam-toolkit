@@ -1,20 +1,19 @@
 import {Feature, Settings} from '../../utils/settings'
-import {
-    blurEverything,
-    clearBlockNavigationView,
-
-} from './blockNavigationView'
+import {blurEverything, clearBlockNavigationView} from './blockNavigationView'
 import {
     jumpBlocksInFocusedPanel,
     firstNativelyHighlightedBlock,
     lastNativelyHighlightedBlock,
     selectedBlock,
-    state, scrollFocusedPanel, jumpUntilSelectedBlockIsVisible, scrollUntilBlockIsVisible
+    state,
+    scrollFocusedPanel,
+    jumpUntilSelectedBlockIsVisible,
+    scrollUntilBlockIsVisible,
 } from './blockNavigation'
 import {Selectors} from '../../roam/roam-selectors'
 import {Mouse} from '../../utils/mouse'
 import {initializeBlockNavigationMode} from './blockNavigationInit'
-import {map, Mode, nmap, nvmap} from './vim'
+import {map, Mode, nimap, nmap, nvmap} from './vim'
 import {getHint, HINT_IDS, HINT_KEYS} from './blockNavigationHintView'
 import {Roam} from '../../roam/roam'
 import {Keyboard} from '../../utils/keyboard'
@@ -191,7 +190,7 @@ export const config: Feature = {
             id: 'insertBlockBefore',
             key: 'Shift+o',
             label: 'Insert Block Before',
-            onPress: async (mode) => {
+            onPress: async mode => {
                 await _jumpBlocksInFocusedPanel(mode, -1)
                 await insertBlockAfter()
             },
@@ -233,7 +232,7 @@ export const config: Feature = {
             label: 'Undo',
             onPress: async () => {
                 // z
-                await Keyboard.simulateKey(90, 0, { key: 'z', metaKey: true })
+                await Keyboard.simulateKey(90, 0, {key: 'z', metaKey: true})
             },
         }),
         nmap({
@@ -242,7 +241,7 @@ export const config: Feature = {
             label: 'Redo',
             onPress: async () => {
                 // z
-                await Keyboard.simulateKey(90, 0, { key: 'z', shiftKey: true, metaKey: true })
+                await Keyboard.simulateKey(90, 0, {key: 'z', shiftKey: true, metaKey: true})
             },
         }),
         nmap({
@@ -254,7 +253,7 @@ export const config: Feature = {
                 // The native block cut/paste uses the System's cut/paste shortcuts (the ones you can remap in Mac OSX's Keyboard preferences)
                 // May have to figure out another way to cut (using the right click menu for example)
                 await insertBlockAfter()
-                await Keyboard.simulateKey(86, 0, { key: 'v', metaKey: true })
+                await Keyboard.simulateKey(86, 0, {key: 'v', metaKey: true})
             },
         }),
         nmap({
@@ -265,7 +264,7 @@ export const config: Feature = {
                 // TODO: This doesn't work. Browsers may ban clipboard commands because they're a security vulnerability
                 await _jumpBlocksInFocusedPanel('NORMAL', -1)
                 await insertBlockAfter()
-                await Keyboard.simulateKey(86, 0, { key: 'v', metaKey: true })
+                await Keyboard.simulateKey(86, 0, {key: 'v', metaKey: true})
             },
         }),
         nvmap({
@@ -274,7 +273,7 @@ export const config: Feature = {
             label: 'Copy',
             onPress: async () => {
                 // TODO: This doesn't work. Browsers may ban clipboard commands because they're a security vulnerability
-                await Keyboard.simulateKey(67, 0, { key: 'c', metaKey: true })
+                await Keyboard.simulateKey(67, 0, {key: 'c', metaKey: true})
             },
         }),
         nvmap({
@@ -283,7 +282,55 @@ export const config: Feature = {
             label: 'Cut',
             onPress: async () => {
                 // TODO: This doesn't work. Browsers may ban clipboard commands because they're a security vulnerability
-                await Keyboard.simulateKey(88, 0, { key: 'x', metaKey: true })
+                await Keyboard.simulateKey(88, 0, {key: 'x', metaKey: true})
+            },
+        }),
+        nvmap({
+            id: 'selectUp',
+            key: 'Shift+k',
+            label: 'Grow Selection Up',
+            onPress: async mode => {
+                const block = selectedBlock()
+                if (mode === 'NORMAL' && block) {
+                    await Roam.selectBlock(block)
+                }
+                await Keyboard.simulateKey(Keyboard.UP_ARROW, 0, {shiftKey: true})
+            },
+        }),
+        nvmap({
+            id: 'selectDown',
+            key: 'Shift+j',
+            label: 'Grow Selection Down',
+            onPress: async mode => {
+                const block = selectedBlock()
+                if (mode === 'NORMAL' && block) {
+                    await Roam.selectBlock(block)
+                }
+                await Keyboard.simulateKey(Keyboard.DOWN_ARROW, 0, {shiftKey: true})
+            },
+        }),
+        nimap({
+            id: 'moveBlockUp',
+            key: 'Shift+Command+k',
+            label: 'Move Block Up',
+            onPress: async () => {
+                const block = selectedBlock()
+                if (block) {
+                    await Roam.activateBlock(block)
+                    await Keyboard.simulateKey(Keyboard.UP_ARROW, 0, {metaKey: true, shiftKey: true})
+                }
+            },
+        }),
+        nimap({
+            id: 'moveBlockDown',
+            key: 'Shift+Command+j',
+            label: 'Move Block Up',
+            onPress: async () => {
+                const block = selectedBlock()
+                if (block) {
+                    await Roam.activateBlock(block)
+                    await Keyboard.simulateKey(Keyboard.DOWN_ARROW, 0, {metaKey: true, shiftKey: true})
+                }
             },
         }),
     ].concat(
