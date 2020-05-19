@@ -348,7 +348,7 @@ export const config: Feature = {
             }),
             nmap({
                 id: `hint${n}Shift`,
-                key: `Shift+${n.toString()}`,
+                key: `Shift+${HINT_KEYS[n]}`,
                 label: `Shift Click Hint ${n}`,
                 onPress: () => {
                     const hint = getHint(n)
