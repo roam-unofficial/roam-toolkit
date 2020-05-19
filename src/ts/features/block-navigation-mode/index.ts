@@ -249,11 +249,8 @@ export const config: Feature = {
             key: 'p',
             label: 'Paste',
             onPress: async () => {
-                // TODO: This doesn't work. Browsers may ban clipboard commands because they're a security vulnerability
-                // The native block cut/paste uses the System's cut/paste shortcuts (the ones you can remap in Mac OSX's Keyboard preferences)
-                // May have to figure out another way to cut (using the right click menu for example)
                 await insertBlockAfter()
-                await Keyboard.simulateKey(86, 0, {key: 'v', metaKey: true})
+                document.execCommand('paste')
             },
         }),
         nmap({
@@ -261,28 +258,33 @@ export const config: Feature = {
             key: 'Shift+p',
             label: 'Paste Before',
             onPress: async () => {
-                // TODO: This doesn't work. Browsers may ban clipboard commands because they're a security vulnerability
                 await _jumpBlocksInFocusedPanel('NORMAL', -1)
                 await insertBlockAfter()
-                await Keyboard.simulateKey(86, 0, {key: 'v', metaKey: true})
+                document.execCommand('paste')
             },
         }),
         nvmap({
             id: 'copy',
             key: 'y',
             label: 'Copy',
-            onPress: async () => {
-                // TODO: This doesn't work. Browsers may ban clipboard commands because they're a security vulnerability
-                await Keyboard.simulateKey(67, 0, {key: 'c', metaKey: true})
+            onPress: async (mode) => {
+                const block = selectedBlock()
+                if (mode === 'NORMAL' && block) {
+                    await Roam.selectBlock(block)
+                }
+                document.execCommand('copy')
             },
         }),
         nvmap({
             id: 'cut',
             key: 'd',
             label: 'Cut',
-            onPress: async () => {
-                // TODO: This doesn't work. Browsers may ban clipboard commands because they're a security vulnerability
-                await Keyboard.simulateKey(88, 0, {key: 'x', metaKey: true})
+            onPress: async (mode) => {
+                const block = selectedBlock()
+                if (mode === 'NORMAL' && block) {
+                    await Roam.selectBlock(block)
+                }
+                document.execCommand('cut')
             },
         }),
         nvmap({
