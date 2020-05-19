@@ -42,15 +42,13 @@ export const Roam = {
     },
 
     async selectBlock(element?: HTMLElement) {
+        if (element) {
+            await this.activateBlock(element)
+        }
         if (this.getRoamBlockInput()) {
             return Keyboard.pressEsc()
         }
-        if (element) {
-            await this.activateBlock(element)
-            this.moveCursorToStart()
-            return Keyboard.simulateKey(Keyboard.UP_ARROW, 0, {shiftKey: true})
-        }
-        return Promise.reject("No block was specified, and we're not inside a block")
+        return Promise.reject("We're not inside a block")
     },
 
     async activateBlock(element: HTMLElement) {

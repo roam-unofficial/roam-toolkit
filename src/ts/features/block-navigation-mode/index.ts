@@ -184,9 +184,13 @@ export const config: Feature = {
             id: 'insertBlockBefore',
             key: 'Shift+o',
             label: 'Insert Block Before',
-            onPress: async mode => {
-                await _jumpBlocksInFocusedPanel(mode, -1)
-                await insertBlockAfter()
+            onPress: async () => {
+                const block = selectedBlock()
+                if (block) {
+                    await Roam.activateBlock(block)
+                    await Roam.moveCursorToStart()
+                    await Keyboard.pressEnter()
+                }
             },
         }),
         nmap({
