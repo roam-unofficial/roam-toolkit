@@ -1,5 +1,5 @@
 import {browser} from 'webextension-polyfill-ts'
-import {Feature, Settings} from '../../utils/settings'
+import {Feature, Settings} from '../utils/settings'
 
 export const config: Feature = {
     id: 'custom-css',
@@ -7,16 +7,16 @@ export const config: Feature = {
     settings: [{type: 'large_string', id: 'css'}],
 }
 
-Settings.isActive('custom-css').then(active => {
+Settings.isActive(config.id).then(active => {
     if (active) {
-        Settings.get('custom-css', 'css').then((value: string) => {
+        Settings.get(config.id, 'css').then((value: string) => {
             setCss(value)
         })
     }
 })
 
 browser.runtime.onMessage.addListener(async message => {
-    if (message?.featureId === 'custom-css') {
+    if (message?.featureId === config.id) {
         setCss(message.value)
     }
 })

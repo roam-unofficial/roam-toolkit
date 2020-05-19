@@ -1,7 +1,7 @@
-import {Feature, Shortcut} from '../../utils/settings'
-import {RoamDate} from '../../date/common'
-import {Roam} from '../../roam/roam'
-import {RoamNode, Selection} from '../../roam/roam-node'
+import {Feature, Shortcut} from '../utils/settings'
+import {RoamDate} from '../date/common'
+import {Roam} from '../roam/roam'
+import {RoamNode, Selection} from '../roam/roam-node'
 
 const createModifier = (change: number) => (num: number) => num + change
 

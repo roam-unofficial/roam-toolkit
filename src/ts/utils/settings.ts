@@ -15,7 +15,7 @@ export interface Setting {
     type: string
     id: string
     label?: string
-    initValue?: string
+    initValue?: string | boolean
     placeholder?: string
     description?: string
     onSave?: (value: string) => void
@@ -25,8 +25,10 @@ export type Feature = {
     id: string
     name: string
     description?: string
+    warning?: string
     settings?: Setting[]
     toggleable?: boolean
+    enabledByDefault?: boolean
     toggle?: (active: boolean) => void
     reducer?: Reducer
 }
@@ -41,9 +43,14 @@ export const Settings = {
         (await getStateFromStorage())[featureId][settingId] || defaultValue,
     isActive: async (featureId: string) => (await getStateFromStorage())[featureId]?.active,
 }
+const initDefaultState = (feature: Feature): { active: boolean } => {
+    return {
+        active: feature.enabledByDefault !== false,
+    }
+}
 
 export const prepareSettings = (features: Feature[]): Feature[] => {
-    return features.map((feature: any) => {
+    return features.map((feature: Feature) => {
         if (feature.toggleable !== false) {
             feature.toggleable = true
         }
@@ -52,9 +59,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
             payload: active,
         })
 
-        const initialState: any = {
-            active: true,
-        }
+        const initialState: any = initDefaultState(feature)
 
         let reducers: any = {
             [`${feature.id}_toggle`]: (state: any, action: any) => {
@@ -64,7 +69,7 @@ export const prepareSettings = (features: Feature[]): Feature[] => {
         }
 
         feature.settings =
-            feature?.settings.map((setting: Setting) => {
+            feature.settings?.map((setting: Setting) => {
                 initialState[setting.id] = setting.initValue
                 setting.onSave = (payload: any = '') => ({
                     type: `${feature.id}_${setting.id}`,
