@@ -15,7 +15,7 @@ import {Selectors} from '../../roam/roam-selectors'
 import {Mouse} from '../../utils/mouse'
 import {initializeBlockNavigationMode} from './blockNavigationInit'
 import {map, Mode, nmap, nvmap} from './vim'
-import {getHint, HINTS} from './blockNavigationHintView'
+import {getHint, HINT_IDS, HINT_KEYS} from './blockNavigationHintView'
 import {Roam} from '../../roam/roam'
 import {Keyboard} from '../../utils/keyboard'
 import {delay} from '../../utils/async'
@@ -286,10 +286,10 @@ export const config: Feature = {
             },
         }),
     ].concat(
-        HINTS.flatMap(n => [
+        HINT_IDS.flatMap(n => [
             nmap({
                 id: `hint${n}`,
-                key: n.toString(),
+                key: HINT_KEYS[n],
                 label: `Click Hint ${n}`,
                 onPress: () => {
                     const hint = getHint(n)

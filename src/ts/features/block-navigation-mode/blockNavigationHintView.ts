@@ -2,13 +2,14 @@ import {Selectors} from '../../roam/roam-selectors'
 import {injectStyle} from '../../scripts/dom'
 import {getBlockNavigationModeSetting} from './blockNavigationSetting'
 
-export const HINTS = [0, 1, 2, 3, 4, 5]
+export const HINT_IDS = [0, 1, 2, 3]
+export const HINT_KEYS = ['q', 'w', 'e', 'r']
 
-const hintKey = (n: number) => getBlockNavigationModeSetting(`hint${n}`)
+const hintKey = async (n: number) => getBlockNavigationModeSetting(`hint${n}`, HINT_KEYS[n])
 
 const HINT_CSS_CLASS = 'roam-toolkit--hint'
 const hintCssClass = (n: number) => HINT_CSS_CLASS + n
-const HINT_CSS_CLASSES = HINTS.map(hintCssClass)
+const HINT_CSS_CLASSES = HINT_IDS.map(hintCssClass)
 
 const hintCss = async (n: number) => {
     const key = await hintKey(n)
@@ -21,7 +22,7 @@ const hintCss = async (n: number) => {
 
 // roam-toolkit--hint1
 
-Promise.all(HINTS.map(hintCss)).then(cssClasses => {
+Promise.all(HINT_IDS.map(hintCss)).then(cssClasses => {
     injectStyle(
         cssClasses.join('\n') +
             `
