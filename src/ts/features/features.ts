@@ -9,6 +9,8 @@ import {config as estimate} from './estimates'
 import {config as navigation} from './navigation'
 import {config as livePreview} from './livePreview'
 import {filterAsync, mapAsync} from '../utils/async'
+import {KeyMap} from 'react-hotkeys'
+import {Handlers} from './shortcuts'
 
 export const Features = {
     all: prepareSettings([
@@ -28,13 +30,13 @@ export const Features = {
         return filterAsync(this.all, it => this.isActive(it.id))
     },
 
-    getShortcutHandlers: () =>
+    getShortcutHandlers: (): Handlers =>
         getAllShortcuts(Features.all).reduce((acc: any, current) => {
             acc[current.id] = current.onPress
             return acc
         }, {}),
 
-    async getCurrentKeyMap() {
+    async getCurrentKeyMap(): Promise<KeyMap> {
         const features = (await Features.getActiveFeatures()).filter(it => it.settings)
         const allShortcuts = (await mapAsync(features, this.getKeyMapFor)).flat().filter(it => it[1])
         return allShortcuts.reduce((acc: any, current) => {

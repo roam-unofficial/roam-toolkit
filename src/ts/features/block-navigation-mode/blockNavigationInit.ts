@@ -29,7 +29,6 @@ const selectBlockWheneverClicked = () => {
                 updateBlockNavigationView()
             })
             // Delay doesn't work very well, because 'mouseup' is actually the one to trigger to re-render
-
         }
     })
 }
