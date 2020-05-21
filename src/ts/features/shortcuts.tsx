@@ -8,12 +8,6 @@ import {CODE_TO_KEY, normalizeKeyCombo} from '../utils/react-hotkeys'
 configure({
     ignoreTags: [],
     ignoreRepeatedEventsWhenKeyHeldDown: false,
-    logLevel: 'debug',
-    ignoreEventsCondition: (event: KeyboardEvent) => {
-        const normalized = CODE_TO_KEY[event.keyCode]
-        console.log([normalized, event.key])
-        return false
-    },
     simulateMissingKeyPressEvents: true,
     // https://github.com/greena13/react-hotkeys/issues/249
     // Plain key bindings like `u` shouldn't clobber shortcuts like `cmd+u`

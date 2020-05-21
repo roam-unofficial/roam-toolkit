@@ -382,13 +382,7 @@ export const config: Feature = {
 
 // Don't trigger the single letter shortcuts when pressing native keybindings such as "cmd+u".
 // See https://github.com/greena13/react-hotkeys/issues/234#issuecomment-612687273
-export const nativeKeyBindingsToIgnore: string[] = [
-    'command+c',
-    'command+a',
-    'command+v',
-    'command+x',
-    'command+u',
-];
+export const nativeKeyBindingsToIgnore: string[] = ['command+c', 'command+a', 'command+v', 'command+x', 'command+u']
 
 Settings.isActive('block_navigation_mode').then(active => {
     if (active) {
