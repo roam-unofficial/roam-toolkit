@@ -17,6 +17,7 @@ import {map, Mode, nimap, nmap, nvmap, returnToNormalMode} from './vim'
 import {getHint, HINT_IDS, HINT_KEYS} from './blockNavigationHintView'
 import {Roam} from '../../roam/roam'
 import {Keyboard} from '../../utils/keyboard'
+import {KEY_TO_SHIFTED} from '../../utils/react-hotkeys'
 
 const _jumpBlocksInFocusedPanel = async (mode: Mode, blocksToJump: number) => {
     if (mode == 'NORMAL') {
@@ -95,7 +96,7 @@ export const config: Feature = {
         }),
         nmap({
             id: 'pageBottom',
-            key: 'Shift+g',
+            key: 'G',
             label: 'Select Last Block',
             onPress: async () => {
                 await _jumpBlocksInFocusedPanel('NORMAL', 200)
@@ -182,7 +183,7 @@ export const config: Feature = {
         }),
         nmap({
             id: 'insertBlockBefore',
-            key: 'Shift+o',
+            key: 'O',
             label: 'Insert Block Before',
             onPress: async () => {
                 const block = selectedBlock()
@@ -214,7 +215,7 @@ export const config: Feature = {
         }),
         nmap({
             id: 'enterVisualMode',
-            key: 'Shift+v',
+            key: 'V',
             label: 'Enter Visual Mode',
             onPress: async () => {
                 const block = selectedBlock()
@@ -254,7 +255,7 @@ export const config: Feature = {
         }),
         nmap({
             id: 'pasteBefore',
-            key: 'Shift+p',
+            key: 'P',
             label: 'Paste Before',
             onPress: async () => {
                 await _jumpBlocksInFocusedPanel('NORMAL', -1)
@@ -291,7 +292,7 @@ export const config: Feature = {
         }),
         nvmap({
             id: 'selectUp',
-            key: 'Shift+k',
+            key: 'K',
             label: 'Grow Selection Up',
             onPress: async mode => {
                 const block = selectedBlock()
@@ -303,7 +304,7 @@ export const config: Feature = {
         }),
         nvmap({
             id: 'selectDown',
-            key: 'Shift+j',
+            key: 'J',
             label: 'Grow Selection Down',
             onPress: async mode => {
                 const block = selectedBlock()
@@ -315,7 +316,7 @@ export const config: Feature = {
         }),
         nimap({
             id: 'moveBlockUp',
-            key: 'Shift+Command+k',
+            key: 'Command+K',
             label: 'Move Block Up',
             onPress: async () => {
                 const block = selectedBlock()
@@ -327,7 +328,7 @@ export const config: Feature = {
         }),
         nimap({
             id: 'moveBlockDown',
-            key: 'Shift+Command+j',
+            key: 'Command+J',
             label: 'Move Block Up',
             onPress: async () => {
                 const block = selectedBlock()
@@ -352,7 +353,7 @@ export const config: Feature = {
             }),
             nmap({
                 id: `hint${n}Shift`,
-                key: `Shift+${HINT_KEYS[n]}`,
+                key: `${KEY_TO_SHIFTED[HINT_KEYS[n]]}`,
                 label: `Shift Click Hint ${n}`,
                 onPress: () => {
                     const hint = getHint(n)
