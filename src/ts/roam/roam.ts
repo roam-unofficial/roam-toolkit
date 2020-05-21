@@ -145,10 +145,5 @@ export const Roam = {
         await Mouse.leftClick(foldButton as HTMLElement);
     },
 
-    getCurrentBlockUid(): string | undefined {
-        // An empirical observation:
-        const uidLength = 9
-        const elementId = Roam.getRoamBlockInput()?.id
-        return elementId?.substr(elementId?.length - uidLength)
-    },
+
 }

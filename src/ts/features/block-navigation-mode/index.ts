@@ -8,7 +8,8 @@ import {
     scrollFocusedPanel,
     scrollUntilBlockIsVisible,
     selectedBlock,
-    state
+    selectedBlockId,
+    state,
 } from './blockNavigation'
 import {Selectors} from '../../roam/roam-selectors'
 import {Mouse} from '../../utils/mouse'
@@ -18,6 +19,7 @@ import {getHint, HINT_IDS, HINT_KEYS} from './blockNavigationHintView'
 import {Roam} from '../../roam/roam'
 import {Keyboard} from '../../utils/keyboard'
 import {KEY_TO_SHIFTED} from '../../utils/react-hotkeys'
+import {copyBlockEmbed, copyBlockReference} from '../../roam/roam-block'
 
 const _jumpBlocksInFocusedPanel = async (mode: Mode, blocksToJump: number) => {
     if (mode == 'NORMAL') {
@@ -268,7 +270,7 @@ export const config: Feature = {
             id: 'copy',
             key: 'y',
             label: 'Copy',
-            onPress: async (mode) => {
+            onPress: async mode => {
                 const block = selectedBlock()
                 if (mode === 'NORMAL' && block) {
                     await Roam.selectBlock(block)
@@ -278,10 +280,22 @@ export const config: Feature = {
             },
         }),
         nvmap({
+            id: 'copyBlockRef',
+            key: 'Alt+y',
+            label: 'Copy Block Reference',
+            onPress: () => copyBlockReference(selectedBlockId()),
+        }),
+        nvmap({
+            id: 'copyBlockEmbed',
+            key: 'Y',
+            label: 'Copy Block Embed',
+            onPress: () => copyBlockEmbed(selectedBlockId()),
+        }),
+        nvmap({
             id: 'cut',
             key: 'd',
             label: 'Cut',
-            onPress: async (mode) => {
+            onPress: async mode => {
                 const block = selectedBlock()
                 if (mode === 'NORMAL' && block) {
                     await Roam.selectBlock(block)

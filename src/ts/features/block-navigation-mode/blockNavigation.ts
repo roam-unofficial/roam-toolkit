@@ -116,7 +116,7 @@ export const setSelectedBlockId = (blockId: string, panel?: Panel) => {
     }
 }
 
-const selectedBlockId = (): string =>
+export const selectedBlockId = (): string =>
     assumeExists(
         state.panel === 'MAIN' ? state.mainBlockId : state.sideBlockId,
         'blocks should be focused as soon as the first block becomes visible'
