@@ -1,6 +1,7 @@
 import {Feature, Settings} from '../../utils/settings'
 import {clearBlockNavigationView} from './blockNavigationView'
 import {
+    ensureFocusedPanelHasBlockSelected,
     firstNativelyHighlightedBlock,
     jumpBlocksInFocusedPanel,
     jumpUntilSelectedBlockIsVisible,
@@ -20,6 +21,7 @@ import {Roam} from '../../roam/roam'
 import {Keyboard} from '../../utils/keyboard'
 import {KEY_TO_SHIFTED} from '../../utils/react-hotkeys'
 import {copyBlockEmbed, copyBlockReference} from '../../roam/roam-block'
+import {delay} from '../../utils/async'
 
 const _jumpBlocksInFocusedPanel = async (mode: Mode, blocksToJump: number) => {
     if (mode == 'NORMAL') {
@@ -36,12 +38,21 @@ const _jumpBlocksInFocusedPanel = async (mode: Mode, blocksToJump: number) => {
     }
 }
 
-async function insertBlockAfter() {
+const insertBlockAfter = async () => {
     const block = selectedBlock()
     if (block) {
         await Roam.activateBlock(block)
         await Roam.createBlockBelow()
     }
+}
+
+const cutAndGoBackToNormal = async () => {
+    document.execCommand('cut')
+    // Wait for the block to disappear, double check that a block is still selected
+    // Deleting the first line can lead to no previous block existing to select
+    await delay(0)
+    ensureFocusedPanelHasBlockSelected()
+    await returnToNormalMode()
 }
 
 export const config: Feature = {
@@ -294,15 +305,18 @@ export const config: Feature = {
         }),
         nvmap({
             id: 'cut',
-            key: 'd d',
-            label: 'Cut',
+            // mapping 'd d' and 'd' conflict with each other.
+            // replicate the behavior of `d d` by entering visual, and then cutting
+            // this gives more feedback in the UX anyways
+            key: 'd',
+            label: 'Enter Visual Mode / Cut in Visual Mode',
             onPress: async mode => {
                 const block = selectedBlock()
                 if (mode === 'NORMAL' && block) {
                     await Roam.selectBlock(block)
+                    return
                 }
-                document.execCommand('cut')
-                await returnToNormalMode()
+                await cutAndGoBackToNormal()
             },
         }),
         nvmap({

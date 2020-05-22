@@ -1,9 +1,10 @@
 import {Selectors} from '../../roam/roam-selectors'
-import {state} from './blockNavigation'
+import {ensureFocusedPanelHasBlockSelected, selectedBlock} from './blockNavigation'
 import {injectStyle} from '../../scripts/dom'
 import {Mouse} from '../../utils/mouse'
 import {clearHints, updateBlockNavigationHintView} from './blockNavigationHintView'
 import {isElementVisible} from '../../utils/dom'
+import {assumeExists} from '../../utils/assert'
 
 const BLUR_PIXEL = 'roam-toolkit-block-mode--unfocus-pixel'
 const HIGHLIGHT_CSS_CLASS = 'roam-toolkit-block-mode--highlight'
@@ -25,18 +26,17 @@ injectStyle(
 )
 
 export const clearBlockNavigationView = () => {
-    clearHighlights();
-    clearHints();
+    clearHighlights()
+    clearHints()
 }
 
 export const updateBlockNavigationView = () => {
-    const {mainBlockId, sideBlockId, panel} = state
-
-    const blockId = panel === 'MAIN' ? mainBlockId : sideBlockId
-    const block = blockId && document.getElementById(blockId)
+    let block = selectedBlock()
 
     if (!block) {
-        return
+        console.log('No selected block. Selecting the first one by default')
+        ensureFocusedPanelHasBlockSelected()
+        block = assumeExists(selectedBlock())
     }
 
     // Roam.activateBlock focuses the textarea, which prevents holding down j/k.
@@ -44,7 +44,7 @@ export const updateBlockNavigationView = () => {
     clearHighlights()
     block.classList.add(HIGHLIGHT_CSS_CLASS)
 
-    updateBlockNavigationHintView(block);
+    updateBlockNavigationHintView(block)
 
     viewMoreDailyLogIfPossible()
 

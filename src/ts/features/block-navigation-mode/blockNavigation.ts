@@ -51,6 +51,14 @@ export const ensureRightPanelHasBlockSelected = () => {
     }
 }
 
+export const ensureFocusedPanelHasBlockSelected = () => {
+    if (state.panel === 'MAIN') {
+        ensureMainPanelHasBlockSelected()
+    } else {
+        ensureRightPanelHasBlockSelected()
+    }
+}
+
 const blockIdRelative = (block: HTMLElement, blocksToJump: number, panel: Element): string => {
     const blocks = panel.querySelectorAll(Selectors.block)
 

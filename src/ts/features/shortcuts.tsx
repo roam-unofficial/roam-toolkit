@@ -4,7 +4,7 @@ import {configure, GlobalHotKeys, KeyMap} from 'react-hotkeys'
 import KeyEventManager from 'react-hotkeys/es/lib/KeyEventManager'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {nativeKeyBindingsToIgnore} from './block-navigation-mode'
+import {keysOverlappingWithNativeShortCuts, nativeKeyBindingsToIgnore} from './block-navigation-mode'
 import {CODE_TO_KEY, normalizeKeySequence} from '../utils/react-hotkeys'
 
 configure({
@@ -64,8 +64,8 @@ export async function updateShortcuts() {
     const sequenceHandlers: Handlers = {}
     Object.entries(keyMap).forEach(([action, keySequence]) => {
         keySequence = keySequence as string
-        const dontHandleDuringOtherHandlers = keysOverlappingWithNativeShortCuts.some(
-            key => (keySequence as string).includes(key)
+        const dontHandleDuringOtherHandlers = keysOverlappingWithNativeShortCuts.some(key =>
+            (keySequence as string).includes(key)
         )
         if (keySequence.includes(' ')) {
             sequenceKeyMap[action] = normalizeKeySequence(keySequence)
