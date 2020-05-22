@@ -92,10 +92,20 @@ export const KEY_TO_SHIFTED: {[key: string]: string} = {
 // prettier-ignore
 export const KEY_TO_UNSHIFTED: {[key: string]: string} = invertObject(KEY_TO_SHIFTED);
 
-// Listen to both "shift+x" and "x", because the latter triggers if you hold down
-// "shift+x"
-export const normalizeKeyCombo = (keyCombo: string): string[] => {
-    const keys = keyCombo.split('+')
+// Listen to both "shift+x" and "x", because the latter only
+// triggers if you hold down "shift+x"
+export const normalizeKeySequence = (keySequence: string): string[] | string => {
+    if (keySequence.includes(' ')) {
+        const keyChords = keySequence.split(' ')
+        // Don't allow holding in the middle of key sequences
+        return keyChords.map(keyChord => normalizeKeyChord(keyChord, false)[0]).join(' ')
+    }
+
+    return normalizeKeyChord(keySequence, true)
+}
+
+const normalizeKeyChord = (keyChord: string, allowHolding: boolean = true): string[] => {
+    const keys = keyChord.split('+')
     const key = keys.pop()
     const modifiers = keys.filter(key => key.toLowerCase())
 
@@ -104,12 +114,13 @@ export const normalizeKeyCombo = (keyCombo: string): string[] => {
         const nonShiftModifiers = modifiers.filter(key => key !== 'shift')
         // Expand keys like "alt+D" => "alt+shift+d"
         // Normalize keys like "alt+shift+D => alt+shift+d"
-        return [
-            nonShiftModifiers.concat([key!]).join('+'),
-            nonShiftModifiers.concat(['shift', key!]).join('+'),
-        ]
+        const shifted = nonShiftModifiers.concat(['shift', key!]).join('+')
+        if (allowHolding) {
+            return [nonShiftModifiers.concat([key!]).join('+'), shifted]
+        } else {
+            return [shifted]
+        }
     }
 
-    // Otherwise, leave the key combinations alone
-    return [keyCombo]
+    return [keyChord]
 }

@@ -52,7 +52,7 @@ export const config: Feature = {
         map({
             id: 'exitToNormalMode',
             key: 'Escape',
-            label: 'Exit to Normal Mode and close all popups',
+            label: 'Exit to Normal Mode',
             onPress: returnToNormalMode,
         }),
         nvmap({
@@ -71,6 +71,9 @@ export const config: Feature = {
                 await _jumpBlocksInFocusedPanel(mode, 1)
             },
         }),
+        // TODO map H to 'Select First Visible Block'
+        // TODO map M to 'Select Middle Visible Block'
+        // TODO map L to 'Select Last Visible Block'
         nmap({
             id: 'pageUp',
             key: 'Control+u',
@@ -89,8 +92,7 @@ export const config: Feature = {
         }),
         nmap({
             id: 'pageTop',
-            // TODO figure out why key sequences like 'g g' mess up the other shortcuts
-            key: 'g',
+            key: 'g g',
             label: 'Select First Block',
             onPress: async () => {
                 await _jumpBlocksInFocusedPanel('NORMAL', -200)
@@ -172,7 +174,6 @@ export const config: Feature = {
             label: 'Close Page in Side Bar',
             updateView: false,
             onPress: () => {
-                console.log('CLOSE')
                 const block = selectedBlock()
                 if (block) {
                     const pageContainer = block.closest(`${Selectors.sidebarContent} > div`)
@@ -293,7 +294,7 @@ export const config: Feature = {
         }),
         nvmap({
             id: 'cut',
-            key: 'd',
+            key: 'd d',
             label: 'Cut',
             onPress: async mode => {
                 const block = selectedBlock()
