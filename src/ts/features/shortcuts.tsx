@@ -8,7 +8,6 @@ import {nativeKeyBindingsToIgnore} from './block-navigation-mode'
 import {CODE_TO_KEY, normalizeKeySequence} from '../utils/react-hotkeys'
 
 configure({
-    logLevel: 'debug',
     ignoreTags: [],
     ignoreRepeatedEventsWhenKeyHeldDown: false,
     // This emits ctrl+u when holding down ctrl and pressing u,
@@ -23,8 +22,29 @@ configure({
 
 const shortcutContainer = document.createElement('div')
 
+
+type Handler = (event: KeyboardEvent) => Promise<any> | undefined
 export type Handlers = {
-    [action: string]: (event: KeyboardEvent) => void
+    [action: string]: Handler
+}
+
+let executingHandler = 0
+
+// Roam actions such as unfocusing a block require simulating key presses.
+// We only want want that simulated "Esc" press to do it's native job, not
+// trigger another hotkey handler
+const onlyOneHandlerAtATime = (handler: Handler): Handler => async (event: KeyboardEvent) => {
+    if (executingHandler > 0) {
+        return
+    }
+
+    executingHandler += 1
+    try {
+        await handler(event)
+    } catch (error) {
+        console.error(error)
+    }
+    executingHandler -= 1
 }
 
 export async function updateShortcuts() {
@@ -47,18 +67,18 @@ export async function updateShortcuts() {
         keyChord = keyChord as string
         if (keyChord.includes(' ')) {
             sequenceKeyMap[action] = normalizeKeySequence(keyChord)
-            sequenceHandlers[action] = (event: KeyboardEvent) => {
-                handlers[action](event)
+            sequenceHandlers[action] = onlyOneHandlerAtATime(async (event) => {
+                await handlers[action](event)
                 // React hotkeys activates `g g` twice when pressing `g g g`,
                 // because it listens to a "rolling window" of keyChords
                 //
                 // Clear the key history after each sequence using this workaround:
                 // https://github.com/greena13/react-hotkeys/issues/255#issuecomment-558199060
                 KeyEventManager.getInstance()._clearKeyHistory()
-            }
+            })
         } else {
             singleKeyMap[action] = normalizeKeySequence(keyChord)
-            singleHandlers[action] = handlers[action]
+            singleHandlers[action] = onlyOneHandlerAtATime(handlers[action])
         }
     })
 
