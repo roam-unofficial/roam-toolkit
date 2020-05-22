@@ -390,3 +390,7 @@ Settings.isActive('block_navigation_mode').then(active => {
         initializeBlockNavigationMode()
     }
 })
+
+// These keys should not trigger other handlers in the middle of an existing handler.
+// Allow the others to run concurrently though, so the UI feels more responsive.
+export const keysOverlappingWithNativeShortCuts: string[] = ['Escape']

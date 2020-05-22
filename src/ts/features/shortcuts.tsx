@@ -22,7 +22,6 @@ configure({
 
 const shortcutContainer = document.createElement('div')
 
-
 type Handler = (event: KeyboardEvent) => Promise<any> | undefined
 export type Handlers = {
     [action: string]: Handler
@@ -33,18 +32,18 @@ let executingHandler = 0
 // Roam actions such as unfocusing a block require simulating key presses.
 // We only want want that simulated "Esc" press to do it's native job, not
 // trigger another hotkey handler
-const onlyOneHandlerAtATime = (handler: Handler): Handler => async (event: KeyboardEvent) => {
-    if (executingHandler > 0) {
-        return
+const onlyOneHandlerAtATime = (handler: Handler, allowConcurrent: boolean = true): Handler => async (
+    event: KeyboardEvent
+) => {
+    if (allowConcurrent || executingHandler === 0) {
+        executingHandler += 1
+        try {
+            await handler(event)
+        } catch (error) {
+            console.error(error)
+        }
+        executingHandler -= 1
     }
-
-    executingHandler += 1
-    try {
-        await handler(event)
-    } catch (error) {
-        console.error(error)
-    }
-    executingHandler -= 1
 }
 
 export async function updateShortcuts() {
@@ -63,11 +62,14 @@ export async function updateShortcuts() {
     const singleHandlers: Handlers = {}
     const sequenceKeyMap: KeyMap = {}
     const sequenceHandlers: Handlers = {}
-    Object.entries(keyMap).forEach(([action, keyChord]) => {
-        keyChord = keyChord as string
-        if (keyChord.includes(' ')) {
-            sequenceKeyMap[action] = normalizeKeySequence(keyChord)
-            sequenceHandlers[action] = onlyOneHandlerAtATime(async (event) => {
+    Object.entries(keyMap).forEach(([action, keySequence]) => {
+        keySequence = keySequence as string
+        const dontHandleDuringOtherHandlers = keysOverlappingWithNativeShortCuts.some(
+            key => (keySequence as string).includes(key)
+        )
+        if (keySequence.includes(' ')) {
+            sequenceKeyMap[action] = normalizeKeySequence(keySequence)
+            sequenceHandlers[action] = onlyOneHandlerAtATime(async event => {
                 await handlers[action](event)
                 // React hotkeys activates `g g` twice when pressing `g g g`,
                 // because it listens to a "rolling window" of keyChords
@@ -75,10 +77,10 @@ export async function updateShortcuts() {
                 // Clear the key history after each sequence using this workaround:
                 // https://github.com/greena13/react-hotkeys/issues/255#issuecomment-558199060
                 KeyEventManager.getInstance()._clearKeyHistory()
-            })
+            }, dontHandleDuringOtherHandlers)
         } else {
-            singleKeyMap[action] = normalizeKeySequence(keyChord)
-            singleHandlers[action] = onlyOneHandlerAtATime(handlers[action])
+            singleKeyMap[action] = normalizeKeySequence(keySequence)
+            singleHandlers[action] = onlyOneHandlerAtATime(handlers[action], dontHandleDuringOtherHandlers)
         }
     })
 
