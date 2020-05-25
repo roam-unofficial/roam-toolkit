@@ -13,9 +13,12 @@ describe(AnkiScheduler, () => {
         const rescheduledNode = subject.schedule(testNode, SRSSignal.GOOD)
         expect(rescheduledNode.factor).toBe(testNode.factor)
 
-        const jitter = testNode.interval! * AnkiScheduler.jitterPercentage
+        const jitter = rescheduledNode.interval! * AnkiScheduler.jitterPercentage
         const newBaseInterval = testNode.factor! * testNode.interval!
-        expect(rescheduledNode.interval).toBeWithin(newBaseInterval - jitter, newBaseInterval + jitter)
+
+        // Adding floor/ceil because of additional transformations performed by `withInterval`
+        expect(rescheduledNode.interval).toBeWithin(
+            Math.floor(newBaseInterval - jitter), Math.ceil(newBaseInterval + jitter))
     })
 
     test('no scheduling info - schedule with default values', () => {
