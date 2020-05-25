@@ -1,6 +1,7 @@
 import {SM2Node} from './SM2Node'
 import {addDays} from '../date/common'
 import {Scheduler, SRSSignal} from './scheduler'
+import {randomFromInterval} from '../utils/random'
 
 /**
  * Again (1)
@@ -33,6 +34,7 @@ export class AnkiScheduler implements Scheduler {
     static maxInterval = 50 * 365
     static minFactor = 1.3
     static hardFactor = 1.2
+    static jitterPercentage = 0.05
 
     schedule(node: SM2Node, signal: SRSSignal): SM2Node {
         const newParams = this.getNewParameters(node, signal)
@@ -42,7 +44,6 @@ export class AnkiScheduler implements Scheduler {
             node
                 .withInterval(newParams.interval)
                 .withFactor(newParams.factor)
-                // TODO random jitter, in percentage points of interval
                 .withDate(addDays(currentDate, Math.ceil(newParams.interval)))
         )
     }
@@ -73,7 +74,14 @@ export class AnkiScheduler implements Scheduler {
                 break
         }
 
-        return AnkiScheduler.enforceLimits(new SM2Params(newInterval, newFactor))
+        return AnkiScheduler.enforceLimits(AnkiScheduler.addJitter(new SM2Params(newInterval, newFactor)))
+    }
+
+    private static addJitter(params: SM2Params) {
+        // I wonder if i can make this "regressive" i.e. start with larger number &
+        // reduce percentage, as the number grows higher
+        const jitter = params.interval * AnkiScheduler.jitterPercentage
+        return new SM2Params(params.interval + randomFromInterval(-jitter, jitter), params.factor)
     }
 
     private static enforceLimits(params: SM2Params) {
