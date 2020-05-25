@@ -12,7 +12,8 @@
         "test": "jest",
         "test:coverage": "jest --collect-coverage",
         "prettify": "prettier --write src/**/*.{ts,tsx,json,html}",
-        "lint": "tslint src/**/*.ts{,x}"
+        "lint": "tslint src/**/*.ts{,x}",
+        "package": "npm run clean && rm -f extension.zip && npm run prod && cd dist && zip -r ../extension.zip ./*"
     },
     "license": "MIT",
     "dependencies": {
