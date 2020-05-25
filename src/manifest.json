@@ -9,11 +9,8 @@
     "content_security_policy": "script-src 'self'; object-src 'self'",
     "permissions": [
         "activeTab",
-        "alarms",
-        "bookmarks",
         "storage",
         "tabs",
-        "webRequestBlocking",
         "clipboardRead",
         "clipboardWrite",
         "*://roamresearch.com/*"
