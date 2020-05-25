@@ -39,7 +39,7 @@ export class AnkiScheduler implements Scheduler {
     schedule(node: SM2Node, signal: SRSSignal): SM2Node {
         const newParams = this.getNewParameters(node, signal)
 
-        const currentDate = node.listDates()[0] || new Date()
+        const currentDate = new Date()
         return (
             node
                 .withInterval(newParams.interval)
@@ -93,5 +93,6 @@ export class AnkiScheduler implements Scheduler {
 }
 
 class SM2Params {
-    constructor(readonly interval: number, readonly factor: number) {}
+    constructor(readonly interval: number, readonly factor: number) {
+    }
 }
