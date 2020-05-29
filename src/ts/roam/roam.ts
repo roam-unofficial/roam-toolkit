@@ -2,6 +2,7 @@ import {RoamNode, Selection} from './roam-node'
 import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLevelBlock} from '../utils/dom'
 import {Keyboard} from '../utils/keyboard'
 import {Mouse} from '../utils/mouse'
+import {delay} from '../utils/async'
 
 export const Roam = {
     save(roamNode: RoamNode) {
@@ -49,6 +50,12 @@ export const Roam = {
     async activateBlock(element: HTMLElement) {
         if (element.classList.contains('roam-block')) {
             await Mouse.leftClick(element)
+
+            // Prevent race condition when attempting to use the
+            // resulting block before Roam has had a chance to
+            // replace the <span> with a <textarea>. Without this,
+            // Batch operations often skip some blocks.
+            await delay(100)
         }
         return this.getRoamBlockInput()
     },
@@ -75,6 +82,20 @@ export const Roam = {
 
     moveCursorToEnd() {
         this.applyToCurrent(node => node.withCursorAtTheEnd())
+    },
+
+    async replace(element: HTMLElement, mod: { (orig: string): string }) {
+        const textarea = await Roam.activateBlock(element) as HTMLTextAreaElement
+        if (!textarea) {
+            console.log("🚨 NO TEXTAREA returned from ", element)
+            return
+        }
+
+        const newText = mod(textarea.value)
+
+        Roam.save(new RoamNode(newText))
+        Keyboard.pressEsc()
+        Keyboard.pressEsc()
     },
 
     writeText(text: string) {

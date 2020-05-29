@@ -33,6 +33,18 @@ export function getFirstTopLevelBlock() {
     return firstChild.querySelector('.roam-block, textarea') as HTMLElement
 }
 
+export function getHighlightedBlocks(): { parentBlocks: NodeListOf<HTMLElement>, contentBlocks: NodeListOf<HTMLElement> } {
+
+    const highlightedParentBlocks = document.querySelectorAll('.block-highlight-blue') as NodeListOf<HTMLElement>
+
+    const highlightedContentBlocks = document.querySelectorAll('.block-highlight-blue .roam-block') as NodeListOf<HTMLElement>
+
+    return {
+        parentBlocks: highlightedParentBlocks,
+        contentBlocks: highlightedContentBlocks
+    }
+}
+
 export function getInputEvent() {
     return new Event('input', {
         bubbles: true,

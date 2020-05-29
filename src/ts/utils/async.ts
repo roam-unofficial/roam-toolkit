@@ -16,3 +16,13 @@ export async function filterAsync<T>(
     const filterMap = await mapAsync(array, callbackfn)
     return array.filter((_value, index) => filterMap[index])
 }
+
+export async function forEachAsync<T>(
+    array: T[],
+    callbackfn: (value: T, ...args: any[]) => void
+) {
+    for await (const element of array) {
+        await callbackfn(element, arguments)
+    }
+}
+

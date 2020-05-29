@@ -20,19 +20,21 @@ It's available in their respective extension stores for both [Chrome](https://ch
   
   ![](./media/fuzzy_date.gif)
 1. Date increment/decrement
+    - Shortcuts for ±1 day and ±7 days
     - If there is only 1 date in the block - place the cursor anywhere withing it and press `Ctrl-Alt-Up/Down`, if there is more then 1 date - you need to place the cursor within the name of the date.
 1. Spaced repetition
    * Anki SRS algorithm & Shortcuts
    * Leitner System automation shortcuts 
-1. Block actions: Delete, Duplicate
+1. Single-block actions: Duplicate, Delete, Copy Block Reference, and Copy Block Embed
+1. Batch-block actions: Batch Link a word or phrase, and add/remove "end" tags
 1. Task estimates
 1. Custom CSS
-
+1. Navigation Hotkeys: Go to Today, Go to Tomorrow, and Go to Yesterday
 
 ## Running the development version
 
 1. Checkout the repository
-2. Revert the https://github.com/roam-unofficial/roam-toolkit/commit/20ad9560b7cfaf71adf65dbc3645b3554c2ab598 change locally to allow Toolkit to properly run in the development mode
+2. Revert the https://github.com/roam-unofficial/roam-toolkit/commit/20ad9560b7cfaf71adf65dbc3645b3554c2ab598 change locally to allow Toolkit to properly run in the development mode. **← Do not commit the resulting change as it will break the release build!**
 
 ### In terminal or command prompt
 
