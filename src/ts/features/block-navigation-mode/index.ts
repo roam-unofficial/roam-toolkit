@@ -22,6 +22,7 @@ import {Keyboard} from '../../utils/keyboard'
 import {KEY_TO_SHIFTED} from '../../utils/react-hotkeys'
 import {copyBlockEmbed, copyBlockReference} from '../../roam/roam-block'
 import {delay} from '../../utils/async'
+import {expandLastBreadcrumb} from '../../roam/navigation/references';
 
 const _jumpBlocksInFocusedPanel = async (mode: Mode, blocksToJump: number) => {
     if (mode == 'NORMAL') {
@@ -366,6 +367,12 @@ export const config: Feature = {
                     await Keyboard.simulateKey(Keyboard.DOWN_ARROW, 0, {metaKey: true, shiftKey: true})
                 }
             },
+        }),
+        nimap({
+            id: 'expandLastBreadcrumb',
+            label: 'Expand Last Reference Breadcrumb',
+            key: 'alt+z',
+            onPress: expandLastBreadcrumb,
         }),
     ].concat(
         HINT_IDS.flatMap(n => [

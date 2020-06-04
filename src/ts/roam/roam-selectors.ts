@@ -18,5 +18,7 @@ export const Selectors = {
     button: '.bp3-button',
     closeButton: '.bp3-icon-cross',
     logButton: '.log-button',
-    viewMore: '.roam-log-preview'
+    viewMore: '.roam-log-preview',
+    referenceItem: '.rm-reference-item',
+    breadcrumbsContainer: '.zoom-mentions-view',
 }
