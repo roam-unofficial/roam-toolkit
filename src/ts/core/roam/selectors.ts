@@ -20,4 +20,6 @@ export const Selectors = {
     viewMore: '.roam-log-preview',
     checkbox: '.check-container',
     externalLink: 'a',
+    referenceItem: '.rm-reference-item',
+    breadcrumbsContainer: '.zoom-mentions-view',
 }
