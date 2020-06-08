@@ -51,6 +51,8 @@ To implement this feature we'll need to do the following things:
 directory that contains feature description and implementation. Here is an example: 
 
     ```typescript
+    import {Feature, Shortcut} from '../utils/settings'
+   
     export const config: Feature = { // An object that describes new feature we introduce
         id: 'block_manipulation',  // Feature id - any unique string would do
         name: 'Block manipulation',  // Feature name - would be displayed in the settings menu
