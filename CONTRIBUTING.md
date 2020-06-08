@@ -56,7 +56,7 @@ To implement this feature we'll need to do the following things:
 directory that contains feature description and implementation. Here is an example: 
 
     ```typescript
-    import {Feature, Shortcut} from '../settings/settings'
+    import {Feature, Shortcut} from '../settings'
    
     export const config: Feature = { // An object that describes new feature we introduce
         id: 'block_manipulation',  // Feature id - any unique string would do
@@ -116,22 +116,41 @@ directory that contains feature description and implementation. Here is an examp
 
 ### Entry point
 
-[src/ts/contentScripts/entry/index.ts](https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/contentScripts/entry/index.ts) Is the entry-point file for the extension. For code to be
+[src/ts/contentScripts/entry/index.ts](src/ts/contentScripts/entry/index.ts) Is the entry-point file for the extension. For code to be
  loaded/executed - it has to be directly or transitively be imported from this file. 
 
 ### Features directory 
 
-[/src/ts/core/features/](https://github.com/roam-unofficial/roam-toolkit/tree/master/src/ts/core/features) 
-directory contains entry point for all the features in the Toolkit. 
+[/src/ts/core/features/](src/ts/core/features/) 
+directory contains entry points for most of the features in the Toolkit. If you're developing a new 
+Feature - you should put entry point for it here.   
+`features.ts` file within that directory defines the [list of all features](https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/core/features/features.ts#L13). It can also serve as a good starting point 
+ for exploring the code if you are curious for how any particular feature works.  
 
+### Roam interaction interfaces and utils
 
-starting point for exploring
+Toolkit provides a variety of utilities and abstractions to make it easier for you to interact with 
+various aspects of Roam.   
+[src/ts/core/roam](src/ts/core/roam) is a good entry point to start exploring these.
 
-### Roam interaction utils
+* [src/ts/core/roam/roam.ts](src/ts/core/roam/roam.ts) Provides abstraction for operating on Roam Blocks. Exposing operations like: 
+  * Read/Write current block
+  * Select current block
+  * Delete block
+  * Create blocks above/below/etc
+  * And many more
 
-1. short summary of utils/abstractions available
+* [src/ts/core/roam/roam-db.ts](src/ts/core/roam/roam-db.ts) - An interface for querying Roam database directly, exposing some pre-prepared queries and the ability to submit raw [Datalog](https://github.com/tonsky/datascript) queries 
+* [src/ts/core/roam/date/index.ts](src/ts/core/roam/date/index.ts) - Interacting with Roam Date (parsing, formatting, etc)
+
+* [src/ts/core/roam/navigation.ts](src/ts/core/roam/navigation.ts) - Interface for navigating to different Roam
+pages in the browser (by name, date, etc) .
+
+* Simulating [keyboard](src/ts/core/common/keyboard.ts) and [mouse](src/ts/core/common/mouse.ts) events
+ 
 
 ## Unit testing
 
-* 
+Unit tests in Roam Toolkit use [Jest](https://jestjs.io/docs/en/getting-started) framework. 
+Adding tests for you features is strongly encouraged. 
 
