@@ -1,4 +1,4 @@
-import {Feature, prepareSettings, Settings, Shortcut} from '../settings/settings'
+import {Feature, prepareSettings, Settings, Shortcut} from '../settings'
 
 import {config as incDec} from './inc-dec-value'
 import {config as customCss} from './custom-css'

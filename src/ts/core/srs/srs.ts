@@ -1,4 +1,4 @@
-import {Feature, Shortcut} from '../settings/settings'
+import {Feature, Shortcut} from '../settings'
 import {SRSSignal, SRSSignals} from './scheduler'
 import {SM2Node} from './SM2Node'
 import {AnkiScheduler} from './AnkiScheduler'

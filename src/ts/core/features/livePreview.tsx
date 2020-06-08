@@ -1,4 +1,4 @@
-import {Feature, Settings} from '../settings/settings'
+import {Feature, Settings} from '../settings'
 import {Navigation} from '../roam/navigation'
 import {browser} from 'webextension-polyfill-ts'
 import {createPopper, Instance} from '@popperjs/core'

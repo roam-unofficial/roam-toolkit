@@ -3,7 +3,7 @@
  * Any file to be loaded should be included directly or transitively (from other files)
  */
 
-import '../../core/features/features'
+import '../../core/features'
 import '../../core/settings/dispatcher'
 import '../../core/settings/shortcuts'
 import '../../core/features/fuzzy_date'

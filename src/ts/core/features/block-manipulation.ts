@@ -1,4 +1,4 @@
-import {Feature, Shortcut} from '../settings/settings'
+import {Feature, Shortcut} from '../settings'
 import {RoamNode, Selection} from '../roam/roam-node'
 import {Roam} from '../roam/roam'
 

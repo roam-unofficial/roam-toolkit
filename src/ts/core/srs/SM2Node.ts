@@ -1,4 +1,4 @@
-import {withDate} from '../date/withDate'
+import {withDate} from '../roam/date/withDate'
 import {RoamNode, Selection} from '../roam/roam-node'
 
 export class SM2Node extends withDate(RoamNode) {

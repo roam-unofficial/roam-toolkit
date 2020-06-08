@@ -1,5 +1,5 @@
 import {browser} from 'webextension-polyfill-ts'
-import {Feature, Settings} from '../settings/settings'
+import {Feature, Settings} from '../settings'
 
 export const config: Feature = {
     id: 'custom-css',

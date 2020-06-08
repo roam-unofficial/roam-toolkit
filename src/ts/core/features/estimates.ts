@@ -1,4 +1,4 @@
-import {Feature, Settings, Shortcut, String} from '../settings/settings'
+import {Feature, Settings, Shortcut, String} from '../settings'
 import {getActiveEditElement} from '../common/dom'
 import {RoamNode} from '../roam/roam-node'
 import {Roam} from '../roam/roam'

@@ -1,4 +1,4 @@
-import {Feature, Shortcut} from '../settings/settings'
+import {Feature, Shortcut} from '../settings'
 import {Navigation} from '../roam/navigation'
 
 export const config: Feature = {

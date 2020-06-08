@@ -6,7 +6,7 @@ import {IAppState} from '../../../background/store'
 import {Home} from './Home'
 import {FeatureConfig} from './FeatureConfig'
 
-import {Features} from '../../../core/features/features'
+import {Features} from '../../../core/features'
 
 export const Settings = () => {
     const featureId = useSelector<IAppState, string>(state => state.settings.featureId)

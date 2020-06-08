@@ -1,5 +1,5 @@
-import {Feature, Shortcut} from '../settings/settings'
-import {RoamDate} from '../date/common'
+import {Feature, Shortcut} from '../settings'
+import {RoamDate} from '../roam/date'
 import {Roam} from '../roam/roam'
 import {RoamNode, Selection} from '../roam/roam-node'
 

@@ -1,9 +1,9 @@
 import * as chrono from 'chrono-node'
 import {afterClosingBrackets} from '../common/brackets'
-import {RoamDate} from '../date/common'
+import {RoamDate} from '../roam/date'
 import {RoamNode, Selection} from '../roam/roam-node'
 import {Roam} from '../roam/roam'
-import {NodeWithDate} from '../date/withDate'
+import {NodeWithDate} from '../roam/date/withDate'
 
 export const guard = ';'
 const dateContainerExpr = /;(.{3,}?);/gm

@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import styled from 'styled-components'
 import {setFeatureId} from '../../../background/store/settings'
 
-import {Feature} from '../../../core/settings/settings'
+import {Feature} from '../../../core/settings'
 
 import {Checkbox} from '../../Checkbox'
 import {WarningIcon} from '../../WarningIcon'

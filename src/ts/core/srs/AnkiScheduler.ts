@@ -1,7 +1,7 @@
 import {SM2Node} from './SM2Node'
-import {addDays} from '../date/common'
 import {Scheduler, SRSSignal} from './scheduler'
 import {randomFromInterval} from '../common/random'
+import {addDays} from '../common/date';
 
 /**
  * Again (1)

@@ -2,7 +2,7 @@ import * as React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import styled from 'styled-components'
 
-import {Feature, Setting} from '../../../core/settings/settings'
+import {Feature, Setting} from '../../../core/settings'
 
 import {returnToHome} from '../../../background/store/settings'
 
