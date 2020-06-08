@@ -5,7 +5,7 @@ import styled, {ThemeProvider} from 'styled-components'
 import {IAppState} from '../../background/store'
 import GlobalStyle from '../../components/styles/GlobalStyle'
 import {themes, ThemeTypes} from '../../components/styles/themes'
-import {Settings} from '../../containers/Settings/Settings'
+import {Settings} from '../../components/containers/Settings/Settings'
 
 interface IPopupApp {
     theme: ThemeTypes
