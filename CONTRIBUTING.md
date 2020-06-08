@@ -47,19 +47,19 @@ in such a way that it'd integrate with the settings menu.
 The example feature would be a shortcut to **copy block reference** of the block. 
 
 To implement this feature we'll need to do the following things:  
-1. Create a file in [features](https://github.com/roam-unofficial/roam-toolkit/tree/master/src/ts/features)
+1. Create a file in [features](https://github.com/roam-unofficial/roam-toolkit/tree/master/src/ts/core/features)
 directory that contains feature description and implementation. Here is an example: 
 
     ```typescript
-    import {Feature, Shortcut} from '../utils/settings'
+    import {Feature, Shortcut} from '../settings/settings'
    
     export const config: Feature = { // An object that describes new feature we introduce
         id: 'block_manipulation',  // Feature id - any unique string would do
         name: 'Block manipulation',  // Feature name - would be displayed in the settings menu
         settings: [ // List of settings for the feature
             {
-                type: 'shortcut', // Type of the setting. See other ones defined here: https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/utils/settings.ts#L36 
-                id: 'copyBlockRef', // Id of the setting - any unique strign would do
+                type: 'shortcut', // Type of the setting. See other ones defined here: https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/core/settings/settings.ts#L36 
+                id: 'copyBlockRef', // Id of the setting - any unique string would do
                 label: 'Copy Block Reference',  // Shortcut name - would be displayed in setting menu
                 initValue: 'ctrl+shift+c',  // Initial shortcut value
                 // This defines what function would be called when shortcut is pressed 
@@ -73,9 +73,9 @@ directory that contains feature description and implementation. Here is an examp
     }
     ```
    
-   The original code for this feature can be found at https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/features/block-manipulation.ts#L5
+   The original code for this feature can be found at https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/core/features/block-manipulation.ts#L5
 
-1. Add the newly defined feature to the list of all features to be loaded [here](https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/features/features.ts#L12).  
+1. Add the newly defined feature to the list of all features to be loaded [here](https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/core/features/features.ts#L12).  
 
     For our block manipulation feature it'd look like:
     ```typescript
@@ -94,7 +94,7 @@ directory that contains feature description and implementation. Here is an examp
 
 ### Bare minimum example (without settings):
 
-1. Create a TypeScript file anywhere in [ts directory](https://github.com/roam-unofficial/roam-toolkit/tree/master/src/ts)
+1. Create a TypeScript file anywhere in [core directory](https://github.com/roam-unofficial/roam-toolkit/tree/master/src/ts/core)
 
     ```typescript
     alert("Hello World!")
@@ -106,14 +106,27 @@ directory that contains feature description and implementation. Here is an examp
 1. You should have your new shiny hello world now 🎉
 
 ## Code structure
-WIP 
+* [Main source dir](https://github.com/roam-unofficial/roam-toolkit/tree/master/src/ts)
+* [Tests](https://github.com/roam-unofficial/roam-toolkit/tree/master/tests/ts)
 
 ### Entry point
 
-### Features dir
+[src/ts/contentScripts/entry/index.ts](https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/contentScripts/entry/index.ts) Is the entry-point file for the extension. For code to be
+ loaded/executed - it has to be directly or transitively be imported from this file. 
+
+### Features directory 
+
+[/src/ts/features/](https://github.com/roam-unofficial/roam-toolkit/tree/master/src/ts/core/features) 
+directory contains entry point for all the features in the Toolkit. 
+
+
 starting point for exploring
 
 ### Roam interaction utils
 
 1. short summary of utils/abstractions available
+
+## Unit testing
+
+* 
 
