@@ -24,42 +24,40 @@ It's available in their respective extension stores for both [Chrome](https://ch
 1. Spaced repetition
    * Anki SRS algorithm & Shortcuts
    * Leitner System automation shortcuts 
-1. Block actions: Delete, Duplicate
+1. Block actions: Delete, Duplicate, Copy Block Reference
 1. Task estimates
 1. Custom CSS
+1. Live Preview of pages
+ 
+ ![](./media/live_preview.gif)
 
+## Contributing 
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on how to start contributing.
 
 ## Running the development version
 
 1. Checkout the repository
-2. Revert the https://github.com/roam-unofficial/roam-toolkit/commit/20ad9560b7cfaf71adf65dbc3645b3554c2ab598 change locally to allow Toolkit to properly run in the development mode
 
-### In terminal or command prompt
+2. In terminal or command prompt run the following commands:
 
-```
-install dependencies
- - npm install
-Transpile the code
- - npm run dev (only transpiles the code)
- - npm run watch (transpiles and watches for code changes)
+    ```bash
+    npm install # Install dependencies
+    npm run prod # Transpile the code
+    ```
 
+### Load extension into the browser
 
-yarn commands will work too if yarn is installed.
-```
-
-### In Chrome web browser
+#### Chrome
 1. Go to: [**chrome://extensions**](chrome://extensions)
 2. Toggle: "**developer mode**" on.
 3. Click on: "**Load unpacked**"
 4. Select the newly created folder "**dist**" from the project folder.
-5. Thats it.
+5. That's it.
 
-### In Firefox web browser
+#### Firefox
 1. Go to: [**about:debugging**](about:debugging)
 2. Select: "**Enable add-on debugging**"
 3. Click on: "**Load Temporary Add-on…**"
 4. Open the newly created folder "**dist**" from the project folder, and choose the "**manifest.json**" file.
-5. Thats it.
-
-## License
-MIT
+5. That's it.
