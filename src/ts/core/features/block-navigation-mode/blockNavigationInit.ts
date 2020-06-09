@@ -1,4 +1,4 @@
-import {onSelectorChange, waitForSelectorToExist} from '../../scripts/mutation-observer'
+import {onSelectorChange, waitForSelectorToExist} from '../../common/mutation-observer'
 import {Selectors} from '../../roam/roam-selectors'
 import {
     ensureMainPanelHasBlockSelected,
@@ -7,8 +7,8 @@ import {
     state,
 } from './blockNavigation'
 import {updateBlockNavigationView} from './blockNavigationView'
-import {delay} from '../../utils/async'
-import {assumeExists} from '../../utils/assert'
+import {delay} from '../../common/async'
+import {assumeExists} from '../../common/assert'
 
 const selectBlockWheneverClicked = () => {
     document.addEventListener('focusin', event => {

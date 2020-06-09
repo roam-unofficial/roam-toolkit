@@ -1,4 +1,4 @@
-import {Feature, Settings} from '../../utils/settings'
+import {Feature, Settings} from '../../settings'
 import {clearBlockNavigationView} from './blockNavigationView'
 import {
     ensureFocusedPanelHasBlockSelected,
@@ -13,15 +13,15 @@ import {
     state,
 } from './blockNavigation'
 import {Selectors} from '../../roam/roam-selectors'
-import {Mouse} from '../../utils/mouse'
+import {Mouse} from '../../common/mouse'
 import {initializeBlockNavigationMode} from './blockNavigationInit'
 import {map, Mode, nimap, nmap, nvmap, returnToNormalMode} from './vim'
 import {getHint, HINT_IDS, HINT_KEYS} from './blockNavigationHintView'
 import {Roam} from '../../roam/roam'
-import {Keyboard} from '../../utils/keyboard'
-import {KEY_TO_SHIFTED} from '../../utils/react-hotkeys'
+import {Keyboard} from '../../common/keyboard'
+import {KEY_TO_SHIFTED} from '../../common/react-hotkeys'
 import {copyBlockEmbed, copyBlockReference} from '../../roam/roam-block'
-import {delay} from '../../utils/async'
+import {delay} from '../../common/async'
 import {expandLastBreadcrumb} from '../../roam/navigation/references';
 
 const _jumpBlocksInFocusedPanel = async (mode: Mode, blocksToJump: number) => {

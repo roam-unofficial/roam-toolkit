@@ -10,7 +10,7 @@ import {config as navigation} from './navigation'
 import {config as livePreview} from './livePreview'
 import {filterAsync, mapAsync} from '../common/async'
 import {KeyMap} from 'react-hotkeys'
-import {Handlers} from './shortcuts'
+import {Handlers} from '../settings/shortcuts'
 
 export const Features = {
     all: prepareSettings([

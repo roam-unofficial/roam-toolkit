@@ -1,4 +1,4 @@
-import {assumeExists} from '../utils/assert'
+import {assumeExists} from './assert'
 
 type DisconnectFn = () => void
 

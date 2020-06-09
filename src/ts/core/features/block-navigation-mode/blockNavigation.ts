@@ -1,4 +1,4 @@
-import {assumeExists} from '../../utils/assert'
+import {assumeExists} from '../../common/assert'
 import {Selectors} from '../../roam/roam-selectors'
 
 export type Panel = 'MAIN' | 'SIDEBAR'

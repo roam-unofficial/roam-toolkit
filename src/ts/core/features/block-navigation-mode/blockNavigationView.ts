@@ -1,10 +1,9 @@
 import {Selectors} from '../../roam/roam-selectors'
 import {ensureFocusedPanelHasBlockSelected, selectedBlock} from './blockNavigation'
-import {injectStyle} from '../../scripts/dom'
-import {Mouse} from '../../utils/mouse'
+import {injectStyle, isElementVisible} from '../../common/dom'
+import {Mouse} from '../../common/mouse'
 import {clearHints, updateBlockNavigationHintView} from './blockNavigationHintView'
-import {isElementVisible} from '../../utils/dom'
-import {assumeExists} from '../../utils/assert'
+import {assumeExists} from '../../common/assert'
 
 const BLUR_PIXEL = 'roam-toolkit-block-mode--unfocus-pixel'
 const HIGHLIGHT_CSS_CLASS = 'roam-toolkit-block-mode--highlight'

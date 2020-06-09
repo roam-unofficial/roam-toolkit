@@ -1,4 +1,4 @@
-import {Settings} from '../../utils/settings'
+import {Settings} from '../../settings'
 
 export const getBlockNavigationModeSetting = (settingId: string, defaultValue?: string) => Settings.get(
     'block_navigation_mode',

@@ -53,3 +53,15 @@ export const isElementVisible = (element: Element) => {
     const {x, y} = element.getBoundingClientRect()
     return x >= 0 && y >= 0 && x <= window.innerWidth && y <= window.innerHeight
 }
+
+export const injectStyle = (css: string, tagId: string) => {
+    if (document.getElementById(tagId)) {
+        document.getElementById(tagId)!.innerHTML = css
+        return
+    }
+
+    const style = document.createElement('style')
+    style.id = tagId
+    style.innerHTML = css
+    document.getElementsByTagName('head')[0].appendChild(style)
+}

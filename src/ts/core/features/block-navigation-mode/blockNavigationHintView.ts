@@ -1,5 +1,5 @@
 import {Selectors} from '../../roam/roam-selectors'
-import {injectStyle} from '../../scripts/dom'
+import {injectStyle} from '../../common/dom'
 import {getBlockNavigationModeSetting} from './blockNavigationSetting'
 
 export const HINT_IDS = [0, 1, 2, 3]

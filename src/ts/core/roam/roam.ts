@@ -3,7 +3,7 @@ import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLe
 import {Keyboard} from '../common/keyboard'
 import {Mouse} from '../common/mouse'
 import {Selectors} from './roam-selectors'
-import {assumeExists} from '../utils/assert'
+import {assumeExists} from '../common/assert'
 
 export const Roam = {
     save(roamNode: RoamNode) {

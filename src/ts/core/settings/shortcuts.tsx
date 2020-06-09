@@ -4,8 +4,8 @@ import {configure, GlobalHotKeys, KeyMap} from 'react-hotkeys'
 import KeyEventManager from 'react-hotkeys/es/lib/KeyEventManager'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {keysOverlappingWithNativeShortCuts, nativeKeyBindingsToIgnore} from './block-navigation-mode'
-import {CODE_TO_KEY, normalizeKeySequence} from '../utils/react-hotkeys'
+import {keysOverlappingWithNativeShortCuts, nativeKeyBindingsToIgnore} from '../features/block-navigation-mode'
+import {CODE_TO_KEY, normalizeKeySequence} from '../common/react-hotkeys'
 
 configure({
     ignoreTags: [],

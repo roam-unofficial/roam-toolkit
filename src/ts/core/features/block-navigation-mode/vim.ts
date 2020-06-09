@@ -1,8 +1,8 @@
-import {Shortcut} from '../../utils/settings'
+import {Shortcut} from '../../settings'
 import {blurEverything, updateBlockNavigationView} from './blockNavigationView'
-import {isEditing} from '../../utils/dom'
+import {isEditing} from '../../common/dom'
 import {Selectors} from '../../roam/roam-selectors'
-import {delay} from '../../utils/async'
+import {delay} from '../../common/async'
 
 export type Mode = 'INSERT' | 'VISUAL' | 'NORMAL'
 

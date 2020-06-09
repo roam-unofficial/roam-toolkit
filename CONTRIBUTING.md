@@ -165,7 +165,7 @@ various aspects of Roam.
 * [src/ts/core/roam/roam-db.ts](src/ts/core/roam/roam-db.ts) - An interface for querying Roam database directly, exposing some pre-prepared queries and the ability to submit raw [Datalog](https://github.com/tonsky/datascript) queries 
 * [src/ts/core/roam/date/index.ts](src/ts/core/roam/date/index.ts) - Interacting with Roam Date (parsing, formatting, etc)
 
-* [src/ts/core/roam/navigation.ts](src/ts/core/roam/navigation.ts) - Interface for navigating to different Roam
+* [src/ts/core/roam/navigation.ts](src/ts/core/roam/navigation/index.ts) - Interface for navigating to different Roam
 pages in the browser (by name, date, etc) .
 
 * Simulating [keyboard](src/ts/core/common/keyboard.ts) and [mouse](src/ts/core/common/mouse.ts) events

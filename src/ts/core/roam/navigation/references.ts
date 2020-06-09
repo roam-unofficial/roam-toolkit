@@ -1,5 +1,5 @@
 import {Selectors} from '../roam-selectors';
-import {Mouse} from '../../utils/mouse';
+import {Mouse} from '../../common/mouse';
 import {selectedBlock} from '../../features/block-navigation-mode/blockNavigation';
 
 export const expandLastBreadcrumb = () => {
