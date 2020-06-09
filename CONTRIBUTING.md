@@ -17,33 +17,52 @@ And there is a lot of material out there if you want to learn more!
 
 1. Get a good editor 😉. My favorite is [WebStorm](https://www.jetbrains.com/webstorm/). [VS Code](https://code.visualstudio.com/) is pretty good too.
 
+1. If you haven't worked with GitHub before - look at this guide https://www.thinkful.com/learn/github-pull-request-tutorial/#Time-to-Submit-Your-First-PR to figure out the general contribution process. 
+
 
 ## Running the plugin in development mode
 
-1. Clone the repository  
+1. [Fork the repository](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) and then clone your fork locally. 
 
-    `git clone https://github.com/roam-unofficial/roam-toolkit.git`
+    `git clone https://github.com/<YourUserName>/roam-toolkit.git`
 
 1. Revert the https://github.com/roam-unofficial/roam-toolkit/commit/20ad9560b7cfaf71adf65dbc3645b3554c2ab598 change locally to allow Toolkit to properly run in the development mode.   
   This is awkward, but required because of how react development tools work 😞. Make sure not to 
   commit these changes back to the repository. 
   
-    `git revert --no-commit 20ad9560b7cfaf71adf65dbc3645b3554c2ab598 && git reset src/manifest.json`
+   ```
+   cd roam-toolkit # Go to the Roam Toolkit directory
+   git revert --no-commit 20ad9560b7cfaf71adf65dbc3645b3554c2ab598 
+   git reset src/manifest.json
+   ```
   
 1. Install dependencies by running  
   `npm install`
 
 1. Build the plugin. Here you have two options:
     * `npm run dev` - run one time build
-    * `npm run watch` - continuously watch for changes in your source code and rebuild the plugin & 
-  reload it in the browser. This mode is great for continuous iteration as it introduces a minimal 
+    * `npm run watch` - (**recommended**) continuously watch for changes in your source code 
+    and rebuild the plugin & reload it in the browser.  
+    This mode is great for continuous iteration as it introduces a minimal 
   friction between making a change and seeing the result. It'll even reload the browser page for you 
   where the plugin is loaded, to ensure that your changes are applied.
   
-1. [Load the extension in the browser](https://github.com/roam-unofficial/roam-toolkit#load-extension-into-the-browser) 
- 
- 
- 
+1. Load extension into the browser
+   
+   **Chrome**
+   
+   1. Go to: [**chrome://extensions**](chrome://extensions)
+   1. Toggle: "**developer mode**" on.
+   1. Click on: "**Load unpacked**"
+   1. Select the newly created folder "**dist**" from the project folder.
+   1. That's it.
+   
+   **Firefox**
+   1. Go to: [**about:debugging**](about:debugging)
+   1. Select: "**Enable add-on debugging**"
+   1. Click on: "**Load Temporary Add-on…**"
+   1. Open the newly created folder "**dist**" from the project folder, and choose the "**manifest.json**" file.
+   1. That's it.
  
 ## Example feature with settings
 
@@ -80,7 +99,7 @@ directory that contains feature description and implementation. Here is an examp
    
    The original code for this feature can be found at https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/core/features/block-manipulation.ts#L5
 
-1. Add the newly defined feature to the list of all features to be loaded [here](https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/core/features/features.ts#L12).  
+1. Add the newly defined feature to the list of all features to be loaded [here](https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/core/features/index.ts#L12).  
 
     For our block manipulation feature it'd look like:
     ```typescript
@@ -99,14 +118,17 @@ directory that contains feature description and implementation. Here is an examp
 
 ### Bare minimum example (without settings):
 
-1. Create a TypeScript file anywhere in [core directory](https://github.com/roam-unofficial/roam-toolkit/tree/master/src/ts/core)
+1. Create a TypeScript file anywhere in [core directory](https://github.com/roam-unofficial/roam-toolkit/tree/master/src/ts/core) - for the example purposes we'll assume that you've created 
+`src/ts/core/features/hello_world.ts` with the following content:
 
     ```typescript
     alert("Hello World!")
     ```
-2. Import your file from [this file](https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/contentScripts/entry/index.ts) to ensure it's loaded with the plugin
+1. Import your file from [src/ts/contentScripts/entry/index.ts](https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/contentScripts/entry/index.ts) by adding the following line to it: 
 
-   It'd look something like `import '../../features/hello_world'`
+   `import '../../core/features/hello_world'`
+   
+   This is required to ensure it's loaded with the extension. 
    
 1. You should have your new shiny hello world now 🎉
 
@@ -124,7 +146,7 @@ directory that contains feature description and implementation. Here is an examp
 [/src/ts/core/features/](src/ts/core/features/) 
 directory contains entry points for most of the features in the Toolkit. If you're developing a new 
 Feature - you should put entry point for it here.   
-`features.ts` file within that directory defines the [list of all features](https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/core/features/features.ts#L13). It can also serve as a good starting point 
+`index.ts` file within that directory defines the [list of all features](https://github.com/roam-unofficial/roam-toolkit/blob/master/src/ts/core/features/index.ts#L13). It can also serve as a good starting point 
  for exploring the code if you are curious for how any particular feature works.  
 
 ### Roam interaction interfaces and utils
