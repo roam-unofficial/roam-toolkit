@@ -69,7 +69,7 @@ const activateButtons = () => {
 
     // TODO: find more explanatory icons
     createButtonElement('bp3-icon-sort-alphabetical', 'alphabetical')
-    createButtonElement('bp3-icon-sort-asc', 'daily')
+    createButtonElement('bp3-icon-sort-numerical', 'daily')
 }
 
 const destroyButtons = () => {
@@ -98,6 +98,11 @@ const createButtonElement = (icon: string, elementId: string) => {
     const buttonInnerElement = createSpan(['bp3-icon', icon])
     buttonInnerElement.id = elementId
 
+    // TODO: store this state in a better way, this is just proof-of-concept
+    let sortedAscending:boolean = false;
+    console.log(icon, sortedAscending);
+
+
     buttonContainer.appendChild(buttonInnerElement)
 
     // TODO: refactor out class selectors
@@ -110,6 +115,8 @@ const createButtonElement = (icon: string, elementId: string) => {
             console.log('click event received', event)
         }
 
+        console.log('before', icon, sortedAscending);
+
         const referencesList = buttonContainer.parentNode?.nextSibling;
         if(!referencesList) {
             console.error('something went really wrong ...')
@@ -117,25 +124,20 @@ const createButtonElement = (icon: string, elementId: string) => {
         }
         
         // TODO: refactor out class selectors
-        const references = referencesList?.querySelectorAll(':scope > .rm-ref-page-view');
+        let references = referencesList?.querySelectorAll(':scope > .rm-ref-page-view');
 
         // Remove reference elements from DOM
         // references.forEach(element => referencesList?.removeChild(element))
         
         // TODO: refactor out sorting function to allow for state management (asc/desc)
-        Array.from(references)
+        references = Array.from(references)
             .sort((a, b) => {
                 // TODO: find a cleaner way to do this
                 // TODO: refactor out class selectors
                 const elementAText = a.querySelector(':scope .rm-ref-page-view-title a span').textContent
                 const elementBText = b.querySelector(':scope .rm-ref-page-view-title a span').textContent
-                
-                if(debug){
-                    console.log('a', elementAText, nameIsDate(elementAText))
-                    console.log('b', elementBText, nameIsDate(elementBText))
-                }
 
-                if (elementId == "alphabetical" || (!nameIsDate(elementAText) && !nameIsDate(elementBText)))
+                if (elementId === "alphabetical" || (!nameIsDate(elementAText) && !nameIsDate(elementBText)))
                     return elementAText.localeCompare(elementBText)
 
                 if(nameIsDate(elementAText) && !nameIsDate(elementBText))
@@ -144,10 +146,32 @@ const createButtonElement = (icon: string, elementId: string) => {
                 if(!nameIsDate(elementAText) && nameIsDate(elementBText))
                     return (elementId === "daily") ? 1 : -1;
 
-                return RoamDate.parseFromReference(elementAText) - RoamDate.parseFromReference(elementBText)
+                return RoamDate.parseFromReference(elementBText) - RoamDate.parseFromReference(elementAText)
             })
-            .forEach(node => referencesList.appendChild(node))
+
+        if(sortedAscending && elementId === "alphabetical") {
+            references.reverse()
+        }
+        
+        references.forEach(node => referencesList.appendChild(node))
+
+        toggleIcon(buttonInnerElement, elementId);
+        
+        sortedAscending = !sortedAscending;
+        console.log('after', icon, sortedAscending);
     })
+}
+
+const toggleIcon = (element, sortType: string) => {
+    if(sortType === "alphabetical"){
+        element.classList.toggle('bp3-icon-sort-alphabetical-desc')
+        element.classList.toggle('bp3-icon-sort-alphabetical')
+    }
+
+    if(sortType === "daily"){
+        element.classList.toggle('bp3-icon-sort-numerical-desc')
+        element.classList.toggle('bp3-icon-sort-numerical')
+    }
 }
 
 // TODO: move Roam Date helper function to RoamDate.ts file
