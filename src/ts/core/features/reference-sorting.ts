@@ -2,12 +2,16 @@ import {browser} from 'webextension-polyfill-ts'
 import {Feature, Settings} from '../settings'
 import {RoamDate} from '../roam/date'
 
-// TODO: add setting for the different types of sorting variants (date, daily, etc.)
 export const config: Feature = { // An object that describes new feature we introduce
     id: 'reference-sorting',  // Feature id - any unique string would do
     name: 'Reference Sorting',  // Feature name - would be displayed in the settings menu
     warning: 'Experimental feature',
     enabledByDefault: false,
+
+    // TODO: add capability to enable/disable the various sorting modes (daily, date, etc.)
+    settings: [
+
+    ],
 }
 
 // TODO: remove debug mode + console.logs
