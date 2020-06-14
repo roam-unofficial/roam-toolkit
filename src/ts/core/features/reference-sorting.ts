@@ -20,8 +20,8 @@ const observer = new MutationObserver(() => {
     // TODO: find a better an more reliable selector to check for
     // TODO: refactor out class selectors
     if(document.querySelectorAll('.rm-reference-container > .flex-h-box').length) {
-        checkSettingsAndSetupButtons();
-        observer.disconnect();
+        checkSettingsAndSetupButtons()
+        observer.disconnect()
     }
 })
   
@@ -43,7 +43,11 @@ observer.observe(document.body, {
 // TODO: figure out a way to generalise this for all features, seems like boilerplate code
 const checkSettingsAndSetupButtons = () => {
     Settings.isActive(config.id).then((active) => {
-        return active ? addSortingButtons : null
+        if(active){
+            return activateButtons()
+        }
+
+        destroyButtons()
     })
 }
 
@@ -54,14 +58,18 @@ browser.runtime.onMessage.addListener(async message => {
 })
 
 
-const addSortingButtons = () => {
+const activateButtons = () => {
     if(debug) {
-        console.log('addSortingButtons');
+        console.log('activateButtons');
     }
 
     // TODO: find more explanatory icons
     createButtonElement('bp3-icon-sort-alphabetical', 'alphabetical')
     createButtonElement('bp3-icon-sort-asc', 'daily')
+}
+
+const destroyButtons = () => {
+    // TODO: add logic for destroying the HTML elements and removing event listeners
 }
 
 const createSpan = (classes: Array) => {
