@@ -8,6 +8,7 @@ import {config as estimate} from './estimates'
 import {config as navigation} from './navigation'
 import {config as livePreview} from './livePreview'
 import {config as dateTitle} from './day-title'
+import {config as referenceSorting} from './reference-sorting'
 import {filterAsync, mapAsync} from '../common/async'
 
 export const Features = {
@@ -20,6 +21,7 @@ export const Features = {
         navigation,
         dateTitle,
         livePreview,
+        referenceSorting,
     ]),
 
     isActive: Settings.isActive,
