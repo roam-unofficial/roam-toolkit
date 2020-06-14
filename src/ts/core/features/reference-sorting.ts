@@ -40,9 +40,10 @@ observer.observe(document.body, {
 
 
 
+// TODO: figure out a way to generalise this for all features, seems like boilerplate code
 const checkSettingsAndSetupButtons = () => {
-    Settings.isActive(config.id).then(() => {
-        addSortingButtons()
+    Settings.isActive(config.id).then((active) => {
+        return active ? addSortingButtons : null
     })
 }
 
