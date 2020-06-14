@@ -2,6 +2,7 @@ import {browser} from 'webextension-polyfill-ts'
 import {Feature, Settings} from '../settings'
 import {RoamDate} from '../roam/date'
 
+// TODO: add setting for the different types of sorting variants (date, daily, etc.)
 export const config: Feature = { // An object that describes new feature we introduce
     id: 'reference-sorting',  // Feature id - any unique string would do
     name: 'Reference Sorting',  // Feature name - would be displayed in the settings menu
@@ -9,6 +10,7 @@ export const config: Feature = { // An object that describes new feature we intr
     enabledByDefault: false,
 }
 
+// TODO: remove debug mode + console.logs
 const debug = true;
 
 
@@ -16,6 +18,7 @@ const debug = true;
 // TODO: need to refactor out the DOM Observer logic waiting for the Reference container to render before starting execution
 const observer = new MutationObserver(() => {
     // TODO: find a better an more reliable selector to check for
+    // TODO: refactor out class selectors
     if(document.querySelectorAll('.rm-reference-container > .flex-h-box').length) {
         checkSettingsAndSetupButtons();
         observer.disconnect();
@@ -26,6 +29,14 @@ observer.observe(document.body, {
     childList: true,
     subtree: true
 });
+
+
+// TODO: handle reference filtering
+// TODO: handle page navigation
+
+
+
+
 
 
 
@@ -43,9 +54,11 @@ browser.runtime.onMessage.addListener(async message => {
 
 
 const addSortingButtons = () => {
-    if(debug)
+    if(debug) {
         console.log('addSortingButtons');
+    }
 
+    // TODO: find more explanatory icons
     createButtonElement('bp3-icon-sort-alphabetical', 'alphabetical')
     createButtonElement('bp3-icon-sort-asc', 'daily')
 }
@@ -63,6 +76,7 @@ const createSpan = (classes: Array) => {
 // </span>
 
 const createButtonElement = (icon: string, elementId: string) => {
+    // TODO: create a configuration object for these classes
     const buttonContainerClasses = ['bp3-button', 'bp3-minimal', 'bp3-small', 'rr-sort']
 
     const buttonContainer = createSpan(buttonContainerClasses);
@@ -73,6 +87,7 @@ const createButtonElement = (icon: string, elementId: string) => {
 
     buttonContainer.appendChild(buttonInnerElement)
 
+    // TODO: refactor out class selectors
     document.querySelectorAll('.rm-reference-container > .flex-h-box').forEach(element => {
         element.appendChild(buttonContainer)
     })
@@ -88,14 +103,17 @@ const createButtonElement = (icon: string, elementId: string) => {
             return;
         }
         
+        // TODO: refactor out class selectors
         const references = referencesList?.querySelectorAll(':scope > .rm-ref-page-view');
 
         // Remove reference elements from DOM
         // references.forEach(element => referencesList?.removeChild(element))
         
+        // TODO: refactor out sorting function to allow for state management (asc/desc)
         Array.from(references)
             .sort((a, b) => {
                 // TODO: find a cleaner way to do this
+                // TODO: refactor out class selectors
                 const elementAText = a.querySelector(':scope .rm-ref-page-view-title a span').textContent
                 const elementBText = b.querySelector(':scope .rm-ref-page-view-title a span').textContent
                 
