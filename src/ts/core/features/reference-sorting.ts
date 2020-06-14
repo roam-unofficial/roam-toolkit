@@ -9,6 +9,7 @@ export const config: Feature = { // An object that describes new feature we intr
     enabledByDefault: false,
 
     // TODO: add capability to enable/disable the various sorting modes (daily, date, etc.)
+    // TODO: add setting for toggling sort for "Linked References" and "Unlinked References"
     settings: [
 
     ],
@@ -16,7 +17,6 @@ export const config: Feature = { // An object that describes new feature we intr
 
 // TODO: remove debug mode + console.logs
 const debug = true;
-
 
 
 // TODO: need to refactor out the DOM Observer logic waiting for the Reference container to render before starting execution
@@ -28,11 +28,11 @@ const observer = new MutationObserver(() => {
         observer.disconnect()
     }
 })
-  
-observer.observe(document.body, { 
-    childList: true,
-    subtree: true
-});
+
+const startObservingDOM = () => observer.observe(document, { childList: true, subtree: true })
+const stopObservingDOM = () => observer.disconnect()
+
+startObservingDOM()
 
 
 // TODO: handle reference filtering
@@ -46,13 +46,8 @@ observer.observe(document.body, {
 
 // TODO: figure out a way to generalise this for all features, seems like boilerplate code
 const checkSettingsAndSetupButtons = () => {
-    Settings.isActive(config.id).then((active) => {
-        if(active){
-            return activateButtons()
-        }
-
-        destroyButtons()
-    })
+    Settings.isActive(config.id)
+        .then((active) => {toggleReferenceSorting(active)})
 }
 
 browser.runtime.onMessage.addListener(async message => {
@@ -62,17 +57,21 @@ browser.runtime.onMessage.addListener(async message => {
 })
 
 
-const activateButtons = () => {
-    if(debug) {
-        console.log('activateButtons');
+const toggleReferenceSorting = (active: boolean) => {
+    if(!active){
+        return destructor()
     }
 
+    constructor()
+}
+
+const constructor = () => {
     // TODO: find more explanatory icons
     createButtonElement('bp3-icon-sort-alphabetical', 'alphabetical')
     createButtonElement('bp3-icon-sort-numerical', 'daily')
 }
 
-const destroyButtons = () => {
+const destructor = () => {
     // TODO: add logic for destroying the HTML elements and removing event listeners
 }
 
