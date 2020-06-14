@@ -76,7 +76,7 @@ const destroyButtons = () => {
     // TODO: add logic for destroying the HTML elements and removing event listeners
 }
 
-const createSpan = (classes: Array) => {
+const createSpan = (classes: string[]): HTMLElement => {
     const element = document.createElement('span')
     element.classList.add(...classes)
     
@@ -124,7 +124,7 @@ const createButtonElement = (icon: string, elementId: string) => {
         }
         
         // TODO: refactor out class selectors
-        let references = referencesList?.querySelectorAll(':scope > .rm-ref-page-view');
+        let references = referencesList?.querySelectorAll(':scope > .rm-ref-page-view')
 
         // Remove reference elements from DOM
         // references.forEach(element => referencesList?.removeChild(element))
@@ -134,8 +134,8 @@ const createButtonElement = (icon: string, elementId: string) => {
             .sort((a, b) => {
                 // TODO: find a cleaner way to do this
                 // TODO: refactor out class selectors
-                const elementAText = a.querySelector(':scope .rm-ref-page-view-title a span').textContent
-                const elementBText = b.querySelector(':scope .rm-ref-page-view-title a span').textContent
+                const elementAText: string = a.querySelector(':scope .rm-ref-page-view-title a span').textContent
+                const elementBText: string = b.querySelector(':scope .rm-ref-page-view-title a span').textContent
 
                 if (elementId === "alphabetical" || (!nameIsDate(elementAText) && !nameIsDate(elementBText)))
                     return elementAText.localeCompare(elementBText)
@@ -146,14 +146,14 @@ const createButtonElement = (icon: string, elementId: string) => {
                 if(!nameIsDate(elementAText) && nameIsDate(elementBText))
                     return (elementId === "daily") ? 1 : -1;
 
-                return RoamDate.parseFromReference(elementBText) - RoamDate.parseFromReference(elementAText)
+                return RoamDate.parseFromReference(elementBText).getTime() - RoamDate.parseFromReference(elementAText).getTime()
             })
 
         if(sortedAscending && elementId === "alphabetical") {
             references.reverse()
         }
         
-        references.forEach(node => referencesList.appendChild(node))
+        references.forEach((node: HTMLElement) => referencesList.appendChild(node))
 
         toggleIcon(buttonInnerElement, elementId);
         
@@ -162,7 +162,7 @@ const createButtonElement = (icon: string, elementId: string) => {
     })
 }
 
-const toggleIcon = (element, sortType: string) => {
+const toggleIcon = (element: HTMLElement, sortType: string) => {
     if(sortType === "alphabetical"){
         element.classList.toggle('bp3-icon-sort-alphabetical-desc')
         element.classList.toggle('bp3-icon-sort-alphabetical')
