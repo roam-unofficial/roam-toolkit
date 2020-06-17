@@ -1,5 +1,6 @@
 import {browser} from 'webextension-polyfill-ts'
 import {RoamDate} from '../roam/date'
+import {getDayName} from '../common/date'
 import {Feature, Settings} from '../settings'
 
 export const config: Feature = {
@@ -24,7 +25,7 @@ const getDayFromDate = (name: string) => {
     const matches = name.match(re)
     if (matches && matches.length === 4) {
         const date = RoamDate.parse(name)
-        return RoamDate.getDayName(date)
+        return getDayName(date)
     }
     return null
 }

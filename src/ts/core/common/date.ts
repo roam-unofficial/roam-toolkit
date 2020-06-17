@@ -5,3 +5,7 @@ export function addDays(date: Date, days: number) {
 }
 
 export const isValid = (date: Date) => !isNaN(date.getTime())
+
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+export const getDayName = (date: Date) => days[date.getDay()]

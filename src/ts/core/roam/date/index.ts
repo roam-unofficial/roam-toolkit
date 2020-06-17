@@ -1,7 +1,5 @@
 import dateFormat from 'dateformat'
 
-const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
 export const RoamDate = {
     formatString: `mmmm dS, yyyy`,
     pageFormatString() {
@@ -23,8 +21,5 @@ export const RoamDate = {
     },
     parseFromReference(name: string): Date {
         return this.parse(name.slice(2).slice(0, -2))
-    },
-    getDayName(date: Date) {
-        return days[date.getDay()]
     },
 }
