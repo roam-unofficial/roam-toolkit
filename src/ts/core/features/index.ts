@@ -8,6 +8,7 @@ import {config as blockNavigationMode} from './block-navigation-mode'
 import {config as estimate} from './estimates'
 import {config as navigation} from './navigation'
 import {config as livePreview} from './livePreview'
+import {config as dateTitle} from './day-title'
 import {filterAsync, mapAsync} from '../common/async'
 import {KeyMap} from 'react-hotkeys'
 import {Handlers} from '../settings/shortcuts'
@@ -21,6 +22,7 @@ export const Features = {
         estimate,
         customCss,
         navigation,
+        dateTitle,
         livePreview,
     ]),
 
