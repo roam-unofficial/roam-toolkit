@@ -40,7 +40,11 @@ const registerEventListener = () => {
         }
 
         let day = null
-        if (target.classList.contains('rm-page-ref') || isElementPageViewTitle(target)) {
+        if (
+            target.classList.contains('rm-page-ref') ||
+            target.classList.contains(`rm-title-display`) ||
+            isElementPageViewTitle(target)
+        ) {
             day = getDayFromDate(target.innerText)
         }
 
