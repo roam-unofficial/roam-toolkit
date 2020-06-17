@@ -2,12 +2,12 @@ import {RoamDate} from '../roam/date'
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-function getDayFromDate(name: string) {
+const getDayFromDate = (name: string) => {
     let re = /(.*) (\d+).{2}, (\d{4})/i
-    var matches = name.match(re)
+    const matches = name.match(re)
     if (matches && matches.length === 4) {
-        const d = RoamDate.parse(name)
-        return days[d.getDay()]
+        const date = RoamDate.parse(name)
+        return RoamDate.getDayName(date)
     }
     return null
 }
