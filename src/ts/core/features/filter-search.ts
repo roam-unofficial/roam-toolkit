@@ -5,7 +5,7 @@ export const config: Feature = { // An object that describes new feature we intr
     id: 'filter_search',  // Feature id - any unique string would do
     name: 'Filter Search',  // Feature name - would be displayed in the settings menu
     //warning: 'Experimental feature',
-    enabledByDefault: false,
+    enabledByDefault: true,
 }
 
 const checkSettingsAndSetupFilterSearchToggle = () => {
