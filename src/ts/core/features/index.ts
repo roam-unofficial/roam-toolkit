@@ -7,6 +7,7 @@ import {config as blockManipulation} from './block-manipulation'
 import {config as estimate} from './estimates'
 import {config as navigation} from './navigation'
 import {config as livePreview} from './livePreview'
+import {config as dateTitle} from './day-title'
 import {filterAsync, mapAsync} from '../common/async'
 
 export const Features = {
@@ -17,6 +18,7 @@ export const Features = {
         estimate,
         customCss,
         navigation,
+        dateTitle,
         livePreview,
     ]),
 
