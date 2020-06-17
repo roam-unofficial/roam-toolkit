@@ -12,13 +12,8 @@ function getDayFromDate(name: string) {
     return null
 }
 
-function isPageViewTitle(element: HTMLElement) {
-    return (
-        element.parentNode &&
-        element.parentNode.parentNode &&
-        (element.parentNode.parentNode as Element).classList.contains('rm-ref-page-view-title')
-    )
-}
+const isElementPageViewTitle = (element: HTMLElement) =>
+    (element.parentNode?.parentNode as HTMLElement)?.classList?.contains('rm-ref-page-view-title')
 
 document.querySelector('body')?.addEventListener('mouseover', ev => {
     const target = ev.target as HTMLElement
