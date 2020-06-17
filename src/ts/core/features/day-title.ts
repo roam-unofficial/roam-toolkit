@@ -21,19 +21,19 @@ function isPageViewTitle(element: HTMLElement) {
 }
 
 document.querySelector('body')?.addEventListener('mouseover', ev => {
-    let day = null
     const target = ev.target as HTMLElement
-
     if (target === null) {
         return
     }
 
-    if (target.classList.contains('rm-page-ref') || isPageViewTitle(target)) {
+        let day = null
+        if (target.classList.contains('rm-page-ref') || isElementPageViewTitle(target)) {
         day = getDayFromDate(target.innerText)
     }
 
-    if (day == null) {
+        if (day === null) {
         return
     }
     target.setAttribute('title', day)
 })
+}
