@@ -3,6 +3,7 @@ import {Navigation} from '../roam/navigation'
 import {browser} from 'webextension-polyfill-ts'
 import {createPopper, Instance} from '@popperjs/core'
 import {delay} from '../common/async';
+import {Selectors} from '../roam/selectors';
 
 export const config: Feature = {
     id: 'live_preview',
@@ -236,7 +237,7 @@ class PreviewIframe {
         .roam-topbar {
             display: none !important;
         }
-        .roam-body-main {
+        ${Selectors.mainPanel} {
             top: 0px !important;
         }
         #buffer {

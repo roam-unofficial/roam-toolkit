@@ -2,6 +2,7 @@ import {Feature, Settings, Shortcut, String} from '../settings'
 import {getActiveEditElement} from '../common/dom'
 import {RoamNode} from '../roam/roam-node'
 import {Roam} from '../roam/roam'
+import {Selectors} from '../roam/selectors';
 
 const estimateProperty: String = {
     type: 'string',
@@ -27,7 +28,7 @@ export const config: Feature = {
 }
 
 function getParentElement() {
-    return getActiveEditElement()?.closest('.roam-block-container')?.parentElement
+    return getActiveEditElement()?.closest(Selectors.blockContainer)?.parentElement
 }
 
 /** I'm still figuring out UX on this one.

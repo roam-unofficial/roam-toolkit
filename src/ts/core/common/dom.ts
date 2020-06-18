@@ -1,3 +1,5 @@
+import {Selectors} from '../roam/selectors';
+
 export type ValueElement = HTMLTextAreaElement | HTMLInputElement | HTMLSelectElement
 
 export function getActiveEditElement(): ValueElement {
@@ -25,12 +27,12 @@ export function getTopLevelBlocks() {
 
 export function getLastTopLevelBlock() {
     const lastChild = getTopLevelBlocks().lastChild as HTMLElement
-    return lastChild.querySelector('.roam-block, textarea') as HTMLElement
+    return lastChild.querySelector(`${Selectors.block}, textarea`) as HTMLElement
 }
 
 export function getFirstTopLevelBlock() {
     const firstChild = getTopLevelBlocks().firstChild as HTMLElement
-    return firstChild.querySelector('.roam-block, textarea') as HTMLElement
+    return firstChild.querySelector(`${Selectors.block}, textarea`) as HTMLElement
 }
 
 export function getInputEvent() {
