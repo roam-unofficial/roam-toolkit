@@ -35,9 +35,7 @@ const getCursor = (node: RoamNode, newText: string, searchStart: number = 0) =>
     node.text === newText ? node.selection.start : afterClosingBrackets(newText, searchStart)
 
 export function replaceFuzzyDate(guard: string) {
-    var escaped = `${guard}\(\.\{3,\}\?\)${guard}`
-
-    const dateContainerExpr = new RegExp(escaped, 'gm')
+    const dateContainerExpr = new RegExp(`${guard}\(\.\{3,\}\?\)${guard}`, 'gm')
 
     Roam.applyToCurrent(node => {
         const match = node.text.match(dateContainerExpr)
