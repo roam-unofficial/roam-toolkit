@@ -6,4 +6,3 @@
 import '../../core/features'
 import '../../core/settings/dispatcher'
 import '../../core/settings/shortcuts'
-import '../../core/features/fuzzy_date'
