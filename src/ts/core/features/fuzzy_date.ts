@@ -15,19 +15,15 @@ export const config: Feature = {
     settings: [{type: 'string', id: 'guard', initValue: ';', label: 'Guard symbol'}],
 }
 
-Settings.isActive(config.id).then(active => {
-    if (active) {
-        Settings.get(config.id, 'guard').then((value: string) => {
-            registerEventListener(value)
-        })
-    }
-})
+const checkSettingsAndToggleFuzzyDate = () => {
+    Settings.isActive(config.id).then(active => (active ? registerEventListener() : removeEventListener()))
+}
+
+checkSettingsAndToggleFuzzyDate()
 
 browser.runtime.onMessage.addListener(async message => {
-    if (message?.featureId === config.id) {
-        Settings.get(config.id, 'guard').then((value: string) => {
-            registerEventListener(value)
-        })
+    if (message === 'settings-updated') {
+        checkSettingsAndToggleFuzzyDate()
     }
 })
 
@@ -66,8 +62,18 @@ export function replaceFuzzyDate(guard: string) {
  * `setTimeout` is used to put the callback to the end of the event queue,
  * since the input is not yet changed when keypress is firing.
  */
-const registerEventListener = (guard: string) => {
-    document.addEventListener('keypress', ev => {
-        if (ev.key === guard) setTimeout(() => replaceFuzzyDate(guard), 0)
+const registerEventListener = () => {
+    document.addEventListener('keypress', keypressListener)
+}
+
+const removeEventListener = () => {
+    document.removeEventListener('keypress', keypressListener)
+}
+
+const keypressListener = (ev: KeyboardEvent) => {
+    Settings.get(config.id, 'guard').then((value: string) => {
+        if (ev.key === value) {
+            setTimeout(() => replaceFuzzyDate(value), 0)
+        }
     })
 }
