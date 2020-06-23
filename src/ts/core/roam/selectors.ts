@@ -9,8 +9,13 @@ export const Selectors = {
     mainPanel: '.roam-body-main',
 
     sidebarContent: '#roam-right-sidebar-content',
+    rightPanel: '#right-sidebar',
 
+    leftPanel: '.roam-sidebar-container',
+
+    foldButton: '.block-expand',
     highlight: '.block-highlight-blue',
     button: '.bp3-button',
     closeButton: '.bp3-icon-cross',
+    viewMore: '.roam-log-preview'
 }

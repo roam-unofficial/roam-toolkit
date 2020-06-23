@@ -1,3 +1,5 @@
+import {copyBlockEmbed, copyBlockReference} from 'SRC/core/roam/roam-block'
+
 import {Feature, Shortcut} from '../settings'
 import {RoamNode, Selection} from '../roam/roam-node'
 import {Roam} from '../roam/roam'
@@ -26,23 +28,16 @@ export const config: Feature = {
             id: 'copyBlockRef',
             label: 'Copy Block Reference',
             initValue: 'ctrl+shift+c',
-            onPress: () => navigator.clipboard.writeText(getCurrentBlockReference()),
+            onPress: () => copyBlockReference(Roam.getRoamBlockInput()?.id)
         } as Shortcut,
         {
             type: 'shortcut',
             id: 'copyBlockEmbed',
             label: 'Copy Block Embed',
             initValue: 'ctrl+meta+c',
-            onPress: () => navigator.clipboard.writeText(getCurrentBlockEmbed()),
+            onPress: () => copyBlockEmbed(Roam.getRoamBlockInput()?.id)
         } as Shortcut,
     ],
-}
-
-const getCurrentBlockEmbed = () => `{{embed: ${getCurrentBlockReference()}}}`
-
-function getCurrentBlockReference() {
-    // TODO: better interfaces, uid should be a part of the block interfaces
-    return `((${Roam.getCurrentBlockUid()}))`
 }
 
 const duplicate = () => {
