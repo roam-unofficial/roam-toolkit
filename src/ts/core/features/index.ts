@@ -10,6 +10,8 @@ import {config as livePreview} from './livePreview'
 import {config as dateTitle} from './day-title'
 import {config as fuzzyDate} from './fuzzy_date'
 import {filterAsync, mapAsync} from '../common/async'
+import {ObjectMap} from 'SRC/core/common/object'
+import {Handler, KeySequence} from 'SRC/core/common/react-hotkeys-fixed/hotkey'
 
 export const Features = {
     all: prepareSettings([
@@ -30,13 +32,13 @@ export const Features = {
         return filterAsync(this.all, it => this.isActive(it.id))
     },
 
-    getShortcutHandlers: () =>
+    getShortcutHandlers: (): ObjectMap<Handler> =>
         getAllShortcuts(Features.all).reduce((acc: any, current) => {
             acc[current.id] = current.onPress
             return acc
         }, {}),
 
-    async getCurrentKeyMap() {
+    async getCurrentKeyMap(): Promise<ObjectMap<KeySequence>> {
         const features = (await Features.getActiveFeatures()).filter(it => it.settings)
         const allShortcuts = (await mapAsync(features, this.getKeyMapFor)).flat().filter(it => it[1])
         return allShortcuts.reduce((acc: any, current) => {
