@@ -18,4 +18,6 @@ export const Selectors = {
     button: '.bp3-button',
     closeButton: '.bp3-icon-cross',
     viewMore: '.roam-log-preview',
+    checkbox: '.check-container',
+    externalLink: 'a',
 }
