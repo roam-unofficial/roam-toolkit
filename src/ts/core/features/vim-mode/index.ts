@@ -9,6 +9,7 @@ import {panelCommands} from 'SRC/core/features/vim-mode/commands/panel-commands'
 import {visualCommands} from 'SRC/core/features/vim-mode/commands/visual-commands'
 import {blockManipulationCommands} from 'SRC/core/features/vim-mode/commands/block-manipulation-commands'
 import {RoamBlock} from 'SRC/core/features/vim-mode/roam/roam-block'
+import {hintCommands} from 'SRC/core/features/vim-mode/commands/hint-commands'
 
 export const config: Feature = {
     id: 'block_navigation_mode',
@@ -24,6 +25,7 @@ export const config: Feature = {
         ...clipboardCommands,
         ...visualCommands,
         ...blockManipulationCommands,
+        ...hintCommands,
     ],
 }
 
