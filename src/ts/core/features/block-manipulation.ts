@@ -28,14 +28,14 @@ export const config: Feature = {
             id: 'copyBlockRef',
             label: 'Copy Block Reference',
             initValue: 'ctrl+shift+c',
-            onPress: () => copyBlockReference(Roam.getRoamBlockInput()?.id)
+            onPress: () => copyBlockReference(Roam.getRoamBlockInput()?.id),
         } as Shortcut,
         {
             type: 'shortcut',
             id: 'copyBlockEmbed',
             label: 'Copy Block Embed',
             initValue: 'ctrl+meta+c',
-            onPress: () => copyBlockEmbed(Roam.getRoamBlockInput()?.id)
+            onPress: () => copyBlockEmbed(Roam.getRoamBlockInput()?.id),
         } as Shortcut,
     ],
 }
