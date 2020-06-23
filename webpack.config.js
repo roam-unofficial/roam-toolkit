@@ -51,6 +51,10 @@ module.exports = {
     },
     resolve: {
         extensions: ['.js', '.ts', '.tsx', '.json'],
+        alias: {
+            // Enable absolute imports
+            SRC: path.resolve(__dirname, 'src/ts/')
+        }
     },
     module: {
         rules: [{test: /\.(js|ts|tsx)?$/, loader: 'awesome-typescript-loader', exclude: /node_modules/}],
