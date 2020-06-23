@@ -1,21 +1,16 @@
-import {Features} from '../features'
-import {configure, GlobalHotKeys} from 'react-hotkeys'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-configure({
-    ignoreTags: [],
-    ignoreRepeatedEventsWhenKeyHeldDown: false,
-})
+import {ReactHotkeys} from 'src/core/react-hotkeys'
+import {Features} from 'src/core/features'
 
 const shortcutContainer = document.createElement('div')
 
 export async function updateShortcuts() {
     const shortcutElement = (
-        <GlobalHotKeys
+        <ReactHotkeys
             keyMap={await Features.getCurrentKeyMap()}
             handlers={Features.getShortcutHandlers()}
-            allowChanges={true}
         />
     )
     // TODO: hitting this

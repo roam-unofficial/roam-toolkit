@@ -104,5 +104,3 @@ export const KEY_TO_SHIFTED: {[key: string]: string} = {
 }
 
 export const CODE_TO_KEY: {[key: string]: string} = invert(KEY_TO_CODE)
-
-export const KEY_TO_UNSHIFTED: {[key: string]: string} = invert(KEY_TO_SHIFTED)
