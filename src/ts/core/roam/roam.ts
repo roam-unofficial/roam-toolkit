@@ -1,3 +1,6 @@
+import {Selectors} from 'src/core/roam/selectors'
+import {assumeExists} from 'src/core/common/assert'
+
 import {RoamNode, Selection} from './roam-node'
 import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLevelBlock} from '../common/dom'
 import {Keyboard} from '../common/keyboard'
@@ -19,7 +22,7 @@ export const Roam = {
 
     getRoamBlockInput(): HTMLTextAreaElement | null {
         const element = getActiveEditElement()
-        if (element.tagName.toLocaleLowerCase() !== 'textarea') {
+        if (element?.tagName.toLocaleLowerCase() !== 'textarea') {
             return null
         }
         return element as HTMLTextAreaElement
@@ -39,11 +42,15 @@ export const Roam = {
         this.save(action(node))
     },
 
-    async selectBlock() {
+    async selectBlock(element?: HTMLElement) {
+        if (element) {
+            await this.activateBlock(element)
+        }
         if (this.getRoamBlockInput()) {
             return Keyboard.pressEsc()
+        } else {
+            return Promise.reject("We're not inside a block")
         }
-        return Promise.reject("We're currently not inside roam block")
     },
 
     async activateBlock(element: HTMLElement) {
@@ -91,9 +98,13 @@ export const Roam = {
         }
     },
 
-    async createSiblingBelow() {
+    async createBlockBelow() {
         this.moveCursorToEnd()
         await Keyboard.pressEnter()
+    },
+
+    async createSiblingBelow() {
+        await this.createBlockBelow()
         await Keyboard.pressShiftTab(Keyboard.BASE_DELAY)
     },
 
@@ -128,10 +139,13 @@ export const Roam = {
         }
     },
 
-    getCurrentBlockUid(): string | undefined {
-        // An empirical observation:
-        const uidLength = 9
-        const elementId = Roam.getRoamBlockInput()?.id
-        return elementId?.substr(elementId?.length - uidLength)
+    async toggleFoldBlock(block: HTMLElement) {
+        const foldButton = assumeExists(
+            assumeExists(block.parentElement).querySelector(Selectors.foldButton)
+        ) as HTMLElement;
+        await Mouse.hover(foldButton);
+        await Mouse.leftClick(foldButton);
     },
+
+
 }

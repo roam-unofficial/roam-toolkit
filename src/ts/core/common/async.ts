@@ -16,3 +16,9 @@ export async function filterAsync<T>(
     const filterMap = await mapAsync(array, callbackfn)
     return array.filter((_value, index) => filterMap[index])
 }
+
+export async function repeatAsync<T>(n: number, callbackFn: () => Promise<T>) {
+    for (let i = 0; i < n; i++) {
+        await callbackFn()
+    }
+}
