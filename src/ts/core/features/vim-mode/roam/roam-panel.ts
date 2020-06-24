@@ -9,12 +9,16 @@ type BlockNavigationState = {
     panelOrder: PanelId[]
     panels: Map<PanelId, RoamPanel>
     focusedPanel: PanelIndex
+    lastFocusedSidebarPanel: PanelIndex
+    previouslySelectedBlocks: Set<BlockId>
 }
 
 const state: BlockNavigationState = {
     panelOrder: [],
     panels: new Map(),
     focusedPanel: 0,
+    lastFocusedSidebarPanel: 1,
+    previouslySelectedBlocks: new Set(),
 }
 
 /**
@@ -26,7 +30,7 @@ type PanelIndex = number
 type PanelElement = HTMLElement
 
 const PANEL_CSS_CLASS = 'roam-toolkit--panel'
-const PANEL_SELECTOR = `.${PANEL_CSS_CLASS}, ${Selectors.sidebarContent}`
+const PANEL_SELECTOR = `.${PANEL_CSS_CLASS}, ${Selectors.sidebarPage}`
 
 /**
  * A "Panel" is a viewport that contains blocks. For now, there is just
@@ -121,8 +125,13 @@ export class RoamPanel {
     }
 
     select() {
+        if (state.focusedPanel > 0) {
+            state.lastFocusedSidebarPanel = state.focusedPanel
+        }
         state.focusedPanel = state.panelOrder.indexOf(this.element)
-        this.element.scrollIntoView({behavior: 'smooth'})
+        this.element.scrollIntoView({
+            inline: 'end',
+        })
     }
 
     static selected(): RoamPanel {
@@ -144,6 +153,10 @@ export class RoamPanel {
         return RoamPanel.at(0)
     }
 
+    static previousSidebarPanel(): RoamPanel {
+        return RoamPanel.at(state.lastFocusedSidebarPanel)
+    }
+
     static previousPanel(): RoamPanel {
         return RoamPanel.at(state.focusedPanel - 1)
     }
@@ -161,7 +174,8 @@ export class RoamPanel {
     private static get(panelId: PanelId): RoamPanel {
         // lazily create one if doesn't already exist
         if (!state.panels.has(panelId)) {
-            state.panels.set(panelId, new RoamPanel(panelId))
+            const panel = new RoamPanel(panelId)
+            state.panels.set(panelId, panel)
         }
         return assumeExists(state.panels.get(panelId))
     }

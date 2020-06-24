@@ -15,7 +15,9 @@ const closeSidebarPage = () => {
 
 export const PanelCommands = [
     // Need to wrap in function to preserve the `this` reference inside of RoamPanel
-    nmap('h', 'Select Panel Left', () => RoamPanel.previousPanel().select()),
-    nmap('l', 'Select Panel Right', () => RoamPanel.nextPanel().select()),
+    nmap('h', 'Select Main Panel', () => RoamPanel.mainPanel().select()),
+    nmap('l', 'Select Prior Sidebar Panel', () => RoamPanel.previousSidebarPanel().select()),
+    nmap('ctrl+k', 'Select Previous Panel', () => RoamPanel.previousPanel().select()),
+    nmap('ctrl+j', 'Select Next Panel', () => RoamPanel.nextPanel().select()),
     map('ctrl+w', 'Close Page in Side Bar', closeSidebarPage),
 ]
