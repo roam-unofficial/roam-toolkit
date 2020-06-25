@@ -1,7 +1,7 @@
-// prettier-ignore
 import {invertObject} from 'src/core/common/object'
 
 // 2nd column represents shifted keys
+// prettier-ignore
 export const KEY_TO_CODE: {[key: string]: number} = {
     'ArrowLeft': 37,
     'ArrowUp': 38,
