@@ -1,4 +1,4 @@
-import {copyBlockEmbed, copyBlockReference} from 'src/core/roam/roam-block'
+import {copyBlockEmbed, copyBlockReference} from 'src/core/roam/block'
 
 import {Feature, Shortcut} from '../settings'
 import {RoamNode, Selection} from '../roam/roam-node'
