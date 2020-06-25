@@ -1,11 +1,11 @@
-import {Selectors} from '../roam/selectors';
+import {Selectors} from '../roam/selectors'
 
 export type ValueElement = HTMLTextAreaElement | HTMLInputElement | HTMLSelectElement
 
-export function getActiveEditElement(): ValueElement {
+export function getActiveEditElement(): ValueElement | null {
     // stolen from Surfingkeys. Needs work.
 
-   let element = document.activeElement
+    let element = document.activeElement
     // on some pages like chrome://history/, input is in shadowRoot of several other recursive shadowRoots.
     while (element?.shadowRoot) {
         if (element.shadowRoot.activeElement) {
@@ -22,11 +22,10 @@ export function getActiveEditElement(): ValueElement {
 }
 
 export function isEditing(): boolean {
-    const element = getActiveEditElement();
+    const element = getActiveEditElement()
     return (
-        element.tagName === 'INPUT' ||
-        element.tagName === 'TEXTAREA' ||
-        element.tagName === 'SELECT'
+        element !== null &&
+        (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'SELECT')
     )
 }
 
