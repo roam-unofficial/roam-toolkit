@@ -142,9 +142,9 @@ export const Roam = {
     async toggleFoldBlock(block: HTMLElement) {
         const foldButton = assumeExists(
             assumeExists(block.parentElement).querySelector(Selectors.foldButton)
-        );
-        await Mouse.hover(foldButton as HTMLElement);
-        await Mouse.leftClick(foldButton as HTMLElement);
+        ) as HTMLElement;
+        await Mouse.hover(foldButton);
+        await Mouse.leftClick(foldButton);
     },
 
 
