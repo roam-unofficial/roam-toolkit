@@ -1,4 +1,4 @@
-import {invertObject} from 'src/core/common/object'
+import {invert} from 'lodash'
 
 // 2nd column represents shifted keys
 // prettier-ignore
@@ -105,6 +105,6 @@ export const KEY_TO_SHIFTED: {[key: string]: string} = {
     'z': 'Z'
 }
 
-export const CODE_TO_KEY: {[key: string]: string} = invertObject(KEY_TO_CODE)
+export const CODE_TO_KEY: {[key: string]: string} = invert(KEY_TO_CODE)
 
-export const KEY_TO_UNSHIFTED: {[key: string]: string} = invertObject(KEY_TO_SHIFTED)
+export const KEY_TO_UNSHIFTED: {[key: string]: string} = invert(KEY_TO_SHIFTED)

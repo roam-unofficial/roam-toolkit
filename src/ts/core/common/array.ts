@@ -10,11 +10,4 @@ export const relativeItem = <T>(xs: T[], index: number, relativeIndex: number): 
 }
 
 
-export const findLast = <T>(xs: T[], criteria: (x: T) => boolean): T | undefined => {
-    for (let i = xs.length - 1; i >= 0; i--) {
-        if (criteria(xs[i])) {
-            return xs[i];
-        }
-    }
-    return undefined
-}
+// TODO: use https://docs-lodash.com/v4/find-last/ instead of findLast in later commits
