@@ -2,6 +2,9 @@ import {Selectors} from '../roam/selectors'
 
 export type ValueElement = HTMLTextAreaElement | HTMLInputElement | HTMLSelectElement
 
+/**
+ * @return The element being edited, or null if no element is being edited
+ */
 export function getActiveEditElement(): ValueElement | null {
     // stolen from Surfingkeys. Needs work.
 
@@ -18,16 +21,18 @@ export function getActiveEditElement(): ValueElement | null {
             break
         }
     }
+
+    // document.activeElement can be either `document.body` or `null`
+    // https://developer.mozilla.org/en-US/docs/Web/API/DocumentOrShadowRoot/activeElement
+    if (!element || !isEditElement(element)) {
+        return null
+    }
+
     return element as ValueElement
 }
 
-export function isEditing(): boolean {
-    const element = getActiveEditElement()
-    return (
-        element !== null &&
-        (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'SELECT')
-    )
-}
+const isEditElement = (element: Element) =>
+    element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'SELECT'
 
 export function getTopLevelBlocks() {
     return document.querySelector('.roam-article div .flex-v-box') as HTMLElement
