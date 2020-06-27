@@ -1,5 +1,6 @@
 import {browser} from 'webextension-polyfill-ts'
 import {Feature, Settings} from '../settings'
+import {injectStyle} from 'src/core/common/css'
 
 export const config: Feature = {
     id: 'custom-css',
@@ -21,14 +22,6 @@ browser.runtime.onMessage.addListener(async message => {
     }
 })
 
-const setCss = (value: string) => {
-    if (document.getElementById('roam-custom-styles')) {
-        document.getElementById('roam-custom-styles')!.innerHTML = value
-        return
-    }
-
-    const style = document.createElement('style')
-    style.id = 'roam-custom-styles'
-    style.innerHTML = value
-    document.getElementsByTagName('head')[0].appendChild(style)
+const setCss = (css: string) => {
+    injectStyle(css, 'roam-custom-styles')
 }
