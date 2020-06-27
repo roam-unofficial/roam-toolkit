@@ -22,7 +22,7 @@ export const Roam = {
 
     getRoamBlockInput(): HTMLTextAreaElement | null {
         const element = getActiveEditElement()
-        if (!element || element.tagName.toLocaleLowerCase() !== 'textarea') {
+        if (element?.tagName.toLocaleLowerCase() !== 'textarea') {
             return null
         }
         return element as HTMLTextAreaElement
