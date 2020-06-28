@@ -1,4 +1,4 @@
-import { themes } from '../../../../../src/ts/components/styles/themes';
+import { themes } from 'src/components/styles/themes';
 
 describe('Testing themes configuration', () => {
 	test('Theme object containes a dark and a light property', () => {

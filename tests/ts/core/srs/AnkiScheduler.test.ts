@@ -1,6 +1,6 @@
-import {SRSSignal} from '../../../../src/ts/core/srs/scheduler';
-import {SM2Node} from '../../../../src/ts/core/srs/SM2Node';
-import {AnkiScheduler} from '../../../../src/ts/core/srs/AnkiScheduler';
+import {SRSSignal} from 'src/core/srs/scheduler';
+import {SM2Node} from 'src/core/srs/SM2Node';
+import {AnkiScheduler} from 'src/core/srs/AnkiScheduler';
 
 describe(AnkiScheduler, () => {
     const subject = new AnkiScheduler()
