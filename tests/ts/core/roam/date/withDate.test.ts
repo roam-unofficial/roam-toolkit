@@ -1,5 +1,5 @@
-import {NodeWithDate} from '../../../../../src/ts/core/roam/date/withDate'
-import {RoamDate} from '../../../../../src/ts/core/roam/date'
+import {NodeWithDate} from 'src/core/roam/date/withDate'
+import {RoamDate} from 'src/core/roam/date'
 
 
 describe(NodeWithDate, () => {

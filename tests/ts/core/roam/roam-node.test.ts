@@ -1,4 +1,4 @@
-import {RoamNode, Selection} from '../../../../src/ts/core/roam/roam-node';
+import {RoamNode, Selection} from 'src/core/roam/roam-node';
 
 describe(RoamNode, () => {
     const propertyName = 'inline_property';
