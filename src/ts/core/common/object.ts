@@ -1,5 +1,18 @@
-// TODO use https://lodash.com/docs/2.4.2#invert instead of invertObject in later commits
+import {Dictionary} from 'lodash'
 
-// TODO use https://lodash.com/docs/2.4.2#mapValues instead of mapObjectValues in later commits
-
-// TODO use https://lodash.com/docs/4.17.15#pickBy instead of filterObjectValues in later commits
+/**
+ * Given two dictionaries with the same keys, returns a new object with tuples of
+ * the two values for each key
+ */
+export const zipObjects = <X, Y>(xs: Dictionary<X>, ys: Dictionary<Y>): Dictionary<[X, Y]> =>
+    Object.keys(xs).reduce((keyToXY, key) => {
+        const x = xs[key]
+        const y = ys[key]
+        if (x && y) {
+            return {
+                ...keyToXY,
+                [key]: [x, y],
+            }
+        }
+        return keyToXY
+    }, {})

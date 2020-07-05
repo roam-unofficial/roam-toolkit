@@ -1,3 +1,5 @@
+import {Dictionary} from 'lodash'
+
 import {Feature, prepareSettings, Settings, Shortcut} from '../settings'
 
 import {config as incDec} from './inc-dec-value'
@@ -10,6 +12,8 @@ import {config as livePreview} from './livePreview'
 import {config as dateTitle} from './day-title'
 import {config as fuzzyDate} from './fuzzy_date'
 import {filterAsync, mapAsync} from '../common/async'
+import {Handler} from 'src/core/react-hotkeys/key-handler'
+import {KeySequenceString} from 'src/core/react-hotkeys/key-sequence'
 
 export const Features = {
     all: prepareSettings([
@@ -30,13 +34,13 @@ export const Features = {
         return filterAsync(this.all, it => this.isActive(it.id))
     },
 
-    getShortcutHandlers: () =>
+    getShortcutHandlers: (): Dictionary<Handler> =>
         getAllShortcuts(Features.all).reduce((acc: any, current) => {
             acc[current.id] = current.onPress
             return acc
         }, {}),
 
-    async getCurrentKeyMap() {
+    async getCurrentKeyMap(): Promise<Dictionary<KeySequenceString>> {
         const features = (await Features.getActiveFeatures()).filter(it => it.settings)
         const allShortcuts = (await mapAsync(features, this.getKeyMapFor)).flat().filter(it => it[1])
         return allShortcuts.reduce((acc: any, current) => {
