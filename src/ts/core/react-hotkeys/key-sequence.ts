@@ -1,6 +1,5 @@
 import {KeyChord} from './key-chord'
 
-
 export type KeySequenceString = string
 
 /**

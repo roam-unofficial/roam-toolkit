@@ -2,7 +2,7 @@ import {Set} from 'immutable'
 
 export type KeyChordString = string
 
-type Modifier = 'alt' | 'shift' | 'control' | 'command'
+type Modifier = 'alt' | 'shift' | 'ctrl' | 'command'
 
 /**
  * A "KeyChord" is a single combination of one or more keys

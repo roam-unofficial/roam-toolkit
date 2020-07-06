@@ -42,7 +42,7 @@ export const Roam = {
         this.save(action(node))
     },
 
-    async selectBlock(element?: HTMLElement) {
+    async highlight(element?: HTMLElement) {
         if (element) {
             await this.activateBlock(element)
         }
@@ -61,11 +61,11 @@ export const Roam = {
     },
 
     async deleteBlock() {
-        return this.selectBlock().then(() => Keyboard.pressBackspace())
+        return this.highlight().then(() => Keyboard.pressBackspace())
     },
 
     async copyBlock() {
-        await this.selectBlock()
+        await this.highlight()
         document.execCommand('copy')
     },
 
@@ -120,7 +120,7 @@ export const Roam = {
     },
 
     async createDeepestLastDescendant() {
-        await this.selectBlock()
+        await this.highlight()
         await Keyboard.simulateKey(Keyboard.RIGHT_ARROW)
         await Keyboard.pressEnter()
     },
@@ -142,10 +142,8 @@ export const Roam = {
     async toggleFoldBlock(block: HTMLElement) {
         const foldButton = assumeExists(
             assumeExists(block.parentElement).querySelector(Selectors.foldButton)
-        ) as HTMLElement;
-        await Mouse.hover(foldButton);
-        await Mouse.leftClick(foldButton);
+        ) as HTMLElement
+        await Mouse.hover(foldButton)
+        await Mouse.leftClick(foldButton)
     },
-
-
 }

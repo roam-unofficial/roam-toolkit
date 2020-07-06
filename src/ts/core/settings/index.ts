@@ -43,7 +43,7 @@ export const Settings = {
         (await getStateFromStorage())[featureId][settingId] || defaultValue,
     isActive: async (featureId: string) => (await getStateFromStorage())[featureId]?.active,
 }
-const initDefaultState = (feature: Feature): { active: boolean } => {
+const initDefaultState = (feature: Feature): {active: boolean} => {
     return {
         active: feature.enabledByDefault !== false,
     }
