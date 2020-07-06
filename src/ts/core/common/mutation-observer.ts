@@ -1,6 +1,6 @@
 import {assumeExists} from 'src/core/common/assert'
 
-type DisconnectFn = () => void
+export type DisconnectFn = () => void
 
 export const onSelectorChange = (selector: string, handleChange: (changedElement: HTMLElement) => void): DisconnectFn =>
     observeElement(assumeExists(document.querySelector(selector)) as HTMLElement, handleChange)
@@ -23,18 +23,30 @@ const observeElement = (
     return () => waitForLoad.disconnect()
 }
 
-export const waitForSelectorToExist = (selector: string, observeInside: HTMLElement = document.body) => {
-    if (observeInside.querySelector(selector)) {
-        return Promise.resolve()
-    }
-
+/**
+ * @return A promise of the element matching the selector
+ */
+export const waitForSelectorToExist = (
+    selector: string,
+    observeInside: HTMLElement = document.body
+): Promise<HTMLElement> => {
     return new Promise(resolve => {
+        const resolveIfElementExists = () => {
+            const element = observeInside.querySelector(selector) as HTMLElement
+            if (element) {
+                resolve(element)
+                return true
+            }
+            return false
+        }
+
+        resolveIfElementExists()
+
         const disconnect = observeElement(
             observeInside,
             () => {
-                if (observeInside.querySelector(selector)) {
+                if (resolveIfElementExists()) {
                     disconnect()
-                    resolve()
                 }
             },
             true

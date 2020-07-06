@@ -55,7 +55,10 @@ export function getInputEvent() {
     })
 }
 
-export const isElementVisible = (element: Element) => {
+export const isElementVisible = (element: Element | null): boolean => {
+    if (!element) {
+        return false
+    }
     const {x, y} = element.getBoundingClientRect()
     return x >= 0 && y >= 0 && x <= window.innerWidth && y <= window.innerHeight
 }

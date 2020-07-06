@@ -8,10 +8,7 @@ const shortcutContainer = document.createElement('div')
 
 export async function updateShortcuts() {
     const shortcutElement = (
-        <ReactHotkeys
-            keyMap={await Features.getCurrentKeyMap()}
-            handlers={Features.getShortcutHandlers()}
-        />
+        <ReactHotkeys keyMap={await Features.getCurrentKeyMap()} handlers={Features.getShortcutHandlers()} />
     )
     // TODO: hitting this
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/31734 was not able to resolve it
