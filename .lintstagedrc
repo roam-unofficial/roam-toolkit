@@ -1,0 +1,8 @@
+{
+  "**/*.+(ts|tsx|json|html)": [
+    "prettier --write"
+  ],
+  "**/*.+(ts|tsx)": [
+    "tslint"
+  ]
+}
