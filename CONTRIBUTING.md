@@ -25,16 +25,6 @@ And there is a lot of material out there if you want to learn more!
 1. [Fork the repository](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) and then clone your fork locally. 
 
     `git clone https://github.com/<YourUserName>/roam-toolkit.git`
-
-1. Revert the https://github.com/roam-unofficial/roam-toolkit/commit/20ad9560b7cfaf71adf65dbc3645b3554c2ab598 change locally to allow Toolkit to properly run in the development mode.   
-  This is awkward, but required because of how react development tools work 😞. Make sure not to 
-  commit these changes back to the repository. 
-  
-   ```
-   cd roam-toolkit # Go to the Roam Toolkit directory
-   git revert --no-commit 20ad9560b7cfaf71adf65dbc3645b3554c2ab598 
-   git reset src/manifest.json
-   ```
   
 1. Install dependencies by running  
   `npm install`
