@@ -15,23 +15,40 @@ Browser extension designed to improve your experience of using Roam Research
 ## Installation
 It's available in their respective extension stores for both [Chrome](https://chrome.google.com/webstore/detail/roam-toolkit/ebckolanhdjilblnkcgcgifaikppnhba)  & [Firefox](https://addons.mozilla.org/en-US/firefox/addon/roam-toolkit/)
 
-## Currently supported functionality
-1. Fuzzy Date functionality
-  
-  ![](./media/fuzzy_date.gif)
-1. Date increment/decrement
-    - If there is only 1 date in the block - place the cursor anywhere withing it and press `Ctrl-Alt-Up/Down`, if there is more then 1 date - you need to place the cursor within the name of the date.
-1. Spaced repetition
-   * Anki SRS algorithm & Shortcuts
-   * Leitner System automation shortcuts 
+## Features
+
+### Date Manipulation
+
+You can create dates using [**natural language**](https://github.com/wanasit/chrono):
+
+![](./media/fuzzy_date.gif)
+
+You can also **increment or decrement dates**:
+
+* While editing a block, press `Ctrl-Alt-Up/Down` to increment/decrement any date inside. If a block has multiple dates, place your cursor on the date.
+    
+### Spaced Repetition
+
+* Anki SRS algorithm & Shortcuts
+* Leitner System automation shortcuts
+
+### Live Preview of pages
+
+![](./media/live_preview.gif)
+
+### Vim Style keyboard shortcuts
+
+![](./media/vim_demo.gif)
+
+For more details, see the [full video](https://youtu.be/ZxtT05CjOyo)
+
+### Other Features
+
 1. Block actions: Delete, Duplicate, Copy Block Reference
 1. Task estimates
 1. Custom CSS
-1. Live Preview of pages
- 
- ![](./media/live_preview.gif)
 
-## Contributing 
+## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on how to start contributing.
 
