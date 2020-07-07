@@ -5,6 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 const {CheckerPlugin} = require('awesome-typescript-loader')
 const ExtensionReloader = require('webpack-extension-reloader')
+const ReplaceInFileWebpackPlugin = require('replace-in-file-webpack-plugin')
 const locateContentScripts = require('./utils/locateContentScripts')
 
 const sourceRootPath = path.join(__dirname, 'src')
@@ -14,6 +15,10 @@ const nodeEnv = process.env.NODE_ENV ? process.env.NODE_ENV : 'development'
 const webBrowser = process.env.WEB_BROWSER ? process.env.WEB_BROWSER : 'chrome'
 
 const contentScripts = locateContentScripts(contentScriptsPath)
+
+const noopPlugin = () => {
+    this.apply = () => {}
+}
 
 const extensionReloader =
     nodeEnv === 'watch'
@@ -26,16 +31,22 @@ const extensionReloader =
                   contentScript: Object.keys(contentScripts),
               },
           })
-        : () => {
-              this.apply = () => {}
-          }
+        : noopPlugin
 
-const cleanWebpackPlugin =
-    nodeEnv === 'production'
-        ? new CleanWebpackPlugin()
-        : () => {
-              this.apply = () => {}
-          }
+const addUnsafeEvalToManifestPlugin = new ReplaceInFileWebpackPlugin([
+    {
+        dir: 'dist',
+        files: ['manifest.json'],
+        rules: [
+            {
+                search: /"content_security_policy": ".*"/,
+                replace: "\"content_security_policy\": \"script-src 'self' 'unsafe-eval'; object-src 'self'\"",
+            },
+        ],
+    },
+])
+
+const developmentModeManifestPlugin = nodeEnv === 'development' ? addUnsafeEvalToManifestPlugin : noopPlugin
 
 module.exports = {
     watch: nodeEnv === 'watch',
@@ -53,8 +64,8 @@ module.exports = {
         extensions: ['.js', '.ts', '.tsx', '.json'],
         alias: {
             // Enable absolute imports
-            src: path.resolve(__dirname, 'src/ts/')
-        }
+            src: path.resolve(__dirname, 'src/ts/'),
+        },
     },
     module: {
         rules: [{test: /\.(js|ts|tsx)?$/, loader: 'awesome-typescript-loader', exclude: /node_modules/}],
@@ -92,6 +103,7 @@ module.exports = {
                 copyUnmodified: true, // resolve conflict with `CleanWebpackPlugin`
             }
         ),
+        developmentModeManifestPlugin,
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(nodeEnv),
             WEB_BROWSER: JSON.stringify(webBrowser),
