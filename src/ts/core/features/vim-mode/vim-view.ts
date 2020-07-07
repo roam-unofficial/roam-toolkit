@@ -3,6 +3,7 @@ import {isElementVisible} from 'src/core/common/dom'
 import {injectStyle} from 'src/core/common/css'
 import {Selectors} from 'src/core/roam/selectors'
 
+import {updateBlockNavigationHintView} from 'src/core/features/vim-mode/hint-view'
 import {RoamBlock} from 'src/core/features/vim-mode/roam/roam-block'
 
 /**
@@ -28,6 +29,8 @@ export const updateBlockNavigationView = () => {
     // Visually fake selection using css instead. Then, lazily focus them during manipulation.
     clearHighlights()
     block.classList.add(SELECTED_BLOCK_CSS_CLASS)
+
+    updateBlockNavigationHintView(block)
 
     viewMoreDailyLogIfPossible()
 
