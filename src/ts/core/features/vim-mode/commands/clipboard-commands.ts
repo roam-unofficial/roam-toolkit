@@ -35,9 +35,9 @@ const copySelectedBlock = async (mode: Mode) => {
     await returnToNormalMode()
 }
 
-const copySelectedBlockReference = () => copyBlockReference(RoamPanel.selected().selectedBlockId)
+const copySelectedBlockReference = () => copyBlockReference(RoamPanel.selected().selectedBlock().id)
 
-const copySelectedBlockEmbed = () => copyBlockEmbed(RoamPanel.selected().selectedBlockId)
+const copySelectedBlockEmbed = () => copyBlockEmbed(RoamPanel.selected().selectedBlock().id)
 
 const enterOrCutInVisualMode = async (mode: Mode) => {
     if (mode === Mode.NORMAL) {

@@ -48,7 +48,7 @@ export const RoamEvent = {
         return onBlockEvent('focusout', element => {
             // Wait for the text area to transform back into a regular block
             const container = assumeExists(element.closest(Selectors.blockContainer)) as HTMLElement
-            waitForSelectorToExist(`${Selectors.block}#${element.id}`, container).then(handler)
+            waitForSelectorToExist(`${Selectors.block}#${Selectors.escapeHtmlId(element.id)}`, container).then(handler)
         })
     },
 
@@ -56,7 +56,7 @@ export const RoamEvent = {
         // Only the content changes when switching between pages
         let stopObservingContent = onSelectorChange(Selectors.mainContent, handler)
         // The main panel changes when switching between daily notes and regular pages
-        let stopObservingMainPanel = onSelectorChange(Selectors.mainPanel, () => {
+        const stopObservingMainPanel = onSelectorChange(Selectors.mainPanel, () => {
             handler()
             stopObservingContent()
             stopObservingContent = onSelectorChange(Selectors.mainContent, handler)

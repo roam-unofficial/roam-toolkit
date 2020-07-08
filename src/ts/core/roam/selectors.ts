@@ -1,6 +1,7 @@
 export const Selectors = {
     link: '.rm-page-ref',
     block: '.roam-block',
+    blockInput: '.rm-block-input',
     blockContainer: '.roam-block-container',
     blockReference: '.rm-block-ref',
     title: '.rm-title-display',
@@ -22,4 +23,10 @@ export const Selectors = {
     externalLink: 'a',
     referenceItem: '.rm-reference-item',
     breadcrumbsContainer: '.zoom-mentions-view',
+
+    /**
+     * Blocks in mentions may contain your actual email address, which messes up querySelector, unless
+     * special characters are escaped.
+     */
+    escapeHtmlId: (htmlId: string) => htmlId.replace('.', '\\.').replace('@', '\\@'),
 }
