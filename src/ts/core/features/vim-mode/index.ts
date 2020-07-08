@@ -13,7 +13,7 @@ import {HintCommands} from 'src/core/features/vim-mode/commands/hint-commands'
 
 export const config: Feature = {
     id: 'block_navigation_mode',
-    name: 'Vim-like Block Navigation',
+    name: 'Vim-like Block Navigation (requires refresh)',
     warning: 'Experimental; Intrusive, may interfere with your regular workflow',
     enabledByDefault: false,
     settings: [
