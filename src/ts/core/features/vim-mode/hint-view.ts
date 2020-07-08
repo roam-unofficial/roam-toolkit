@@ -48,18 +48,17 @@ Promise.all(HINT_IDS.map(hintCss)).then(cssClasses => {
     )
 })
 
-export const updateBlockNavigationHintView = (block: HTMLElement) => {
+export const updateVimHints = (block: HTMLElement) => {
     // button is for reference counts
     const links = block.querySelectorAll(
         `${Selectors.link}, ${Selectors.externalLink}, ${Selectors.checkbox}, ${Selectors.button}, ${Selectors.blockReference}`
     )
-    clearHints()
     links.forEach((link, i) => {
         link.classList.add(HINT_CSS_CLASS, hintCssClass(i))
     })
 }
 
-export const clearHints = () => {
+export const clearVimHints = () => {
     const priorHints = document.querySelectorAll(`.${HINT_CSS_CLASS}`)
     priorHints.forEach(selection => selection.classList.remove(HINT_CSS_CLASS, ...HINT_CSS_CLASSES))
 }

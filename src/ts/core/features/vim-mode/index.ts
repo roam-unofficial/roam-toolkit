@@ -1,4 +1,6 @@
-import {initializeBlockNavigationMode} from 'src/core/features/vim-mode/vim-init'
+import {browser} from 'webextension-polyfill-ts'
+
+import {startVimMode, stopVimMode} from 'src/core/features/vim-mode/vim-init'
 import {map, nmap, returnToNormalMode} from 'src/core/features/vim-mode/vim'
 import {Feature, Settings} from 'src/core/settings'
 import {NavigationCommands} from 'src/core/features/vim-mode/commands/navigation-commands'
@@ -13,7 +15,7 @@ import {HintCommands} from 'src/core/features/vim-mode/commands/hint-commands'
 
 export const config: Feature = {
     id: 'block_navigation_mode',
-    name: 'Vim-like Block Navigation (requires refresh)',
+    name: 'Vim-like Block Navigation',
     warning: 'Experimental; Intrusive, may interfere with your regular workflow',
     enabledByDefault: false,
     settings: [
@@ -30,8 +32,20 @@ export const config: Feature = {
     ],
 }
 
-Settings.isActive('block_navigation_mode').then(active => {
-    if (active) {
-        initializeBlockNavigationMode()
+const toggleVimDependingOnSetting = () => {
+    Settings.isActive('block_navigation_mode').then(active => {
+        if (active) {
+            startVimMode()
+        } else {
+            stopVimMode()
+        }
+    })
+}
+
+browser.runtime.onMessage.addListener(async message => {
+    if (message === 'settings-updated') {
+        toggleVimDependingOnSetting()
     }
 })
+
+toggleVimDependingOnSetting()
