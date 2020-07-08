@@ -46,7 +46,7 @@ const addUnsafeEvalToManifestPlugin = new ReplaceInFileWebpackPlugin([
     },
 ])
 
-const developmentModeManifestPlugin = nodeEnv === 'development' ? addUnsafeEvalToManifestPlugin : noopPlugin
+const developmentModeManifestPlugin = nodeEnv === 'production' ? noopPlugin : addUnsafeEvalToManifestPlugin
 
 module.exports = {
     watch: nodeEnv === 'watch',
