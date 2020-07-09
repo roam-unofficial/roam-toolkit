@@ -11,6 +11,7 @@ export const Mouse = {
     },
     hover(element: HTMLElement, delayOverride: number = 0) {
         element.dispatchEvent(getMouseEvent('mouseover', 1))
+        element.dispatchEvent(getMouseEvent('mousemove', 1))
         return delay(delayOverride || this.BASE_DELAY)
     },
     leftClick(element: HTMLElement, shiftKey: boolean = false, additionalDelay: number = 0) {
