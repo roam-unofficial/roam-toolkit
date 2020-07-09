@@ -1,6 +1,6 @@
 import {nimap, nmap, nvmap, RoamVim} from 'src/core/features/vim-mode/vim'
 import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-panel'
-import {expandLastBreadcrumb} from 'src/core/roam/references'
+import {closePageReferenceView, expandLastBreadcrumb} from 'src/core/roam/references'
 
 const selectFirstBlock = () => {
     const panel = RoamPanel.selected()
@@ -25,4 +25,5 @@ export const NavigationCommands = [
     // Avoid insert mode, to allow native ctrl-e to go to end of line
     nvmap('ctrl+e', 'Scroll Down', () => RoamPanel.selected().scrollAndReselectBlockToStayVisible(50)),
     nimap('alt+z', 'Expand Last Reference Breadcrumb', expandLastBreadcrumb),
+    nmap('shift+z', 'Collapse the view for the page in references (or query) section', closePageReferenceView),
 ]

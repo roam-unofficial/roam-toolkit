@@ -23,6 +23,8 @@ export const Selectors = {
     externalLink: 'a',
     referenceItem: '.rm-reference-item',
     breadcrumbsContainer: '.zoom-mentions-view',
+    pageReferenceItem: '.rm-ref-page-view',
+    caretButton: '.rm-caret',
 
     /**
      * Blocks in mentions may contain your actual email address, which messes up querySelector, unless
