@@ -79,6 +79,14 @@ export class RoamPanel {
         this.selectBlockAt(this.blockIndex + blocksToJump)
     }
 
+    selectLastVisibleBlock() {
+        this.selectBlock(this.lastVisibleBlock().id)
+    }
+
+    selectFirstVisibleBlock() {
+        this.selectBlock(this.firstVisibleBlock().id)
+    }
+
     scrollUntilBlockIsVisible(block: BlockElement) {
         this.scroll(blockScrollOverflow(block))
     }
@@ -150,11 +158,11 @@ export class RoamPanel {
         const scrollOverflow = blockScrollOverflow(block)
         if (scrollOverflow < 0) {
             // Block has gone out of bounds off the top
-            this.selectBlock(this.firstVisibleBlock().id)
+            this.selectFirstVisibleBlock()
         }
         if (scrollOverflow > 0) {
             // Block has gone out of bounds off the bottom
-            this.selectBlock(this.lastVisibleBlock().id)
+            this.selectLastVisibleBlock()
         }
     }
 
