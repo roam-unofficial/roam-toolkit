@@ -9,14 +9,14 @@ export type BlockElement = HTMLElement
  * The generically reusable parts of this should probably move to core/roam
  */
 export class RoamBlock {
-    private blockId: BlockId
+    element: BlockElement
 
-    constructor(blockId: BlockId) {
-        this.blockId = blockId
+    constructor(element: BlockElement) {
+        this.element = element
     }
 
-    get element(): BlockElement {
-        return assumeExists(document.getElementById(this.blockId))
+    get id(): string {
+        return this.element.id
     }
 
     async edit() {
@@ -28,7 +28,7 @@ export class RoamBlock {
     }
 
     static get(blockId: BlockId): RoamBlock {
-        return new RoamBlock(blockId)
+        return new RoamBlock(assumeExists(document.getElementById(blockId)))
     }
 
     static selected(): RoamBlock {
