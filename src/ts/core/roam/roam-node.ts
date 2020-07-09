@@ -33,11 +33,16 @@ export class RoamNode {
     }
 
     static createInlineProperty(name: string, value: string) {
-        return `[[[[${name}]]:${value}]]`
+        return `{[[${name}]]:${value}}`
     }
 
     static getInlinePropertyMatcher(name: string) {
-        return new RegExp(`\\[\\[\\[\\[${name}]]::?(.*?)]]`, 'g')
+        /**
+         * This has a bunch of things for backward compatibility:
+         * - Potentially allowing double colon `::` between name and value
+         * - Accepting both `{}` and `[[]]` wrapped properties
+         */
+        return new RegExp(`(?:\\[\\[|{)\\[\\[${name}]]::?(.*?)(?:]]|})`, 'g')
     }
 }
 
