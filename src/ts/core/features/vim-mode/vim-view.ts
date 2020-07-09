@@ -3,7 +3,7 @@ import {isElementVisible} from 'src/core/common/dom'
 import {injectStyle} from 'src/core/common/css'
 import {Selectors} from 'src/core/roam/selectors'
 
-import {updateBlockNavigationHintView} from 'src/core/features/vim-mode/hint-view'
+import {clearVimHints, updateVimHints} from 'src/core/features/vim-mode/hint-view'
 import {RoamBlock} from 'src/core/features/vim-mode/roam/roam-block'
 
 /**
@@ -16,30 +16,31 @@ const SELECTED_BLOCK_CSS_CLASS = 'roam-toolkit-block-mode--highlight'
 injectStyle(
     `
     .${SELECTED_BLOCK_CSS_CLASS} {
-        background-color: wheat; 
+        background-color: wheat;
     }
     `,
     'roam-toolkit-block-mode'
 )
 
-export const updateBlockNavigationView = () => {
+export const updateVimView = () => {
     const block = RoamBlock.selected().element
 
     // Roam.activateBlock focuses the textarea, which prevents holding down j/k.
     // Visually fake selection using css instead. Then, lazily focus them during manipulation.
-    clearHighlights()
+    clearVimView()
     block.classList.add(SELECTED_BLOCK_CSS_CLASS)
 
-    updateBlockNavigationHintView(block)
+    updateVimHints(block)
 
     viewMoreDailyLogIfPossible()
 
     return null
 }
 
-const clearHighlights = () => {
+export const clearVimView = () => {
     const priorSelections = document.querySelectorAll(`.${SELECTED_BLOCK_CSS_CLASS}`)
     priorSelections.forEach(selection => selection.classList.remove(SELECTED_BLOCK_CSS_CLASS))
+    clearVimHints()
 }
 
 const viewMoreDailyLogIfPossible = () => {

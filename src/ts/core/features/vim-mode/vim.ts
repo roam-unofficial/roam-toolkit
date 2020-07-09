@@ -1,4 +1,4 @@
-import {blurEverything, updateBlockNavigationView} from 'src/core/features/vim-mode/vim-view'
+import {blurEverything, updateVimView} from 'src/core/features/vim-mode/vim-view'
 import {getActiveEditElement} from 'src/core/common/dom'
 import {Selectors} from 'src/core/roam/selectors'
 import {delay, repeatAsync} from 'src/core/common/async'
@@ -43,7 +43,7 @@ const _map = (modes: Mode[]): CommandMapper => (key, label, onPress) => ({
         const mode = getMode()
         if (modes.includes(mode)) {
             await onPress(getMode())
-            updateBlockNavigationView()
+            updateVimView()
         }
     },
 })
