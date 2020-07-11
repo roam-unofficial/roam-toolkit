@@ -3,6 +3,7 @@ import {clamp, findLast, last} from 'lodash'
 import {Selectors} from 'src/core/roam/selectors'
 import {assumeExists} from 'src/core/common/assert'
 import {BlockElement, BlockId, RoamBlock} from 'src/core/features/vim-mode/roam/roam-block'
+import {relativeItem} from 'src/core/common/array'
 
 type BlockNavigationState = {
     panelOrder: PanelId[]
@@ -38,45 +39,58 @@ const PANEL_SELECTOR = `.${PANEL_CSS_CLASS}, ${Selectors.sidebarContent}`
  */
 export class RoamPanel {
     private readonly element: PanelElement
+    private _selectedBlockId: BlockId | null
     /**
-     * We persist the block index instead of the block id, because blocks are sometimes
+     * We persist the block index in addition to block id, because blocks are sometimes
      * deleted before we get a chance to grab another block id. This often happens during cut/paste.
      *
-     * Instead, we remember the relative position of the block being selected. This normally
-     * throws off your position if many blocks are suddenly inserted before the selected block.
-     *
-     * In practice however, RoamEvent.onBlurBlock will re-select your block after you stop editing it.
-     * This still leads to the selected block being pulled from underneath you during undo/redo however.
+     * We don't use the blockIndex as the source of truth though, to avoid the blocks being pulled
+     * from under the selection like a rug.
      */
     private blockIndex: number
 
     constructor(element: PanelElement) {
         this.element = element
+        this._selectedBlockId = null
         this.blockIndex = 0
     }
 
     private blocks = (): BlockElement[] =>
         Array.from(this.element.querySelectorAll(`${Selectors.block}, ${Selectors.blockInput}`))
 
+    private relativeBlockId(blockId: BlockId, blocksToJump: number): BlockId {
+        return relativeItem(this.blocks(), this.indexOf(blockId), blocksToJump).id
+    }
+
+    private indexOf(blockId: BlockId): number {
+        return this.blocks().findIndex(({id}) => id === blockId)
+    }
+
+    get selectedBlockId(): BlockId {
+        if (!this._selectedBlockId || !document.getElementById(this._selectedBlockId)) {
+            // Fallback to the the position of the last selected block
+            const blocks = this.blocks()
+            this.blockIndex = clamp(this.blockIndex, 0, blocks.length - 1)
+            console.log(this.blockIndex, blocks[this.blockIndex])
+            this.selectBlock(blocks[this.blockIndex].id)
+        }
+
+        return this._selectedBlockId!
+    }
+
     selectedBlock(): RoamBlock {
-        const blocks = this.blocks()
-        this.blockIndex = clamp(this.blockIndex, 0, blocks.length - 1)
-        return new RoamBlock(blocks[this.blockIndex])
+        return RoamBlock.get(this.selectedBlockId)
     }
 
     selectBlock(blockId: BlockId) {
-        const blocks = this.blocks()
-        const blockIndex = blocks.findIndex(({id}) => id === blockId)
-        this.selectBlockAt(blockIndex)
-    }
-
-    private selectBlockAt(blockIndex: number) {
-        this.blockIndex = blockIndex
+        this._selectedBlockId = blockId
+        this.blockIndex = this.indexOf(blockId)
         this.scrollUntilBlockIsVisible(this.selectedBlock().element)
     }
 
     selectRelativeBlock(blocksToJump: number) {
-        this.selectBlockAt(this.blockIndex + blocksToJump)
+        const block = this.selectedBlock().element
+        this.selectBlock(this.relativeBlockId(block.id, blocksToJump))
     }
 
     selectLastVisibleBlock() {

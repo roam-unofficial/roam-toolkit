@@ -8,5 +8,3 @@ export const relativeItem = <T>(xs: T[], index: number, relativeIndex: number): 
 
     return xs[destinationIndex]
 }
-
-// TODO: use https://docs-lodash.com/v4/find-last/ instead of findLast in later commits
