@@ -140,10 +140,16 @@ export const Roam = {
     },
 
     async toggleFoldBlock(block: HTMLElement) {
-        const foldButton = assumeExists(
-            assumeExists(block.parentElement).querySelector(Selectors.foldButton)
-        ) as HTMLElement
+        const foldButton = nearestFoldButton(block)
         await Mouse.hover(foldButton)
         await Mouse.leftClick(foldButton)
     },
+}
+
+const nearestFoldButton = (element: HTMLElement): HTMLElement => {
+    const foldButton = element.querySelector(Selectors.foldButton) as HTMLElement
+    if (foldButton) {
+        return foldButton
+    }
+    return nearestFoldButton(assumeExists(element.parentElement))
 }
