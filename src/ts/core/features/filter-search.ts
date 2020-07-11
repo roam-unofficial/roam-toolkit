@@ -1,5 +1,6 @@
 import {Feature, Settings} from '../settings'
 import {browser} from 'webextension-polyfill-ts'
+import {waitForSelectorToExist} from 'src/core/common/mutation-observer'
 
 export const config: Feature = {
     id: 'filter_search',
@@ -28,7 +29,7 @@ const toggleFilterSearch = (active: boolean) => {
     }
 }
 
-function filterSearch(event: MouseEvent) {
+async function filterSearch(event: MouseEvent) {
     const eventTarget = event.target as HTMLElement
     if (eventTarget !== null) {
         console.log(eventTarget.className)
@@ -43,57 +44,35 @@ function filterSearch(event: MouseEvent) {
             eventTarget.className === 'bp3-icon bp3-icon-filter' ||
             eventTarget.className === 'bp3-button bp3-minimal bp3-small'
         ) {
-            let waitCtr = 0
+            const filterContainer = await waitForSelectorToExist(
+                'div.bp3-transition-container.bp3-popover-enter-done div.bp3-popover-content > div > div'
+            )
+            const newDivLine = document.createElement('div')
+            newDivLine.className = 'rm-line'
+            filterContainer.prepend(newDivLine)
 
-            function waitForFilter() {
-                setTimeout(() => {
-                    // Check if filter search input box is there, otherwise need to load it
-                    const tbInputSearch = document.getElementById('fbSearchInput') as HTMLInputElement
+            const newDiv = document.createElement('div')
+            newDiv.id = 'filterBoxSearch'
+            newDiv.style.cssText = 'display:flex;padding:4px'
+            filterContainer.prepend(newDiv)
 
-                    if (tbInputSearch === null) {
-                        const allByClassTest = document.querySelectorAll(
-                            'div.bp3-transition-container.bp3-popover-enter-done div.bp3-popover-content > div > div'
-                        )
-                        const testFilterDiv = allByClassTest[0] as HTMLElement
-                        if (typeof testFilterDiv !== 'undefined' && testFilterDiv !== null) {
-                            const newDivLine = document.createElement('div')
-                            newDivLine.className = 'rm-line'
-                            testFilterDiv.prepend(newDivLine)
+            const newLabel = document.createElement('strong')
+            newLabel.innerText = 'Search'
+            newLabel.style.cssText = 'margin-right:10px'
+            newDiv.appendChild(newLabel)
 
-                            const newDiv = document.createElement('div')
-                            newDiv.id = 'filterBoxSearch'
-                            newDiv.style.cssText = 'display:flex;padding:4px'
-                            testFilterDiv.prepend(newDiv)
+            const newInput = document.createElement('input')
+            newInput.value = ''
+            newInput.id = 'fbSearchInput'
+            newInput.name = 'fbSearchInput'
+            newInput.style.cssText = 'width:200px;display:flex'
+            newDiv.appendChild(newInput)
+            newInput.focus()
 
-                            const newLabel = document.createElement('strong')
-                            newLabel.innerText = 'Search'
-                            newLabel.style.cssText = 'margin-right:10px'
-                            newDiv.appendChild(newLabel)
-
-                            const newInput = document.createElement('input')
-                            newInput.value = ''
-                            newInput.id = 'fbSearchInput'
-                            newInput.name = 'fbSearchInput'
-                            newInput.style.cssText = 'width:200px;display:flex'
-                            newDiv.appendChild(newInput)
-                            newInput.focus()
-
-                            newInput.addEventListener('input', newInputClick)
-                            return
-                        } else {
-                            console.log('Filter box was not loaded in time!')
-                        }
-                    }
-                    waitCtr++
-                    console.log('*** WAIT LOOP: ', waitCtr)
-                    if (waitCtr >= 12) {
-                        return
-                    }
-                    waitForFilter()
-                }, 50)
-            }
-
-            waitForFilter()
+            newInput.addEventListener('input', newInputClick)
+            return
+        } else {
+            console.log('Filter box was not loaded in time!')
         }
     }
 }
