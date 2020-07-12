@@ -47,6 +47,7 @@ export const startVimMode = async () => {
         // Select first block when switching pages
         RoamEvent.onChangePage(() => {
             RoamPanel.updateSidePanels()
+            RoamPanel.mainPanel().selectFirstBlock()
             updateVimView()
         }),
     ]

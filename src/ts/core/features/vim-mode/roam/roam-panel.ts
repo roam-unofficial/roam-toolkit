@@ -71,7 +71,6 @@ export class RoamPanel {
             // Fallback to the the position of the last selected block
             const blocks = this.blocks()
             this.blockIndex = clamp(this.blockIndex, 0, blocks.length - 1)
-            console.log(this.blockIndex, blocks[this.blockIndex])
             this.selectBlock(blocks[this.blockIndex].id)
         }
 
@@ -91,6 +90,14 @@ export class RoamPanel {
     selectRelativeBlock(blocksToJump: number) {
         const block = this.selectedBlock().element
         this.selectBlock(this.relativeBlockId(block.id, blocksToJump))
+    }
+
+    selectFirstBlock() {
+        this.selectBlock(this.firstBlock().id)
+    }
+
+    selectLastBlock() {
+        this.selectBlock(this.lastBlock().id)
     }
 
     selectLastVisibleBlock() {
