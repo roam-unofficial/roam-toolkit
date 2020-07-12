@@ -42,6 +42,10 @@ You can also **increment or decrement dates**:
 
 For more details, see the [full video](https://youtu.be/ZxtT05CjOyo)
 
+### Search pages in the page or linked references filter view
+
+![](./media/filter_search.gif)
+
 ### Other Features
 
 1. Block actions: Delete, Duplicate, Copy Block Reference
