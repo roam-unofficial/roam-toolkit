@@ -1,6 +1,7 @@
 import {Feature, Settings} from '../settings'
 import {browser} from 'webextension-polyfill-ts'
 import {waitForSelectorToExist} from 'src/core/common/mutation-observer'
+import {Selectors} from 'src/core/roam/selectors'
 
 export const config: Feature = {
     id: 'filter_search',
@@ -29,7 +30,7 @@ const toggleFilterSearch = (active: boolean) => {
     }
 }
 
-const searchInputId = 'searchInputBox'
+const searchInputId = 'roam-toolkit--searchInputBox'
 
 const getSearchInput = (): HTMLInputElement | null => {
     return document.getElementById(searchInputId) as HTMLInputElement
@@ -39,15 +40,17 @@ async function filterSearch(event: MouseEvent) {
     const eventTarget = event.target as HTMLElement
     if (!eventTarget) return
 
-    const filterPageButtonClicked = eventTarget.className === 'bp3-button'
-    const filterActivationButtonClicked =
-        eventTarget.className === 'bp3-icon bp3-icon-filter' ||
-        eventTarget.className === 'bp3-button bp3-minimal bp3-small'
+    const filterPageButtonClicked = eventTarget.matches(Selectors.button)
 
-    if (filterPageButtonClicked) {
-        refocusSearchInput()
-    } else if (filterActivationButtonClicked) {
+    // The filter button is nested in the generic outer button and you can click either
+    const filterActivationButtonClicked =
+        eventTarget.matches(Selectors.filterButton) ||
+        (eventTarget.firstChild as HTMLElement | null)?.matches(Selectors.filterButton)
+
+    if (filterActivationButtonClicked) {
         await createSearchFilterElements()
+    } else if (filterPageButtonClicked) {
+        refocusSearchInput()
     }
 }
 
@@ -56,7 +59,7 @@ function refocusSearchInput() {
     if (searchInput) {
         searchInput.focus()
         searchInput.select()
-        onFilterInput()
+        showButtonsMatchingQuery()
     }
 }
 
@@ -100,14 +103,14 @@ async function createSearchFilterElements() {
         searchInput.style.cssText = 'width:200px;display:flex'
         searchElementsContainer.appendChild(searchInput)
 
-        searchInput.addEventListener('input', onFilterInput)
+        searchInput.addEventListener('input', showButtonsMatchingQuery)
     }
 
     createSearchInput()
     refocusSearchInput()
 }
 
-function onFilterInput() {
+function showButtonsMatchingQuery() {
     const filterButtonsContainer = document.querySelector('.bp3-overlay.bp3-overlay-open.bp3-overlay-inline')
     const filterButtons =
         filterButtonsContainer?.querySelectorAll('div:not(.flex-h-box) > div > button.bp3-button') || []
