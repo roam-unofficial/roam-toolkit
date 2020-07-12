@@ -25,6 +25,7 @@ export const Selectors = {
     breadcrumbsContainer: '.zoom-mentions-view',
     pageReferenceItem: '.rm-ref-page-view',
     caretButton: '.rm-caret',
+    filterButton: '.bp3-icon.bp3-icon-filter',
 
     /**
      * Blocks in mentions may contain your actual email address, which messes up querySelector, unless
