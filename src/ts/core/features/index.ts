@@ -6,6 +6,7 @@ import {config as incDec} from './inc-dec-value'
 import {config as srs} from '../srs/srs'
 import {config as blockManipulation} from './block-manipulation'
 import {config as vimMode} from './vim-mode'
+import {config as treeLayout} from './tree-layout'
 import {config as estimate} from './estimates'
 import {config as navigation} from './navigation'
 import {config as livePreview} from './livePreview'
@@ -22,6 +23,7 @@ export const Features = {
         srs,
         blockManipulation,
         vimMode,
+        treeLayout,
         estimate,
         navigation,
         dateTitle,

@@ -16,7 +16,7 @@ const observeElement = (
 
     waitForLoad.observe(observeInside, {
         childList: true,
-        attributes: true,
+        attributes: false,
         subtree: observeChildren,
     })
 

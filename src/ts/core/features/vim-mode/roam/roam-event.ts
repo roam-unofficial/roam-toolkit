@@ -44,6 +44,10 @@ export const RoamEvent = {
         return onBlockEvent('focusin', handler)
     },
 
+    onChangeBlock(handler: (element: BlockElement) => void): DisconnectFn {
+        return onBlockEvent('input', handler)
+    },
+
     onBlurBlock(handler: (element: BlockElement) => void): DisconnectFn {
         return onBlockEvent('focusout', element => {
             // Wait for the text area to transform back into a regular block

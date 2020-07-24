@@ -23,7 +23,7 @@ const state: BlockNavigationState = {
  */
 type PanelId = PanelElement
 type PanelIndex = number
-type PanelElement = HTMLElement
+export type PanelElement = HTMLElement
 
 const PANEL_CSS_CLASS = 'roam-toolkit--panel'
 const PANEL_SELECTOR = `.${PANEL_CSS_CLASS}, ${Selectors.sidebarContent}`
