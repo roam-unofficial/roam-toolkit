@@ -24,6 +24,7 @@ export const Selectors = {
     referenceItem: '.rm-reference-item',
     breadcrumbsContainer: '.zoom-mentions-view',
     pageReferenceItem: '.rm-ref-page-view',
+    pageReferenceLink: '.rm-ref-page-view-title a span',
     caretButton: '.rm-caret',
     filterButton: '.bp3-icon.bp3-icon-filter',
 
