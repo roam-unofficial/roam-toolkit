@@ -1,5 +1,10 @@
 import {runInPageContext} from '../common/browser'
 
+type RoamPage = {
+    uid: string
+    name: string
+}
+
 export const RoamDb = {
     getBlockById(dbId: number) {
         // @ts-ignore
@@ -7,9 +12,6 @@ export const RoamDb = {
     },
 
     query(query: string, ...params: any[]) {
-        console.log('Executing Roam DB query', query)
-        console.log('Query params', params)
-
         // @ts-ignore
         return runInPageContext((...args: any[]) => window.roamAlphaAPI.q(...args), query, ...params)
     },
@@ -27,5 +29,11 @@ export const RoamDb = {
 
     getBlockByUid(uid: string) {
         return this.queryFirst('[:find ?e :in $ ?a :where [?e :block/uid ?a]]', uid)
+    },
+
+    getAllPages(): RoamPage[] {
+        return this.query(
+            '[:find ?uid ?title :where [?page :node/title ?title] [?page :block/uid ?uid]]'
+        ).map(([uid, name]: [string, string]) => ({uid, name}))
     },
 }
