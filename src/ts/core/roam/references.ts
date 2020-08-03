@@ -1,6 +1,6 @@
 import {Selectors} from './selectors'
 import {Mouse} from '../common/mouse'
-import {RoamBlock} from '../features/vim-mode/roam/roam-block'
+import {BlockElement, RoamBlock} from '../features/vim-mode/roam/roam-block'
 
 export const expandLastBreadcrumb = () => {
     const referenceItem = RoamBlock.selected().element?.closest(Selectors.referenceItem)
@@ -16,10 +16,31 @@ export const closePageReferenceView = () => {
     if (caretButton) Mouse.leftClick(caretButton as HTMLElement)
 }
 
-export const openParentPage = (shiftKey: boolean = false) => {
-    const referenceCard = RoamBlock.selected().element?.closest(Selectors.pageReferenceItem)
-    const referenceCardLink = referenceCard?.querySelector(Selectors.pageReferenceLink) as HTMLElement
-    if (referenceCardLink) {
-        Mouse.leftClick(referenceCardLink, shiftKey)
+const parentPageLink = (blockElement: BlockElement | null): HTMLElement | null => {
+    const referenceCard = blockElement?.closest(Selectors.pageReferenceItem)
+    if (referenceCard) {
+        return referenceCard?.querySelector(Selectors.pageReferenceLink) as HTMLElement
     }
+
+    const mainPanel = blockElement?.closest(Selectors.mainContent)
+    if (mainPanel) {
+        return mainPanel.querySelector(Selectors.title) as HTMLElement
+    }
+
+    const sidePanel = blockElement?.closest(Selectors.sidebarPage)
+    if (sidePanel) {
+        // Block outline uses h2, regular sidebar pages use h1
+        return sidePanel?.querySelector('h2 span, h1 a') as HTMLElement
+    }
+
+    return null
+}
+
+export const openParentPage = (shiftKey: boolean = false) => {
+    const parentLink = parentPageLink(RoamBlock.selected().element)
+    if (!parentLink) {
+        return
+    }
+
+    Mouse.leftClick(parentLink, shiftKey)
 }
