@@ -15,3 +15,11 @@ export const closePageReferenceView = () => {
 
     if (caretButton) Mouse.leftClick(caretButton as HTMLElement)
 }
+
+export const openParentPage = (shiftKey: boolean = false) => {
+    const referenceCard = RoamBlock.selected().element?.closest(Selectors.pageReferenceItem)
+    const referenceCardLink = referenceCard?.querySelector(Selectors.pageReferenceLink) as HTMLElement
+    if (referenceCardLink) {
+        Mouse.leftClick(referenceCardLink, shiftKey)
+    }
+}

@@ -1,6 +1,6 @@
 import {nimap, nmap, nvmap, RoamVim} from 'src/core/features/vim-mode/vim'
 import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-panel'
-import {closePageReferenceView, expandLastBreadcrumb} from 'src/core/roam/references'
+import {closePageReferenceView, expandLastBreadcrumb, openParentPage} from 'src/core/roam/references'
 
 export const NavigationCommands = [
     nvmap('k', 'Select Block Up', () => RoamVim.jumpBlocksInFocusedPanel(-1)),
@@ -16,4 +16,6 @@ export const NavigationCommands = [
     nvmap('ctrl+e', 'Scroll Down', () => RoamPanel.selected().scrollAndReselectBlockToStayVisible(50)),
     nimap('alt+z', 'Expand Last Reference Breadcrumb', expandLastBreadcrumb),
     nmap('shift+z', 'Collapse the view for the page in references (or query) section', closePageReferenceView),
+    nmap('1', 'Open parent page', () => openParentPage()),
+    nmap('shift+1', 'Open parent page in sidebar', () => openParentPage(true)),
 ]
