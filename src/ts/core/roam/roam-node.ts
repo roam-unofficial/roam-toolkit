@@ -33,7 +33,7 @@ export class RoamNode {
     }
 
     static createInlineProperty(name: string, value: string) {
-        return `{[[${name}]]:${value}}`
+        return `[[[[${name}]]:${value}]]`
     }
 
     static getInlinePropertyMatcher(name: string) {
