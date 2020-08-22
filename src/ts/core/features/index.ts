@@ -3,7 +3,6 @@ import {Dictionary} from 'lodash'
 import {Feature, prepareSettings, Settings, Shortcut} from '../settings'
 
 import {config as incDec} from './inc-dec-value'
-import {config as customCss} from './custom-css'
 import {config as srs} from '../srs/srs'
 import {config as blockManipulation} from './block-manipulation'
 import {config as vimMode} from './vim-mode'
@@ -23,7 +22,6 @@ export const Features = {
         blockManipulation,
         vimMode,
         estimate,
-        customCss,
         navigation,
         dateTitle,
         fuzzyDate,
