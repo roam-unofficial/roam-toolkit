@@ -29,8 +29,11 @@ You can also **increment or decrement dates**:
     
 ### Spaced Repetition
 
-* Anki SRS algorithm & Shortcuts
-* Leitner System automation shortcuts
+Implements SM2 Spaced repetition algorithm (Anki version) as described here: https://docs.ankiweb.net/#/faqs?id=what-spaced-repetition-algorithm-does-anki-use for Roam blocks.  
+Put a cursor inside the block and pres Ctrl+Shift+ [number between 1 and 4 signifying ease of remembering this card], and the plugin is going to reschedule the Block accordingly (tagging it with the appropriate date, and some metadata tags)
+
+Watch the video for more details:
+[![Watch the video for details on how to use it](https://img.youtube.com/vi/08o8q_bOedw/maxresdefault.jpg)](https://youtu.be/08o8q_bOedw)
 
 ### Live Preview of pages
 
@@ -42,15 +45,10 @@ You can also **increment or decrement dates**:
 
 For more details, see the [full video](https://youtu.be/ZxtT05CjOyo)
 
-### Search pages in the page or linked references filter view
-
-![](./media/filter_search.gif)
-
 ### Other Features
 
 1. Block actions: Delete, Duplicate, Copy Block Reference
 1. Task estimates
-1. Custom CSS
 
 ## Contributing
 
