@@ -11,6 +11,7 @@ import {config as navigation} from './navigation'
 import {config as livePreview} from './livePreview'
 import {config as dateTitle} from './day-title'
 import {config as fuzzyDate} from './fuzzy_date'
+import {config as randomPage} from './random-page'
 import {filterAsync, mapAsync} from '../common/async'
 import {Handler} from 'src/core/react-hotkeys/key-handler'
 import {KeySequenceString} from 'src/core/react-hotkeys/key-sequence'
@@ -26,6 +27,7 @@ export const Features = {
         dateTitle,
         fuzzyDate,
         livePreview,
+        randomPage,
     ]),
 
     isActive: Settings.isActive,

@@ -16,6 +16,10 @@ export class RoamNode {
     withCursorAtTheStart = () => this.withSelection(new Selection(0, 0))
     withCursorAtTheEnd = () => this.withSelection(new Selection(this.text.length, this.text.length))
 
+    withCursorAtSearchTerm = (searchTerm: string) => {
+        const indexOfSearchTerm = this.text.indexOf(searchTerm)
+        return this.withSelection(new Selection(indexOfSearchTerm, indexOfSearchTerm))
+    }
     withSelection = (selection: Selection) => new RoamNode(this.text, selection)
 
     getInlineProperty(name: string) {

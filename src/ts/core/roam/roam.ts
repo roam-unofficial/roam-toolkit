@@ -5,18 +5,20 @@ import {RoamNode, Selection} from './roam-node'
 import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLevelBlock} from '../common/dom'
 import {Keyboard} from '../common/keyboard'
 import {Mouse} from '../common/mouse'
+import {delay} from 'src/core/common/async'
 
 export const Roam = {
-    save(roamNode: RoamNode) {
+    async save(roamNode: RoamNode): Promise<void> {
         const roamElement = this.getRoamBlockInput()
         if (roamElement) {
             console.log(`Saving`, roamNode)
 
             roamElement.value = roamNode.text
-            roamElement.selectionStart = roamNode.selection.start
-            roamElement.selectionEnd = roamNode.selection.end
-
             roamElement.dispatchEvent(getInputEvent())
+
+            // Need to select afterwards, otherwise the input event resets the cursor
+            await delay(1)
+            roamElement.setSelectionRange(roamNode.selection.start, roamNode.selection.end)
         }
     },
 
@@ -35,11 +37,11 @@ export const Roam = {
         return new RoamNode(element.value, new Selection(element.selectionStart, element.selectionEnd))
     },
 
-    applyToCurrent(action: (node: RoamNode) => RoamNode) {
+    async applyToCurrent(action: (node: RoamNode) => RoamNode) {
         const node = this.getActiveRoamNode()
         if (!node) return
 
-        this.save(action(node))
+        await this.save(action(node))
     },
 
     async highlight(element?: HTMLElement) {
@@ -76,12 +78,16 @@ export const Roam = {
         document.execCommand('paste')
     },
 
-    moveCursorToStart() {
-        this.applyToCurrent(node => node.withCursorAtTheStart())
+    async moveCursorToStart() {
+        await this.applyToCurrent(node => node.withCursorAtTheStart())
     },
 
-    moveCursorToEnd() {
-        this.applyToCurrent(node => node.withCursorAtTheEnd())
+    async moveCursorToEnd() {
+        await this.applyToCurrent(node => node.withCursorAtTheEnd())
+    },
+
+    async moveCursorToSearchTerm(searchTerm: string) {
+        await this.applyToCurrent(node => node.withCursorAtSearchTerm(searchTerm))
     },
 
     writeText(text: string) {
@@ -89,8 +95,13 @@ export const Roam = {
         return this.getActiveRoamNode()?.text === text
     },
 
+    appendText(text: string) {
+        const existingText = this.getActiveRoamNode()?.text || ''
+        return this.writeText(existingText + text)
+    },
+
     async createSiblingAbove() {
-        this.moveCursorToStart()
+        await this.moveCursorToStart()
         const isEmpty = !this.getActiveRoamNode()?.text
         await Keyboard.pressEnter()
         if (isEmpty) {
@@ -99,7 +110,7 @@ export const Roam = {
     },
 
     async createBlockBelow() {
-        this.moveCursorToEnd()
+        await this.moveCursorToEnd()
         await Keyboard.pressEnter()
     },
 
@@ -109,7 +120,7 @@ export const Roam = {
     },
 
     async createFirstChild() {
-        this.moveCursorToEnd()
+        await this.moveCursorToEnd()
         await Keyboard.pressEnter()
         await Keyboard.pressTab()
     },
