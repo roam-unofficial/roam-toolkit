@@ -5,7 +5,7 @@ import {Roam} from 'src/core/roam/roam'
 import {Keyboard} from 'src/core/common/keyboard'
 import {KEY_TO_CODE} from 'src/core/common/keycodes'
 
-const DEFAULT_EXCLUDE_PATTERN = ', 20dd$|\\[\\[interval|\\[\\[factor'
+const DEFAULT_EXCLUDE_PATTERN = ', 20\\d\\d$|\\[\\[interval|\\[\\[factor'
 
 const getRandomPageName = async () => {
     const excludePattern = await Settings.get('random-page', 'random-page-exclude', DEFAULT_EXCLUDE_PATTERN)
