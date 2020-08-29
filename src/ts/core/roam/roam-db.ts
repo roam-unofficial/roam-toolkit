@@ -12,6 +12,9 @@ export const RoamDb = {
     },
 
     query(query: string, ...params: any[]) {
+        console.log('Executing Roam DB query', query)
+        console.log('Query params', params)
+
         // @ts-ignore
         return runInPageContext((...args: any[]) => window.roamAlphaAPI.q(...args), query, ...params)
     },

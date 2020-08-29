@@ -6,7 +6,6 @@ import {getActiveEditElement, getFirstTopLevelBlock, getInputEvent, getLastTopLe
 import {Keyboard} from '../common/keyboard'
 import {Mouse} from '../common/mouse'
 import {delay} from 'src/core/common/async'
-import {KEY_TO_CODE} from 'src/core/common/keycodes'
 
 export const Roam = {
     async save(roamNode: RoamNode): Promise<void> {
@@ -155,10 +154,6 @@ export const Roam = {
         const foldButton = nearestFoldButton(block)
         await Mouse.hover(foldButton)
         await Mouse.leftClick(foldButton)
-    },
-
-    async followLinkUnderCursor(shiftKey: boolean = true) {
-        await Keyboard.simulateKey(KEY_TO_CODE.o, 0, {key: 'o', shiftKey, ctrlKey: true})
     },
 }
 
