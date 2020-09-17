@@ -23,6 +23,10 @@ You can create dates using [**natural language**](https://github.com/wanasit/chr
 
 ![](./media/fuzzy_date.gif)
 
+Replace mode: 
+
+![](.media/fuzzy_date_replace.gif)
+
 You can also **increment or decrement dates**:
 
 * While editing a block, press `Ctrl-Alt-Up/Down` to increment/decrement any date inside. If a block has multiple dates, place your cursor on the date.
