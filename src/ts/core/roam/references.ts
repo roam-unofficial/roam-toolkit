@@ -44,3 +44,22 @@ export const openParentPage = (shiftKey: boolean = false) => {
 
     Mouse.leftClick(parentLink, shiftKey)
 }
+
+const getMentionsButton = (blockElement: BlockElement | null): HTMLElement | null => {
+    const blockMentionsButton = blockElement
+        ?.closest(Selectors.blockBulletView)
+        ?.querySelector('.block-ref-count-button')
+    if (blockMentionsButton) {
+        return blockMentionsButton as HTMLElement
+    }
+
+    const sidePanel = blockElement?.closest(Selectors.sidebarPage)
+    return sidePanel?.querySelector('button.bp3-button') as HTMLElement
+}
+
+export const openMentions = () => {
+    const mentionsButton = getMentionsButton(RoamBlock.selected().element)
+    if (mentionsButton) {
+        Mouse.leftClick(mentionsButton)
+    }
+}

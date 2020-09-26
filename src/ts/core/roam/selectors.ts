@@ -4,6 +4,7 @@ export const Selectors = {
     blockInput: '.rm-block-input',
     blockContainer: '.roam-block-container',
     blockReference: '.rm-block-ref',
+    blockBulletView: '.block-bullet-view',
     title: '.rm-title-display',
 
     mainContent: '.roam-article',
