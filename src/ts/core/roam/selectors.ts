@@ -16,7 +16,7 @@ export const Selectors = {
 
     leftPanel: '.roam-sidebar-container',
 
-    foldButton: '.block-expand',
+    foldButton: '.rm-caret',
     highlight: '.block-highlight-blue',
     button: '.bp3-button',
     closeButton: '.bp3-icon-cross',
@@ -27,7 +27,6 @@ export const Selectors = {
     breadcrumbsContainer: '.zoom-mentions-view',
     pageReferenceItem: '.rm-ref-page-view',
     pageReferenceLink: '.rm-ref-page-view-title a span',
-    caretButton: '.rm-caret',
     filterButton: '.bp3-icon.bp3-icon-filter',
 
     /**

@@ -11,9 +11,9 @@ export const expandLastBreadcrumb = () => {
 
 export const closePageReferenceView = () => {
     const referenceItem = RoamBlock.selected().element?.closest(Selectors.pageReferenceItem)
-    const caretButton = referenceItem?.querySelector(Selectors.caretButton)
+    const foldButton = referenceItem?.querySelector(Selectors.foldButton)
 
-    if (caretButton) Mouse.leftClick(caretButton as HTMLElement)
+    if (foldButton) Mouse.leftClick(foldButton as HTMLElement)
 }
 
 const parentPageLink = (blockElement: BlockElement | null): HTMLElement | null => {
