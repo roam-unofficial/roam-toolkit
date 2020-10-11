@@ -57,9 +57,9 @@ const getMentionsButton = (blockElement: BlockElement | null): HTMLElement | nul
     return sidePanel?.querySelector('button.bp3-button') as HTMLElement
 }
 
-export const openMentions = () => {
+export const openMentions = (shiftKey: boolean = false) => {
     const mentionsButton = getMentionsButton(RoamBlock.selected().element)
     if (mentionsButton) {
-        Mouse.leftClick(mentionsButton)
+        Mouse.leftClick(mentionsButton, shiftKey)
     }
 }

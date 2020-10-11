@@ -19,4 +19,5 @@ export const NavigationCommands = [
     nmap('1', 'Open parent page', () => openParentPage()),
     nmap('shift+1', 'Open parent page in sidebar', () => openParentPage(true)),
     nmap('2', 'Open mentions', () => openMentions()),
+    nmap('shift+2', 'Open mentions in sidebar', () => openMentions(true)),
 ]
