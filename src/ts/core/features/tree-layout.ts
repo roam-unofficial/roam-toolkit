@@ -12,6 +12,18 @@ import {assumeExists} from 'src/core/common/assert'
 import {injectStyle} from 'src/core/common/css'
 import {Mouse} from 'src/core/common/mouse'
 
+/**
+ * TODO Make `Ctrl+Shift+o` not fuck up the whole layout
+ *
+ * TODO Highlight, or scroll to the panel that was just opened?
+ *
+ * TODO Make nodes spawn at their origin page, rather than `0, 0`
+ *
+ * TODO Make it so orphan main pages spawn in the current viewport
+ *
+ * TODO make it work with dasmonaut
+ */
+
 export const config: Feature = {
     id: 'tree_layout',
     name: 'Layout Pages in a Tree',
@@ -163,6 +175,9 @@ class GraphVisualization {
                     selector: 'node',
                     css: {
                         shape: 'roundrectangle',
+                        color: '#fff',
+                        'background-color': '#fff',
+                        'background-opacity': 1,
                         // content: node => node.id().slice(20),
                     },
                 },
