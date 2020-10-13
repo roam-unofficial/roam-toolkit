@@ -1,7 +1,7 @@
 {
     "name": "Roam Toolkit",
     "author": "roam-unofficial",
-    "version": "0.4.2",
+    "version": "0.4.4",
     "description": "Roam force multiplier",
     "icons": {
         "128": "assets/icon-128.png"
