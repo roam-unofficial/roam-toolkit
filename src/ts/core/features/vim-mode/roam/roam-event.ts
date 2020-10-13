@@ -23,7 +23,7 @@ export const RoamEvent = {
     // Triggers when the sidebar is shown or hidden
     onSidebarToggle(handler: (isSideBarShowing: boolean) => void): DisconnectFn {
         return onSelectorChange(Selectors.sidebar, () => {
-            const isSidebarShowing = !!document.querySelector(Selectors.sidebarContent)
+            const isSidebarShowing = !!document.querySelector(Selectors.sidebar)
             handler(isSidebarShowing)
         })
     },
