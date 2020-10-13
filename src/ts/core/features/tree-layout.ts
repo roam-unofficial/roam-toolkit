@@ -17,9 +17,9 @@ import {Mouse} from 'src/core/common/mouse'
  *
  * TODO Highlight, or scroll to the panel that was just opened?
  *
- * TODO Make nodes spawn at their origin page, rather than `0, 0`
+ * TODO Get rename page to work
  *
- * TODO Make it so orphan main pages spawn in the current viewport
+ * TODO Don't create edges when hitting back button
  *
  * TODO make it work with dasmonaut
  */
@@ -81,8 +81,12 @@ const startTreeLayoutMode = async () => {
     const updateMainPanel = () => {
         const mainPanel = assumeExists(document.querySelector('.roam-center > div'))
         mainPanel.classList.add(PANEL_SELECTOR)
-        const mainTitle = assumeExists(document.querySelector('.rm-title-display')) as HTMLElement
-        mainPanel.id = `${PANEL_SELECTOR} ${mainTitle.innerText}`
+        if (document.querySelector(Selectors.dailyNotes)) {
+            mainPanel.id = `${PANEL_SELECTOR} DAILY_NOTES`
+        } else {
+            const mainTitle = assumeExists(document.querySelector('.rm-title-display')) as HTMLElement
+            mainPanel.id = `${PANEL_SELECTOR} ${mainTitle.innerText}`
+        }
         return mainPanel
     }
 
@@ -109,7 +113,11 @@ const startTreeLayoutMode = async () => {
             .forEach(id => {
                 if (idToCount[id] > (previousIdToCount[id] || 0)) {
                     console.log(`Added ${id}`)
-                    graph.addNode(id, justClickedPanelId)
+                    graph.addNode(
+                        id,
+                        // It's impossible to link to daily notes
+                        id === `${PANEL_SELECTOR} DAILY_NOTES` ? null : justClickedPanelId
+                    )
                     // Allow only one sidebar panel, to keep the edges when switching main page.
                     // Disallow any more, cause they're redundant.
                     if (idToCount[id] > 1) {
@@ -146,6 +154,7 @@ const startTreeLayoutMode = async () => {
     RoamEvent.onSidebarToggle(updateExplorationTree)
     RoamEvent.onSidebarChange(updateExplorationTree)
     RoamEvent.onChangePage(updateExplorationTree)
+    updateExplorationTree()
 }
 
 const getPanelId = (panelElement: PanelElement): string => {
@@ -175,9 +184,9 @@ class GraphVisualization {
                     selector: 'node',
                     css: {
                         shape: 'roundrectangle',
-                        color: '#fff',
-                        'background-color': '#fff',
-                        'background-opacity': 1,
+                        // color: '#fff',
+                        // 'background-color': '#fff',
+                        // 'background-opacity': 1,
                         // content: node => node.id().slice(20),
                     },
                 },
@@ -219,18 +228,36 @@ class GraphVisualization {
     }
 
     addNode(toPanel: PanelId, fromPanel: PanelId | null = null) {
-        if (this.cy.getElementById(toPanel).length === 0) {
-            this.cy.add({
+        let node = this.cy.getElementById(toPanel)
+        if (node.length === 0) {
+            node = this.cy.add({
                 data: {
                     id: toPanel,
                 },
-                // position: fromPanel ? this.cy.getElementById(fromPanel).position : {x: 0, y: 0},
             })
+
+            if (fromPanel) {
+                const fromNode = this.cy.getElementById(fromPanel)
+                node.position({
+                    // Grow the graph towards the right
+                    x: fromNode.position().x + fromNode.width(),
+                    y: fromNode.position().y,
+                })
+                fromNode.lock()
+                this.cy.promiseOn('layoutstop').then(() => {
+                    this.cy.getElementById(fromPanel).unlock()
+                })
+            } else {
+                node.position(this.cy.pan())
+            }
         }
 
         if (
+            // Don't add an edge if you're air-dropping into an orphan page (e.g. search)
             fromPanel &&
+            // Don't attach edges back to self
             fromPanel !== toPanel &&
+            // Don't attach redundant edges
             this.cy.$(`edge[source = "${fromPanel}"][target = "${toPanel}"]`).length === 0
         ) {
             this.cy.add({

@@ -20,6 +20,7 @@ export const Selectors = {
     highlight: '.block-highlight-blue',
     button: '.bp3-button',
     closeButton: '.bp3-icon-cross',
+    dailyNotes: '.roam-log-container',
     viewMore: '.roam-log-preview',
     checkbox: '.check-container',
     externalLink: 'a',
