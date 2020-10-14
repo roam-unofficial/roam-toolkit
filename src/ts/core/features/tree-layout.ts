@@ -21,7 +21,7 @@ import {Mouse} from 'src/core/common/mouse'
  *
  * TODO Don't create edges when hitting back button
  *
- * TODO make it work with dasmonaut
+ * TODO Inject css
  */
 
 export const config: Feature = {
@@ -172,6 +172,8 @@ const getDomViewport = (): HTMLElement => assumeExists(document.querySelector('.
 
 cytoscape.use(cola)
 
+const MIN_EDGE_LENGTH = 50
+
 class GraphVisualization {
     static instance: GraphVisualization | null
     cy: cytoscape.Core
@@ -188,6 +190,7 @@ class GraphVisualization {
                         // 'background-color': '#fff',
                         // 'background-opacity': 1,
                         // content: node => node.id().slice(20),
+                        content: node => `${node.position().x}, ${node.position().y}`,
                     },
                 },
                 {
@@ -240,12 +243,11 @@ class GraphVisualization {
                 const fromNode = this.cy.getElementById(fromPanel)
                 node.position({
                     // Grow the graph towards the right
-                    x: fromNode.position().x + fromNode.width(),
+                    x: fromNode.position().x + fromNode.width() + MIN_EDGE_LENGTH,
                     y: fromNode.position().y,
                 })
-                fromNode.lock()
                 this.cy.promiseOn('layoutstop').then(() => {
-                    this.cy.getElementById(fromPanel).unlock()
+                    this.cy.pan(this.cy.getElementById(toPanel).position())
                 })
             } else {
                 node.position(this.cy.pan())
@@ -287,7 +289,7 @@ class GraphVisualization {
                 name: 'cola',
                 fit: false,
                 // @ts-ignore
-                nodeSpacing: () => 50,
+                nodeSpacing: () => MIN_EDGE_LENGTH,
             })
             .stop()
             .run()
