@@ -186,7 +186,7 @@ class GraphVisualization {
                     selector: 'node',
                     css: {
                         shape: 'roundrectangle',
-                        // color: '#fff',
+                        color: '#b5b5b5',
                         // 'background-color': '#fff',
                         // 'background-opacity': 1,
                         // content: node => node.id().slice(20),
@@ -210,6 +210,8 @@ class GraphVisualization {
                 domViewport.style.transform = `translate(${this.cy.pan().x}px, ${
                     this.cy.pan().y
                 }px) scale(${this.cy.zoom()})`
+                // @ts-ignore just for debugging the pan
+                document.getElementById('find-or-create-input').placeholder = `${this.cy.pan().x}, ${this.cy.pan().y}`
             })
         })
         this.cy.on('render', () => {
@@ -233,11 +235,14 @@ class GraphVisualization {
     addNode(toPanel: PanelId, fromPanel: PanelId | null = null) {
         let node = this.cy.getElementById(toPanel)
         if (node.length === 0) {
-            node = this.cy.add({
-                data: {
-                    id: toPanel,
-                },
-            })
+            this.cy.nodes().unselect()
+            node = this.cy
+                .add({
+                    data: {
+                        id: toPanel,
+                    },
+                })
+                .select()
 
             if (fromPanel) {
                 const fromNode = this.cy.getElementById(fromPanel)
@@ -247,7 +252,8 @@ class GraphVisualization {
                     y: fromNode.position().y,
                 })
                 this.cy.promiseOn('layoutstop').then(() => {
-                    this.cy.pan(this.cy.getElementById(toPanel).position())
+                    const fromAndToNode = this.cy.getElementById(fromPanel).union(this.cy.getElementById(toPanel))
+                    this.cy.center(fromAndToNode)
                 })
             } else {
                 node.position(this.cy.pan())
@@ -262,12 +268,15 @@ class GraphVisualization {
             // Don't attach redundant edges
             this.cy.$(`edge[source = "${fromPanel}"][target = "${toPanel}"]`).length === 0
         ) {
-            this.cy.add({
-                data: {
-                    source: fromPanel,
-                    target: toPanel,
-                },
-            })
+            this.cy.edges().unselect()
+            this.cy
+                .add({
+                    data: {
+                        source: fromPanel,
+                        target: toPanel,
+                    },
+                })
+                .select()
         }
     }
 
