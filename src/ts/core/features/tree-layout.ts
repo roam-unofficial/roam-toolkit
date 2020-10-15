@@ -15,11 +15,7 @@ import {Mouse} from 'src/core/common/mouse'
 /**
  * TODO Make `Ctrl+Shift+o` not fuck up the whole layout
  *
- * TODO Highlight, or scroll to the panel that was just opened?
- *
  * TODO Get rename page to work
- *
- * TODO Don't create edges when hitting back button
  *
  * TODO Inject css
  */
@@ -147,6 +143,14 @@ const startTreeLayoutMode = async () => {
         graph.runLayout()
     }
 
+    // don't draw edges when navigating back/forward in browser history,
+    // the pages are not actually connected semantically
+    window.addEventListener('popstate', event => {
+        // Don't attach edges when using the back/forward button
+        // Unfortunately, this also makes it so plain clicks don't create edges.
+        // You need to shift+click to create the edge
+        justClickedPanelId = null
+    })
     window.addEventListener('resize', () => graph.runLayout())
     RoamEvent.onChangeBlock(() => graph.runLayout())
     RoamEvent.onEditBlock(() => graph.runLayout())
@@ -235,14 +239,11 @@ class GraphVisualization {
     addNode(toPanel: PanelId, fromPanel: PanelId | null = null) {
         let node = this.cy.getElementById(toPanel)
         if (node.length === 0) {
-            this.cy.nodes().unselect()
-            node = this.cy
-                .add({
-                    data: {
-                        id: toPanel,
-                    },
-                })
-                .select()
+            node = this.cy.add({
+                data: {
+                    id: toPanel,
+                },
+            })
 
             if (fromPanel) {
                 const fromNode = this.cy.getElementById(fromPanel)
@@ -250,10 +251,6 @@ class GraphVisualization {
                     // Grow the graph towards the right
                     x: fromNode.position().x + fromNode.width() + MIN_EDGE_LENGTH,
                     y: fromNode.position().y,
-                })
-                this.cy.promiseOn('layoutstop').then(() => {
-                    const fromAndToNode = this.cy.getElementById(fromPanel).union(this.cy.getElementById(toPanel))
-                    this.cy.center(fromAndToNode)
                 })
             } else {
                 node.position(this.cy.pan())
@@ -278,6 +275,28 @@ class GraphVisualization {
                 })
                 .select()
         }
+
+        // bring attention to the newly selected node
+        this.cy.nodes().unselect()
+        node.select()
+        this.cy.promiseOn('layoutstop').then(() => {
+            this.panTo(toPanel, fromPanel)
+        })
+    }
+
+    panTo(toPanel: PanelId, fromPanel: PanelId | null = null) {
+        let nodesToFocus = this.cy.getElementById(toPanel)
+        if (fromPanel) {
+            nodesToFocus = nodesToFocus.union(this.cy.getElementById(fromPanel))
+        }
+        this.cy.stop(true, true)
+        this.cy.animate({
+            center: {
+                eles: nodesToFocus,
+            },
+            easing: 'ease-out',
+            duration: 200,
+        })
     }
 
     cleanMissingNodes() {
@@ -298,6 +317,7 @@ class GraphVisualization {
                 name: 'cola',
                 fit: false,
                 // @ts-ignore
+                maxSimulationTime: 200,
                 nodeSpacing: () => MIN_EDGE_LENGTH,
             })
             .stop()
