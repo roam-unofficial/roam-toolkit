@@ -15,7 +15,9 @@ import {Mouse} from 'src/core/common/mouse'
 /**
  * TODO Get rename page to work
  *
- * TODO Inject css
+ * TODO Be able to resize nodes
+ *
+ * TODO Visually indicate if a main panel isn't "anchored" by a sidebar panel
  */
 
 export const config: Feature = {
@@ -338,6 +340,52 @@ class GraphVisualization {
                     right: 0;
                     top: ${Math.round(domViewport.offsetTop)}px;
                     bottom: 0;
+                }
+                :root {
+                    --card-width: 550px;
+                    --card-height-min: 200px;
+                    --card-height-max: 80%;
+                }
+
+                /* REMOVE UI CRUFT */
+                #right-sidebar {
+                    background-color: transparent;
+                }
+                #right-sidebar > div:first-child, /* sidebar toggle */
+                #buffer, /* help icon in the bottom right */
+                .roam-toolkit--panel-dupe /* extra sidebar panels that match the main panel */ {
+                    display: none !important;
+                }
+                /* remove horizontal dividers between sidebar pages */
+                .sidebar-content > div > div {
+                    border: none !important;
+                }
+
+                /* Make the whole app click-through-able, so we can pan/zoom Cytoscape */
+                #app {
+                    pointer-events: none;
+                }
+                /* But make the actual content itself clickable */
+                .roam-sidebar-container, .roam-topbar, .roam-toolkit--panel {
+                    pointer-events: auto;
+                }
+
+                /* The container that holds everything */
+                .roam-body-main {
+                    /* match Cytoscape's zoom origin */
+                    transform-origin: 0 0;
+                }
+                .roam-center {
+                    /* cancel position: static on the main panel */
+                    position: absolute;
+                }
+                .roam-toolkit--panel {
+                    border: 1px solid gray;
+                    width: var(--card-width);
+                    max-height: var(--card-height-max);
+                    position: absolute;
+                    background: white;
+                    overflow: scroll;
                 }
                 `,
                 'roam-toolkit-graph-mode'
