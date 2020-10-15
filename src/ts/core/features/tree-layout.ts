@@ -13,8 +13,6 @@ import {injectStyle} from 'src/core/common/css'
 import {Mouse} from 'src/core/common/mouse'
 
 /**
- * TODO Make `Ctrl+Shift+o` not fuck up the whole layout
- *
  * TODO Get rename page to work
  *
  * TODO Inject css
@@ -86,7 +84,7 @@ const startTreeLayoutMode = async () => {
         return mainPanel
     }
 
-    const updateExplorationTree = () => {
+    const updateExplorationTree = async () => {
         const idToCount: {[id: string]: number} = {}
         const mainPanel = updateMainPanel()
         idToCount[mainPanel.id] = 1
@@ -145,7 +143,7 @@ const startTreeLayoutMode = async () => {
 
     // don't draw edges when navigating back/forward in browser history,
     // the pages are not actually connected semantically
-    window.addEventListener('popstate', event => {
+    window.addEventListener('popstate', () => {
         // Don't attach edges when using the back/forward button
         // Unfortunately, this also makes it so plain clicks don't create edges.
         // You need to shift+click to create the edge
@@ -165,7 +163,8 @@ const getPanelId = (panelElement: PanelElement): string => {
     const header = assumeExists(panelElement.querySelector('[draggable] > .level2, [draggable] > div')) as HTMLElement
     const headerText = assumeExists(header.innerText)
     if (headerText === 'Block Outline') {
-        return assumeExists(panelElement.querySelector(Selectors.block)?.id)
+        // Need Selectors.blockInput, because ctrl+shift+o opens a panel with the block already focused
+        return assumeExists(panelElement.querySelector(`${Selectors.block}, ${Selectors.blockInput}`)?.id)
     }
     return headerText
 }
