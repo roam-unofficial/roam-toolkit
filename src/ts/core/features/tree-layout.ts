@@ -11,6 +11,7 @@ import {Selectors} from 'src/core/roam/selectors'
 import {assumeExists} from 'src/core/common/assert'
 import {injectStyle} from 'src/core/common/css'
 import {Mouse} from 'src/core/common/mouse'
+import {delay} from 'src/core/common/async'
 
 /**
  * TODO Get rename page to work
@@ -18,30 +19,34 @@ import {Mouse} from 'src/core/common/mouse'
  * TODO Be able to resize nodes
  *
  * TODO Visually indicate if a main panel isn't "anchored" by a sidebar panel
+ *
+ * TODO Be able to enter spatial mode when sidebar panels are already open
  */
 
 export const config: Feature = {
-    id: 'tree_layout',
-    name: 'Layout Pages in a Tree',
-    warning: 'Experimental; Intrusive, may interfere with your regular workflow',
+    id: 'spatial_graph_mode',
+    name: 'Spatial Graph Mode',
+    warning: 'May not work with custom css;',
     enabledByDefault: false,
 }
 
-const toggleTreeLayoutDependingOnSetting = () => {
-    Settings.isActive('tree_layout').then(active => {
+const toggleSpatialGraphModeDependingOnSetting = () => {
+    Settings.isActive('spatial_graph_mode').then(active => {
         if (active) {
-            startTreeLayoutMode()
+            startSpatialGraphMode()
+        } else {
+            stopSpatialGraphMode()
         }
     })
 }
 
 browser.runtime.onMessage.addListener(async message => {
     if (message === 'settings-updated') {
-        toggleTreeLayoutDependingOnSetting()
+        toggleSpatialGraphModeDependingOnSetting()
     }
 })
 
-toggleTreeLayoutDependingOnSetting()
+toggleSpatialGraphModeDependingOnSetting()
 
 const LAST_SELECTED_PANEL_CSS = 'roam-toolkit--source-panel'
 const PANEL_SELECTOR = 'roam-toolkit--panel'
@@ -60,6 +65,9 @@ const saveParentPanel = (interactedElement: HTMLElement) => {
     justClickedPanel.classList.add(LAST_SELECTED_PANEL_CSS)
     justClickedPanelId = justClickedPanel.id
 }
+const clearJustClickPanelId = () => {
+    justClickedPanelId = null
+}
 
 const rememberLastInteractedPanel = () => {
     document.addEventListener('mousedown', event => {
@@ -68,11 +76,15 @@ const rememberLastInteractedPanel = () => {
     RoamEvent.onEditBlock(saveParentPanel)
 }
 
-const previousIdToCount: {[id: string]: number} = {}
-const startTreeLayoutMode = async () => {
+let disconnectorFunctions: (() => void)[] = []
+let previousIdToCount: {[id: string]: number} = {}
+const startSpatialGraphMode = async () => {
     await waitForSelectorToExist(Selectors.mainContent)
     rememberLastInteractedPanel()
     const graph = GraphVisualization.get()
+    // Wait for styles to finish applying, so panels have the right dimensions
+    await delay(100)
+    const layoutGraph = () => graph.runLayout()
 
     const updateMainPanel = () => {
         const mainPanel = assumeExists(document.querySelector('.roam-center > div'))
@@ -87,6 +99,7 @@ const startTreeLayoutMode = async () => {
     }
 
     const updateExplorationTree = async () => {
+        // TODO extract the panel counting into a stateful sidebar manager
         const idToCount: {[id: string]: number} = {}
         const mainPanel = updateMainPanel()
         idToCount[mainPanel.id] = 1
@@ -140,24 +153,25 @@ const startTreeLayoutMode = async () => {
                 previousIdToCount[id] = idToCount[id]
             })
         graph.cleanMissingNodes()
-        graph.runLayout()
+        layoutGraph()
     }
 
-    // don't draw edges when navigating back/forward in browser history,
-    // the pages are not actually connected semantically
-    window.addEventListener('popstate', () => {
-        // Don't attach edges when using the back/forward button
-        // Unfortunately, this also makes it so plain clicks don't create edges.
-        // You need to shift+click to create the edge
-        justClickedPanelId = null
-    })
-    window.addEventListener('resize', () => graph.runLayout())
-    RoamEvent.onChangeBlock(() => graph.runLayout())
-    RoamEvent.onEditBlock(() => graph.runLayout())
-    RoamEvent.onBlurBlock(() => graph.runLayout())
-    RoamEvent.onSidebarToggle(updateExplorationTree)
-    RoamEvent.onSidebarChange(updateExplorationTree)
-    RoamEvent.onChangePage(updateExplorationTree)
+    // Don't attach edges when using the back/forward button
+    // Unfortunately, this also makes it so plain clicks don't create edges.
+    // You need to shift+click to create the edge
+    window.addEventListener('popstate', clearJustClickPanelId)
+    window.addEventListener('resize', layoutGraph)
+
+    disconnectorFunctions = [
+        () => window.removeEventListener('popstate', clearJustClickPanelId),
+        () => window.removeEventListener('resize', layoutGraph),
+        RoamEvent.onChangeBlock(layoutGraph),
+        RoamEvent.onEditBlock(layoutGraph),
+        RoamEvent.onBlurBlock(layoutGraph),
+        RoamEvent.onSidebarToggle(updateExplorationTree),
+        RoamEvent.onSidebarChange(updateExplorationTree),
+        RoamEvent.onChangePage(updateExplorationTree),
+    ]
     updateExplorationTree()
 }
 
@@ -172,6 +186,7 @@ const getPanelId = (panelElement: PanelElement): string => {
 }
 
 const GRAPH_MASK_ID = 'roam-toolkit-graph-mode--mask'
+const GRAPH_MODE_CSS_ID = 'roam-toolkit-graph-mode'
 
 const getDomViewport = (): HTMLElement => assumeExists(document.querySelector('.roam-body-main')) as HTMLElement
 
@@ -290,10 +305,11 @@ class GraphVisualization {
         if (fromPanel) {
             nodesToFocus = nodesToFocus.union(this.cy.getElementById(fromPanel))
         }
-        this.cy.stop(true, true)
+        this.cy.stop(true, true) // stop the previous animation
         this.cy.animate({
-            center: {
+            fit: {
                 eles: nodesToFocus,
+                padding: 50,
             },
             easing: 'ease-out',
             duration: 200,
@@ -323,6 +339,18 @@ class GraphVisualization {
             })
             .stop()
             .run()
+    }
+
+    resetPanelStyles() {
+        // @ts-ignore .json() is just an object in the types
+        const nodes = this.cy.json().elements.nodes
+        if (nodes) {
+            nodes.forEach((node: NodeDataDefinition) => {
+                const panel = assumeExists(document.getElementById(assumeExists(node.data.id)))
+                panel.style.removeProperty('left')
+                panel.style.removeProperty('top')
+            })
+        }
     }
 
     static get(): GraphVisualization {
@@ -382,17 +410,40 @@ class GraphVisualization {
                 .roam-toolkit--panel {
                     border: 1px solid gray;
                     width: var(--card-width);
+                    height: auto !important; /* prevent the main panel from stretching 100% */
                     max-height: var(--card-height-max);
                     position: absolute;
                     background: white;
                     overflow: scroll;
                 }
                 `,
-                'roam-toolkit-graph-mode'
+                GRAPH_MODE_CSS_ID
             )
 
             GraphVisualization.instance = new GraphVisualization(graphElement)
         }
         return GraphVisualization.instance
     }
+
+    static destroy() {
+        if (GraphVisualization.instance) {
+            GraphVisualization.instance.resetPanelStyles()
+            const domViewport = getDomViewport()
+            domViewport.style.width = '100vw'
+            domViewport.style.removeProperty('height')
+            domViewport.style.removeProperty('transform')
+
+            document.getElementById(GRAPH_MODE_CSS_ID)?.remove()
+            document.getElementById(GRAPH_MASK_ID)?.remove()
+
+            GraphVisualization.instance = null
+        }
+    }
+}
+
+const stopSpatialGraphMode = () => {
+    GraphVisualization.destroy()
+    disconnectorFunctions.forEach(disconnect => disconnect())
+    previousIdToCount = {}
+    clearJustClickPanelId()
 }
