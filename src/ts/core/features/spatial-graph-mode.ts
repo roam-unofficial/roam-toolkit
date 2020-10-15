@@ -14,8 +14,6 @@ import {Mouse} from 'src/core/common/mouse'
 import {delay} from 'src/core/common/async'
 
 /**
- * TODO Get rename page to work
- *
  * TODO Be able to resize nodes
  *
  * TODO Visually indicate if a main panel isn't "anchored" by a sidebar panel
@@ -78,6 +76,11 @@ const rememberLastInteractedPanel = () => {
     RoamEvent.onEditBlock(saveParentPanel)
 }
 
+const getComplexPageName = (mainTitle: HTMLElement) =>
+    (Array.from(mainTitle.childNodes) as (HTMLElement | Text)[])
+        .map(node => (node as Text).data || `[[${(node as HTMLElement).dataset?.linkTitle}]]`)
+        .join('')
+
 let disconnectorFunctions: (() => void)[] = []
 let previousIdToCount: {[id: string]: number} = {}
 const startSpatialGraphMode = async () => {
@@ -94,8 +97,8 @@ const startSpatialGraphMode = async () => {
         if (document.querySelector(Selectors.dailyNotes)) {
             mainPanel.id = `${PANEL_SELECTOR} DAILY_NOTES`
         } else {
-            const mainTitle = assumeExists(document.querySelector('.rm-title-display')) as HTMLElement
-            mainPanel.id = `${PANEL_SELECTOR} ${mainTitle.innerText}`
+            const mainTitle = assumeExists(document.querySelector('.rm-title-display > span')) as HTMLElement
+            mainPanel.id = `${PANEL_SELECTOR} ${getComplexPageName(mainTitle)}`
         }
         return mainPanel
     }
@@ -173,6 +176,10 @@ const startSpatialGraphMode = async () => {
         RoamEvent.onSidebarToggle(updateExplorationTree),
         RoamEvent.onSidebarChange(updateExplorationTree),
         RoamEvent.onChangePage(updateExplorationTree),
+        RoamEvent.onRenamePage(newTitle => {
+            // TODO rename nodes when pages change
+            console.log(newTitle)
+        }),
     ]
     updateExplorationTree()
 }

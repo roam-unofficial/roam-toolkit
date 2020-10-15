@@ -56,6 +56,17 @@ export const RoamEvent = {
         })
     },
 
+    onRenamePage(handler: (newTitle: string) => void): DisconnectFn {
+        const handleTitleEvent = (event: Event) => {
+            const element = event.target as HTMLTextAreaElement
+            if (element.classList.contains('rm-title-display')) {
+                handler(element.value)
+            }
+        }
+        document.addEventListener('focusout', handleTitleEvent)
+        return () => document.removeEventListener('focusout', handleTitleEvent)
+    },
+
     onChangePage(handler: () => void): DisconnectFn {
         // Only the content changes when switching between pages
         let stopObservingContent = onSelectorChange(Selectors.mainContent, handler)
