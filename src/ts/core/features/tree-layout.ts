@@ -21,12 +21,14 @@ import {delay} from 'src/core/common/async'
  * TODO Visually indicate if a main panel isn't "anchored" by a sidebar panel
  *
  * TODO Be able to enter spatial mode when sidebar panels are already open
+ *
+ * TODO Maybe allow cutting edges with double click?
  */
 
 export const config: Feature = {
     id: 'spatial_graph_mode',
     name: 'Spatial Graph Mode',
-    warning: 'May not work with custom css;',
+    warning: 'Will probably break custom css;',
     enabledByDefault: false,
 }
 
@@ -266,7 +268,9 @@ class GraphVisualization {
                 node.position({
                     // Grow the graph towards the right
                     x: fromNode.position().x + fromNode.width() + MIN_EDGE_LENGTH,
-                    y: fromNode.position().y,
+                    // Tiny random offset prevents nodes from getting jammed if it spawns
+                    // in the exact same location as another
+                    y: fromNode.position().y + Math.random() * 10,
                 })
             } else {
                 node.position(this.cy.pan())
