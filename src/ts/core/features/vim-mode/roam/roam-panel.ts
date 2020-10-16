@@ -23,10 +23,10 @@ const state: BlockNavigationState = {
  */
 type PanelId = PanelElement
 type PanelIndex = number
-export type PanelElement = HTMLElement
+type PanelElement = HTMLElement
 
 const PANEL_CSS_CLASS = 'roam-toolkit--panel'
-const PANEL_SELECTOR = `.${PANEL_CSS_CLASS}, ${Selectors.sidebarContent}`
+const PANEL_SELECTOR = `.${PANEL_CSS_CLASS}`
 
 /**
  * A "Panel" is a viewport that contains blocks. For now, there is just
@@ -204,6 +204,8 @@ const tagPanels = () => {
     const articleElement = assumeExists(document.querySelector(Selectors.mainContent))
     const mainPanel = assumeExists(articleElement.parentElement)
     mainPanel.classList.add(PANEL_CSS_CLASS)
+    const panels = Array.from(document.querySelectorAll(Selectors.sidebarPage)) as PanelElement[]
+    panels.forEach(panelElement => panelElement.classList.add(PANEL_CSS_CLASS))
 }
 
 // Roughly two lines on either side

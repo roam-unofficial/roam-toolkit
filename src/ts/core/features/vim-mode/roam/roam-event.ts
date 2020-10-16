@@ -40,7 +40,7 @@ export const RoamEvent = {
             }
         }
         // Start watching, if the sidebar is already open
-        observeSidebarPanels()
+        // observeSidebarPanels()
         return RoamEvent.onSidebarToggle(observeSidebarPanels)
     },
 
@@ -75,11 +75,16 @@ export const RoamEvent = {
         // Only the content changes when switching between pages
         let stopObservingContent = onSelectorChange(Selectors.mainContent, handler)
         // The main panel changes when switching between daily notes and regular pages
-        const stopObservingMainPanel = onSelectorChange(Selectors.mainPanel, () => {
-            handler()
-            stopObservingContent()
-            stopObservingContent = onSelectorChange(Selectors.mainContent, handler)
-        })
+        const stopObservingMainPanel = onSelectorChange(
+            Selectors.mainPanel,
+            () => {
+                handler()
+                stopObservingContent()
+                stopObservingContent = onSelectorChange(Selectors.mainContent, handler)
+            },
+            false,
+            false // avoid detecting spatial graph mode transforms
+        )
 
         return () => {
             stopObservingContent()
