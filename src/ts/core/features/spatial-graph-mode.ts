@@ -18,8 +18,6 @@ import {delay} from 'src/core/common/async'
  *
  * TODO Visually indicate if a main panel isn't "anchored" by a sidebar panel
  *
- * TODO Be able to enter spatial mode when sidebar panels are already open
- *
  * TODO Maybe allow cutting edges with double click?
  */
 
@@ -75,6 +73,7 @@ const rememberLastInteractedPanel = () => {
         saveParentPanel(event.target as HTMLElement)
     })
     RoamEvent.onEditBlock(saveParentPanel)
+    clearJustClickPanelId()
 }
 
 const getComplexPageName = (mainTitle: HTMLElement) =>
@@ -89,10 +88,11 @@ let disconnectorFunctions: (() => void)[] = []
 let previousIdToCount: {[id: string]: number} = {}
 const startSpatialGraphMode = async () => {
     await waitForSelectorToExist(Selectors.mainContent)
-    rememberLastInteractedPanel()
     const graph = GraphVisualization.get()
-    // Wait for styles to finish applying, so panels have the right dimensions
-    await delay(100)
+    // Wait for styles to finish applying, so panels have the right dimensions,
+    // and cytoscape has fully instantiated
+    await delay(300)
+    rememberLastInteractedPanel()
     const layoutGraph = () => graph.runLayout()
 
     const updateMainPanel = (): NodeId => {
@@ -123,7 +123,7 @@ const startSpatialGraphMode = async () => {
         // Wait for sidebar pages to update their titles
         await delay(10)
         // Don't draw an edge from the previous main page to the new main page
-        justClickedPanelId = null
+        clearJustClickPanelId()
         // Pretend the new complex sidebar panels were there all along, after renaming a page
         previousIdToCount = tagAndCountPanels()
     }
@@ -149,7 +149,7 @@ const startSpatialGraphMode = async () => {
         return idToCount
     }
 
-    const updateGraphToMatchOpenPanels = async () => {
+    const updateGraphToMatchOpenPanels = (firstRender: boolean = false) => {
         // TODO extract the panel counting into a stateful sidebar manager
         const idToCount = tagAndCountPanels()
         Object.keys(idToCount)
@@ -180,7 +180,7 @@ const startSpatialGraphMode = async () => {
             })
         previousIdToCount = idToCount
         graph.cleanMissingNodes()
-        layoutGraph()
+        graph.runLayout(!firstRender)
     }
 
     // Don't attach edges when using the back/forward button
@@ -200,7 +200,7 @@ const startSpatialGraphMode = async () => {
         RoamEvent.onChangePage(updateGraphToMatchOpenPanels),
         RoamEvent.onRenamePage(updateNodeNames),
     ]
-    updateGraphToMatchOpenPanels()
+    updateGraphToMatchOpenPanels(true)
 }
 
 const panelIdFromSidebarPage = (panelElement: PanelElement): string => {
@@ -399,7 +399,8 @@ class GraphVisualization {
         missingNodes.connectedEdges().remove()
         missingNodes.remove()
     }
-    runLayout() {
+
+    runLayout(firstRender: boolean = false) {
         this.cy.$('node').forEach(node => {
             const domNode = getPanelElement(node.id())
             if (domNode) {
@@ -411,8 +412,10 @@ class GraphVisualization {
             .layout({
                 name: 'cola',
                 fit: false,
+                // @ts-ignore randomize when laying out for the first time, to avoid seizures from all the nodes being jammed on the same space
+                randomize: firstRender,
                 // @ts-ignore
-                maxSimulationTime: 200,
+                maxSimulationTime: firstRender ? 1000 : 200,
                 nodeSpacing: () => MIN_EDGE_LENGTH,
             })
             .stop()

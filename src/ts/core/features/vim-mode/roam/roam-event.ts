@@ -14,6 +14,8 @@ const onBlockEvent = (eventType: string, handler: (element: BlockElement) => voi
     return () => document.removeEventListener(eventType, handleBlockEvent)
 }
 
+const isSidebarShowing = () => !!document.querySelector(Selectors.sidebarContent)
+
 /**
  * Various helpers for detecting user actions
  *
@@ -23,21 +25,23 @@ export const RoamEvent = {
     // Triggers when the sidebar is shown or hidden
     onSidebarToggle(handler: (isSideBarShowing: boolean) => void): DisconnectFn {
         return onSelectorChange(Selectors.sidebar, () => {
-            const isSidebarShowing = !!document.querySelector(Selectors.sidebarContent)
-            handler(isSidebarShowing)
+            handler(isSidebarShowing())
         })
     },
 
     // Triggers when opening or closing an article in the sidebar
     onSidebarChange(handler: () => void): DisconnectFn {
-        let stopObserving = () => {}
-        return RoamEvent.onSidebarToggle(isRightPanelOn => {
-            if (isRightPanelOn) {
+        let stopObserving: DisconnectFn | null = null
+        const observeSidebarPanels = () => {
+            if (isSidebarShowing() && !stopObserving) {
                 stopObserving = onSelectorChange(Selectors.sidebarContent, handler)
-            } else {
+            } else if (stopObserving) {
                 stopObserving()
             }
-        })
+        }
+        // Start watching, if the sidebar is already open
+        observeSidebarPanels()
+        return RoamEvent.onSidebarToggle(observeSidebarPanels)
     },
 
     onEditBlock(handler: (element: BlockElement) => void): DisconnectFn {
