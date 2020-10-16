@@ -59,7 +59,7 @@ export const RoamEvent = {
     onRenamePage(handler: (newTitle: string) => void): DisconnectFn {
         const handleTitleEvent = (event: Event) => {
             const element = event.target as HTMLTextAreaElement
-            if (element.classList.contains('rm-title-display')) {
+            if (element.classList.contains('rm-title-textarea')) {
                 handler(element.value)
             }
         }

@@ -1,5 +1,5 @@
 import {browser} from 'webextension-polyfill-ts'
-import cytoscape, {NodeDataDefinition} from 'cytoscape'
+import cytoscape, {NodeDataDefinition, NodeSingular} from 'cytoscape'
 // @ts-ignore
 import cola from 'cytoscape-cola'
 
@@ -52,8 +52,9 @@ const LAST_SELECTED_PANEL_CSS = 'roam-toolkit--source-panel'
 const PANEL_SELECTOR = 'roam-toolkit--panel'
 
 type PanelId = string
+type NodeId = string
 
-let justClickedPanelId: PanelId | null = null
+let justClickedPanelId: NodeId | null = null
 const saveParentPanel = (interactedElement: HTMLElement) => {
     const justClickedPanel = interactedElement.closest(`.${PANEL_SELECTOR}`)
     if (!justClickedPanel) {
@@ -63,7 +64,7 @@ const saveParentPanel = (interactedElement: HTMLElement) => {
         selection.classList.remove(LAST_SELECTED_PANEL_CSS)
     })
     justClickedPanel.classList.add(LAST_SELECTED_PANEL_CSS)
-    justClickedPanelId = justClickedPanel.id
+    justClickedPanelId = plainId(justClickedPanel.id)
 }
 const clearJustClickPanelId = () => {
     justClickedPanelId = null
@@ -81,6 +82,9 @@ const getComplexPageName = (mainTitle: HTMLElement) =>
         .map(node => (node as Text).data || `[[${(node as HTMLElement).dataset?.linkTitle}]]`)
         .join('')
 
+const namespaceId = (nodeId: NodeId): PanelId => `${PANEL_SELECTOR} ${nodeId}`
+const plainId = (namespacedId: PanelId): NodeId => namespacedId.slice(20)
+
 let disconnectorFunctions: (() => void)[] = []
 let previousIdToCount: {[id: string]: number} = {}
 const startSpatialGraphMode = async () => {
@@ -91,29 +95,49 @@ const startSpatialGraphMode = async () => {
     await delay(100)
     const layoutGraph = () => graph.runLayout()
 
-    const updateMainPanel = () => {
+    const updateMainPanel = (): NodeId => {
         const mainPanel = assumeExists(document.querySelector('.roam-center > div'))
         mainPanel.classList.add(PANEL_SELECTOR)
+        let nodeId
         if (document.querySelector(Selectors.dailyNotes)) {
-            mainPanel.id = `${PANEL_SELECTOR} DAILY_NOTES`
+            nodeId = 'DAILY_NOTES'
         } else {
-            const mainTitle = assumeExists(document.querySelector('.rm-title-display > span')) as HTMLElement
-            mainPanel.id = `${PANEL_SELECTOR} ${getComplexPageName(mainTitle)}`
+            const mainTitle = document.querySelector('.rm-title-display > span') as HTMLElement
+            if (mainTitle) {
+                nodeId = getComplexPageName(mainTitle)
+            } else {
+                const mainTitleTextArea = document.querySelector('.rm-title-textarea') as HTMLTextAreaElement
+                nodeId = mainTitleTextArea.value
+            }
         }
-        return mainPanel
+        mainPanel.id = namespaceId(nodeId)
+        return nodeId
     }
 
-    const updateExplorationTree = async () => {
-        // TODO extract the panel counting into a stateful sidebar manager
+    const updateNodeNames = async (newTitle: string) => {
+        const mainPanel = assumeExists(document.querySelector('.roam-center > div'))
+        // We need to update cytoscape's node names, to keep the edges.
+        // Otherwise, it'll just seem like all the sidebar pages are freshly opened.
+        graph.replaceNodeNames(plainId(mainPanel.id), newTitle)
+        mainPanel.id = namespaceId(newTitle)
+        // Wait for sidebar pages to update their titles
+        await delay(10)
+        // Don't draw an edge from the previous main page to the new main page
+        justClickedPanelId = null
+        // Pretend the new complex sidebar panels were there all along, after renaming a page
+        previousIdToCount = tagAndCountPanels()
+    }
+
+    const tagAndCountPanels = (): {[id: string]: number} => {
         const idToCount: {[id: string]: number} = {}
-        const mainPanel = updateMainPanel()
-        idToCount[mainPanel.id] = 1
+        const mainId = updateMainPanel()
+        idToCount[mainId] = 1
 
         const panels = Array.from(document.querySelectorAll(Selectors.sidebarPage)) as PanelElement[]
         panels.forEach(panelElement => {
             panelElement.classList.add(PANEL_SELECTOR)
-            const panelId = `${PANEL_SELECTOR} ${getPanelId(panelElement)}`
-            panelElement.id = panelId
+            const panelId = panelIdFromSidebarPage(panelElement)
+            panelElement.id = namespaceId(panelId)
             if (idToCount[panelId]) {
                 idToCount[panelId] += 1
                 panelElement.classList.add('roam-toolkit--panel-dupe')
@@ -122,6 +146,12 @@ const startSpatialGraphMode = async () => {
                 panelElement.classList.remove('roam-toolkit--panel-dupe')
             }
         })
+        return idToCount
+    }
+
+    const updateGraphToMatchOpenPanels = async () => {
+        // TODO extract the panel counting into a stateful sidebar manager
+        const idToCount = tagAndCountPanels()
         Object.keys(idToCount)
             .concat(Object.keys(previousIdToCount))
             .forEach(id => {
@@ -130,12 +160,12 @@ const startSpatialGraphMode = async () => {
                     graph.addNode(
                         id,
                         // It's impossible to link to daily notes
-                        id === `${PANEL_SELECTOR} DAILY_NOTES` ? null : justClickedPanelId
+                        id === 'DAILY_NOTES' ? null : justClickedPanelId
                     )
                     // Allow only one sidebar panel, to keep the edges when switching main page.
                     // Disallow any more, cause they're redundant.
                     if (idToCount[id] > 1) {
-                        const dupePanel = document.getElementById(id) as PanelElement
+                        const dupePanel = document.getElementById(namespaceId(id)) as PanelElement
                         if (dupePanel) {
                             const closeButton = dupePanel.querySelector(Selectors.closeButton)
                             if (closeButton) {
@@ -146,17 +176,9 @@ const startSpatialGraphMode = async () => {
                 }
                 if ((idToCount[id] || 0) < previousIdToCount[id]) {
                     console.log(`Removed ${id}`)
-                    // clean up the duplicate panel
-                    // const dupePanel = document.getElementById(id) as PanelElement
-                    // if (dupePanel) {
-                    //     const closeButton = dupePanel.querySelector(Selectors.closeButton)
-                    //     if (closeButton) {
-                    //         Mouse.leftClick(closeButton as HTMLElement)
-                    //     }
-                    // }
                 }
-                previousIdToCount[id] = idToCount[id]
             })
+        previousIdToCount = idToCount
         graph.cleanMissingNodes()
         layoutGraph()
     }
@@ -173,18 +195,15 @@ const startSpatialGraphMode = async () => {
         RoamEvent.onChangeBlock(layoutGraph),
         RoamEvent.onEditBlock(layoutGraph),
         RoamEvent.onBlurBlock(layoutGraph),
-        RoamEvent.onSidebarToggle(updateExplorationTree),
-        RoamEvent.onSidebarChange(updateExplorationTree),
-        RoamEvent.onChangePage(updateExplorationTree),
-        RoamEvent.onRenamePage(newTitle => {
-            // TODO rename nodes when pages change
-            console.log(newTitle)
-        }),
+        RoamEvent.onSidebarToggle(updateGraphToMatchOpenPanels),
+        RoamEvent.onSidebarChange(updateGraphToMatchOpenPanels),
+        RoamEvent.onChangePage(updateGraphToMatchOpenPanels),
+        RoamEvent.onRenamePage(updateNodeNames),
     ]
-    updateExplorationTree()
+    updateGraphToMatchOpenPanels()
 }
 
-const getPanelId = (panelElement: PanelElement): string => {
+const panelIdFromSidebarPage = (panelElement: PanelElement): string => {
     const header = assumeExists(panelElement.querySelector('[draggable] > .level2, [draggable] > div')) as HTMLElement
     const headerText = assumeExists(header.innerText)
     if (headerText === 'Block Outline') {
@@ -198,6 +217,8 @@ const GRAPH_MASK_ID = 'roam-toolkit-graph-mode--mask'
 const GRAPH_MODE_CSS_ID = 'roam-toolkit-graph-mode'
 
 const getDomViewport = (): HTMLElement => assumeExists(document.querySelector('.roam-body-main')) as HTMLElement
+
+const getPanelElement = (nodeId: NodeId): PanelElement | null => document.getElementById(namespaceId(nodeId))
 
 cytoscape.use(cola)
 
@@ -249,7 +270,7 @@ class GraphVisualization {
                 const nodes = this.cy.json().elements.nodes
                 if (nodes) {
                     nodes.forEach((node: NodeDataDefinition) => {
-                        const panel = assumeExists(document.getElementById(assumeExists(node.data.id)))
+                        const panel = assumeExists(getPanelElement(assumeExists(node.data.id)))
                         const position = assumeExists(node.position)
                         panel.style.left = `${Math.round(position.x - panel.offsetWidth / 2)}px`
                         panel.style.top = `${Math.round(position.y - panel.offsetHeight / 2) + 8}px`
@@ -292,6 +313,7 @@ class GraphVisualization {
             // Don't attach redundant edges
             this.cy.$(`edge[source = "${fromPanel}"][target = "${toPanel}"]`).length === 0
         ) {
+            console.log(`Edge: ${fromPanel}---${toPanel}`)
             this.cy.edges().unselect()
             this.cy
                 .add({
@@ -311,6 +333,51 @@ class GraphVisualization {
         })
     }
 
+    replaceNodeNames(before: string, after: string) {
+        if (before === after) {
+            return
+        }
+        // Replace the main node itself
+        this.renameNode(this.cy.getElementById(before), after)
+        // Replace usages in complex pages
+        this.cy.nodes().forEach(node => {
+            if (node.id().includes(`[[${before}]]`)) {
+                this.renameNode(node, node.id().replace(`[[${before}]]`, `[[${after}]]`))
+            }
+        })
+        console.log(this.cy.nodes().map(node => node.id()))
+    }
+
+    renameNode(node: NodeSingular, name: string) {
+        console.log([node.id(), name])
+        // node ids are immutable. We have to create a new one
+        const newNode = this.cy.add({
+            data: {
+                id: name,
+            },
+        })
+        newNode.position(node.position())
+        newNode.style('width', node.style('width'))
+        newNode.style('height', node.style('height'))
+        node.connectedEdges(`[source = "${node.id()}"]`).forEach(edge => {
+            this.cy.add({
+                data: {
+                    source: name,
+                    target: edge.target().id(),
+                },
+            })
+        })
+        node.connectedEdges(`[target = "${node.id()}"]`).forEach(edge => {
+            this.cy.add({
+                data: {
+                    source: edge.source().id(),
+                    target: name,
+                },
+            })
+        })
+        node.remove()
+    }
+
     panTo(toPanel: PanelId, fromPanel: PanelId | null = null) {
         let nodesToFocus = this.cy.getElementById(toPanel)
         if (fromPanel) {
@@ -328,13 +395,13 @@ class GraphVisualization {
     }
 
     cleanMissingNodes() {
-        const missingNodes = this.cy.filter(element => element.isNode() && !document.getElementById(element.id()))
+        const missingNodes = this.cy.filter(element => element.isNode() && !getPanelElement(element.id()))
         missingNodes.connectedEdges().remove()
         missingNodes.remove()
     }
     runLayout() {
         this.cy.$('node').forEach(node => {
-            const domNode = document.getElementById(node.id())
+            const domNode = getPanelElement(node.id())
             if (domNode) {
                 node.style('width', domNode.offsetWidth)
                 node.style('height', domNode.offsetHeight + 15)
@@ -357,7 +424,7 @@ class GraphVisualization {
         const nodes = this.cy.json().elements.nodes
         if (nodes) {
             nodes.forEach((node: NodeDataDefinition) => {
-                const panel = assumeExists(document.getElementById(assumeExists(node.data.id)))
+                const panel = assumeExists(getPanelElement(assumeExists(node.data.id)))
                 panel.style.removeProperty('left')
                 panel.style.removeProperty('top')
             })
