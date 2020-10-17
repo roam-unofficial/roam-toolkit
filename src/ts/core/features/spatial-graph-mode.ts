@@ -19,6 +19,9 @@ import {updateVimView} from 'src/core/features/vim-mode/vim-view'
 /**
  * TODO Be able to resize nodes
  *
+ * TODO Vim scroll inside the panels doesn't work very well
+ * (ctrl+e/y works, but j/k doesn't keep the highlight in view)
+ *
  * TODO Maybe allow cutting edges with double click?
  */
 
