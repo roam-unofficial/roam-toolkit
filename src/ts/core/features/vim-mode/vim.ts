@@ -13,7 +13,7 @@ export enum Mode {
     NORMAL,
 }
 
-const getMode = () => {
+export const getMode = () => {
     if (getActiveEditElement()) {
         return Mode.INSERT
     }

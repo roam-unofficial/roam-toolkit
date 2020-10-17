@@ -3,8 +3,7 @@ import cytoscape, {NodeDataDefinition, NodeSingular} from 'cytoscape'
 // @ts-ignore
 import cola from 'cytoscape-cola'
 
-import {Feature, Settings} from 'src/core/settings'
-import {PanelElement} from 'src/core/features/vim-mode/roam/roam-panel'
+import {Feature, Settings, Shortcut} from 'src/core/settings'
 import {RoamEvent} from 'src/core/features/vim-mode/roam/roam-event'
 import {waitForSelectorToExist} from 'src/core/common/mutation-observer'
 import {Selectors} from 'src/core/roam/selectors'
@@ -12,6 +11,7 @@ import {assumeExists} from 'src/core/common/assert'
 import {injectStyle} from 'src/core/common/css'
 import {Mouse} from 'src/core/common/mouse'
 import {delay} from 'src/core/common/async'
+import {getMode, Mode} from 'src/core/features/vim-mode/vim'
 
 /**
  * TODO Be able to resize nodes
@@ -21,11 +21,52 @@ import {delay} from 'src/core/common/async'
  * TODO Maybe allow cutting edges with double click?
  */
 
+const spatialShortcut = (key: string, label: string, onPress: () => void): Shortcut => ({
+    type: 'shortcut',
+    id: `spatialGraphMode_${label}`,
+    label,
+    initValue: key,
+    onPress: () => {
+        if (getMode() === Mode.NORMAL) {
+            onPress()
+        }
+    },
+})
+
+// Invert for natural scroll
+const PAN_SPEED = 20
+
 export const config: Feature = {
     id: 'spatial_graph_mode',
     name: 'Spatial Graph Mode',
     warning: 'Will probably break custom css;',
     enabledByDefault: false,
+    settings: [
+        spatialShortcut('Ctrl+ArrowUp', 'Zoom in', () => {
+            GraphVisualization.get().zoomBy(5 / 4)
+        }),
+        spatialShortcut('Ctrl+ArrowDown', 'Zoom out', () => {
+            GraphVisualization.get().zoomBy(4 / 5)
+        }),
+        spatialShortcut('Ctrl+0', 'Zoom in completely', () => {
+            GraphVisualization.get().zoomBy(10)
+        }),
+        spatialShortcut('Ctrl+9', 'Zoom out completely', () => {
+            GraphVisualization.get().zoomOutCompletely()
+        }),
+        spatialShortcut('ArrowLeft', 'Pan left', () => {
+            GraphVisualization.get().panBy(PAN_SPEED, 0)
+        }),
+        spatialShortcut('ArrowDown', 'Pan down', () => {
+            GraphVisualization.get().panBy(0, -PAN_SPEED)
+        }),
+        spatialShortcut('ArrowUp', 'Pan up', () => {
+            GraphVisualization.get().panBy(0, PAN_SPEED)
+        }),
+        spatialShortcut('ArrowRight', 'Pan right', () => {
+            GraphVisualization.get().panBy(-PAN_SPEED, 0)
+        }),
+    ],
 }
 
 const toggleSpatialGraphModeDependingOnSetting = () => {
@@ -49,6 +90,7 @@ toggleSpatialGraphModeDependingOnSetting()
 const LAST_SELECTED_PANEL_CSS = 'roam-toolkit--source-panel'
 const PANEL_SELECTOR = 'roam-toolkit--panel'
 
+type PanelElement = HTMLElement
 type PanelId = string
 type NodeId = string
 
@@ -432,6 +474,24 @@ class GraphVisualization {
                 panel.style.removeProperty('top')
             })
         }
+    }
+
+    zoomBy(scale: number) {
+        this.cy.zoom({
+            level: this.cy.zoom() * scale,
+            renderedPosition: {
+                x: this.cy.width() / 2,
+                y: this.cy.height() / 2,
+            },
+        })
+    }
+
+    zoomOutCompletely() {
+        this.cy.fit(undefined, 100)
+    }
+
+    panBy(x: number, y: number) {
+        this.cy.panBy({x, y})
     }
 
     static get(): GraphVisualization {
