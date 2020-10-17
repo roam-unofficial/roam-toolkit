@@ -19,9 +19,6 @@ import {updateVimView} from 'src/core/features/vim-mode/vim-view'
 /**
  * TODO Be able to resize nodes
  *
- * TODO Vim scroll inside the panels doesn't work very well
- * (ctrl+e/y works, but j/k doesn't keep the highlight in view)
- *
  * TODO Maybe allow cutting edges with double click?
  */
 
@@ -275,21 +272,13 @@ const startSpatialGraphMode = async () => {
             .concat(Object.keys(previousIdToCount))
             .forEach(id => {
                 if (idToCount[id] > (previousIdToCount[id] || 0)) {
-                    console.log(`Added ${id}`)
                     graph.addNode(
                         id,
                         // It's impossible to link to daily notes
                         id === 'DAILY_NOTES' ? null : justClickedPanelId
                     )
                 }
-                if ((idToCount[id] || 0) < previousIdToCount[id]) {
-                    console.log(`Removed ${id}`)
-                }
             })
-        // Allow only one sidebar panel, to keep the edges when switching main page.
-        // Disallow any more, cause they're redundant.
-        console.log(previousIdToCount)
-        console.log(idToCount)
         previousIdToCount = idToCount
         graph.cleanMissingNodes()
         graph.runLayout(!firstRender)
@@ -350,10 +339,6 @@ class GraphVisualization {
                         shape: 'roundrectangle',
                         color: '#b5b5b5',
                         // 'background-color': '#fff',
-                        // 'background-opacity': 1,
-                        // content: node => node.id().slice(20),
-                        // CLEANUP
-                        // content: node => `${Math.round(node.position().x)}, ${Math.round(node.position().y)}`,
                     },
                 },
                 {
@@ -373,11 +358,6 @@ class GraphVisualization {
                 domViewport.style.transform = `translate(${this.cy.pan().x}px, ${
                     this.cy.pan().y
                 }px) scale(${this.cy.zoom()})`
-                // @ts-ignore just for debugging the pan
-                // CLEANUP
-                // document.getElementById('find-or-create-input').placeholder = `${Math.round(
-                //     this.cy.pan().x
-                // )}, ${Math.round(this.cy.pan().y)}`
             })
         })
         this.cy.on('render', () => {

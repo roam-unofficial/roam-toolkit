@@ -209,8 +209,7 @@ const tagPanels = () => {
 }
 
 // Roughly two lines on either side
-const SCROLL_PADDING_TOP = 100
-const SCROLL_PADDING_BOTTOM = 60
+const SCROLL_PADDING = 50
 
 /**
  * If a block is:
@@ -219,14 +218,22 @@ const SCROLL_PADDING_BOTTOM = 60
  * - visible, this will be 0
  */
 const blockScrollOverflow = (block: BlockElement): number => {
-    const {top, height} = block.getBoundingClientRect()
+    const {top, height, width} = block.getBoundingClientRect()
+    const bottom = top + height
+    // Scale padding along with CSS transform, from Spatial Graph Mode
+    // Use width instead of height, cause it's larger and has less rounding error
+    const scaledPadding = (width / block.offsetWidth) * SCROLL_PADDING
+    console.log(scaledPadding)
 
-    const overflowTop = SCROLL_PADDING_TOP - top
+    const {top: panelTop, height: panelHeight} = assumeExists(block.closest(PANEL_SELECTOR)).getBoundingClientRect()
+    const panelBottom = panelTop + panelHeight
+
+    const overflowTop = panelTop - top + scaledPadding
     if (overflowTop > 0) {
         return -overflowTop
     }
 
-    const overflowBottom = top + height + SCROLL_PADDING_BOTTOM - window.innerHeight
+    const overflowBottom = bottom - panelBottom + scaledPadding
     if (overflowBottom > 0) {
         return overflowBottom
     }
