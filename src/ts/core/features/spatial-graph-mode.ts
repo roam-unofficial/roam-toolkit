@@ -88,7 +88,7 @@ export const config: Feature = {
             'Shift+ArrowLeft',
             'Move node left',
             graph => {
-                graph.moveSelectionBy(-MOVEMENT_SPEED, 0)
+                graph.dragSelectionBy(-MOVEMENT_SPEED, 0)
             },
             false
         ),
@@ -96,7 +96,7 @@ export const config: Feature = {
             'Shift+ArrowDown',
             'Move node down',
             graph => {
-                graph.moveSelectionBy(0, MOVEMENT_SPEED)
+                graph.dragSelectionBy(0, MOVEMENT_SPEED)
             },
             false
         ),
@@ -104,7 +104,7 @@ export const config: Feature = {
             'Shift+ArrowUp',
             'Move node up',
             graph => {
-                graph.moveSelectionBy(0, -MOVEMENT_SPEED)
+                graph.dragSelectionBy(0, -MOVEMENT_SPEED)
             },
             false
         ),
@@ -112,7 +112,7 @@ export const config: Feature = {
             'Shift+ArrowRight',
             'Move node right',
             graph => {
-                graph.moveSelectionBy(MOVEMENT_SPEED, 0)
+                graph.dragSelectionBy(MOVEMENT_SPEED, 0)
             },
             false
         ),
@@ -225,16 +225,16 @@ const startSpatialGraphMode = async () => {
         idToCount[mainId] = 1
 
         const panels = Array.from(document.querySelectorAll(Selectors.sidebarPage)) as PanelElement[]
-        panels.forEach(panelElement => {
-            panelElement.classList.add(PANEL_SELECTOR)
-            const panelId = panelIdFromSidebarPage(panelElement)
+        panels.forEach(panel => {
+            panel.classList.add(PANEL_SELECTOR)
+            const panelId = panelIdFromSidebarPage(panel)
             if (idToCount[panelId]) {
                 idToCount[panelId] += 1
-                panelElement.classList.add('roam-toolkit--panel-dupe')
+                panel.classList.add('roam-toolkit--panel-dupe')
                 if (panelId === mainId) {
                     // Sidebar pages that duplicate the main page are are useful cause
                     // They anchor the main page's edges. Mark them so we can keep them.
-                    panelElement.classList.add('roam-toolkit--panel-dupe-main')
+                    panel.classList.add('roam-toolkit--panel-dupe-main')
                     // Provide a visual indicator that the main panel is anchored by an invisible sidebar page
                     mainPanel.classList.add('roam-toolkit--panel-anchored')
                 } else {
@@ -242,9 +242,9 @@ const startSpatialGraphMode = async () => {
                 }
             } else {
                 idToCount[panelId] = 1
-                panelElement.classList.remove('roam-toolkit--panel-dupe', 'roam-toolkit--panel-dupe-main')
+                panel.classList.remove('roam-toolkit--panel-dupe', 'roam-toolkit--panel-dupe-main')
                 // Don't assign ids on the duplicate panels
-                panelElement.id = namespaceId(panelId)
+                panel.id = namespaceId(panelId)
             }
         })
         return idToCount
@@ -313,12 +313,12 @@ const startSpatialGraphMode = async () => {
     updateGraphToMatchOpenPanels(true)
 }
 
-const panelIdFromSidebarPage = (panelElement: PanelElement): string => {
-    const header = assumeExists(panelElement.querySelector('[draggable] > .level2, [draggable] > div')) as HTMLElement
+const panelIdFromSidebarPage = (panel: PanelElement): string => {
+    const header = assumeExists(panel.querySelector('[draggable] > .level2, [draggable] > div')) as HTMLElement
     const headerText = assumeExists(header.innerText)
     if (headerText === 'Block Outline') {
         // Need Selectors.blockInput, because ctrl+shift+o opens a panel with the block already focused
-        return assumeExists(panelElement.querySelector(`${Selectors.block}, ${Selectors.blockInput}`)?.id)
+        return assumeExists(panel.querySelector(`${Selectors.block}, ${Selectors.blockInput}`)?.id)
     }
     return headerText
 }
@@ -387,7 +387,7 @@ class GraphVisualization {
                         const panel = assumeExists(getPanelElement(assumeExists(node.data.id)))
                         const position = assumeExists(node.position)
                         panel.style.left = `${Math.round(position.x - panel.offsetWidth / 2)}px`
-                        panel.style.top = `${Math.round(position.y - panel.offsetHeight / 2) + 8}px`
+                        panel.style.top = `${Math.round(position.y - panel.offsetHeight / 2) + 5}px`
                     })
                 }
             })
@@ -514,8 +514,8 @@ class GraphVisualization {
         this.cy.$('node').forEach(node => {
             const domNode = getPanelElement(node.id())
             if (domNode) {
-                node.style('width', domNode.offsetWidth)
-                node.style('height', domNode.offsetHeight + 15)
+                node.style('width', domNode.offsetWidth + 10)
+                node.style('height', domNode.offsetHeight + 20)
             }
         })
         this.cy
@@ -568,8 +568,9 @@ class GraphVisualization {
         node.select().edges().select()
     }
 
-    moveSelectionBy(x: number, y: number) {
+    dragSelectionBy(x: number, y: number) {
         this.cy.nodes(':selected').shift({x, y})
+        this.panBy(-x, -y)
     }
 
     nodeInMiddleOfViewport(): NodeSingular {
@@ -643,13 +644,17 @@ class GraphVisualization {
                     position: absolute;
                 }
                 .roam-toolkit--panel {
-                    border: 1px solid gray;
                     width: var(--card-width);
                     height: auto !important; /* prevent the main panel from stretching 100% */
                     max-height: var(--card-height-max);
+                    border-radius: 5px;
                     position: absolute;
                     background: white;
                     overflow: scroll;
+                }
+                .sidebar-content .roam-toolkit--panel {
+                    margin: 0 !important;
+                    padding: 0 16px !important;
                 }
                 /* Indicate when a main panel's edges are anchored by a hidden sidebar*/
                 .roam-toolkit--panel-anchored::before {

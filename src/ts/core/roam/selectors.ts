@@ -11,7 +11,7 @@ export const Selectors = {
     mainPanel: '.roam-body-main',
 
     sidebarContent: '.sidebar-content',
-    sidebarPage: '.sidebar-content > div',
+    sidebarPage: '.sidebar-content > div > div',
     sidebar: '#right-sidebar',
 
     leftPanel: '.roam-sidebar-container',
