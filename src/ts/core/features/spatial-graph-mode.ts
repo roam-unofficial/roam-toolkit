@@ -571,7 +571,8 @@ class GraphVisualization {
     }
 
     dragSelectionBy(x: number, y: number) {
-        this.cy.nodes(':selected').shift({x, y})
+        const zoom = this.cy.zoom()
+        this.cy.nodes(':selected').shift({x: x / zoom, y: y / zoom})
         this.panBy(-x, -y)
     }
 
