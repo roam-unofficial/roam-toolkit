@@ -235,10 +235,6 @@ const startSpatialGraphMode = async () => {
                     // Sidebar pages that duplicate the main page are are useful cause
                     // They anchor the main page's edges. Mark them so we can keep them.
                     panel.classList.add('roam-toolkit--panel-dupe-main')
-                    // Provide a visual indicator that the main panel is anchored by an invisible sidebar page
-                    mainPanel.classList.add('roam-toolkit--panel-anchored')
-                } else {
-                    mainPanel.classList.remove('roam-toolkit--panel-anchored')
                 }
             } else {
                 idToCount[panelId] = 1
@@ -247,6 +243,12 @@ const startSpatialGraphMode = async () => {
                 panel.id = namespaceId(panelId)
             }
         })
+        if (idToCount[mainId] > 1) {
+            // Provide a visual indicator that the main panel is anchored by an invisible sidebar page
+            mainPanel.classList.add('roam-toolkit--panel-anchored')
+        } else {
+            mainPanel.classList.remove('roam-toolkit--panel-anchored')
+        }
         return idToCount
     }
 
