@@ -38,11 +38,7 @@ const spatialShortcut = (
             onPress(graph)
 
             if (selectMiddleNode) {
-                const middleNode = graph.nodeInMiddleOfViewport()
-                graph.selectNode(middleNode)
-                // This should probably emit an event, rather than directly much with vim state
-                RoamPanel.get(assumeExists(getPanelElement(middleNode.id()))).select()
-                updateVimView()
+                graph.selectMiddleOfViewport()
             }
         }
     },
@@ -252,10 +248,23 @@ const startSpatialGraphMode = async () => {
     const updateGraphToMatchOpenPanels = (firstRender: boolean = false) => {
         // TODO extract the panel counting into a stateful sidebar manager
         const idToCount = tagAndCountPanels()
+        Object.keys(idToCount)
+            .concat(Object.keys(previousIdToCount))
+            .forEach(id => {
+                if (idToCount[id] > (previousIdToCount[id] || 0)) {
+                    graph.addNode(
+                        id,
+                        // It's impossible to link to daily notes
+                        id === 'DAILY_NOTES' ? null : justClickedPanelId
+                    )
+                }
+                previousIdToCount[id] = idToCount[id]
+            })
+
+        // Avoid having identical sidebar pages open
         const redundantPanels = Array.from(document.getElementsByClassName('roam-toolkit--panel-dupe')).filter(
             panelElement => !panelElement.classList.contains('roam-toolkit--panel-dupe-main')
         )
-        // Avoid having identical sidebar pages open
         if (redundantPanels.length > 0) {
             redundantPanels.forEach(panel => {
                 if (panel) {
@@ -268,20 +277,9 @@ const startSpatialGraphMode = async () => {
             // Skip re-rendering, cause the sidebar pages will change after closing the panel anyways
             return
         }
-        Object.keys(idToCount)
-            .concat(Object.keys(previousIdToCount))
-            .forEach(id => {
-                if (idToCount[id] > (previousIdToCount[id] || 0)) {
-                    graph.addNode(
-                        id,
-                        // It's impossible to link to daily notes
-                        id === 'DAILY_NOTES' ? null : justClickedPanelId
-                    )
-                }
-            })
-        previousIdToCount = idToCount
+
         graph.cleanMissingNodes()
-        graph.runLayout(!firstRender)
+        graph.runLayout(firstRender)
     }
 
     // Don't attach edges when using the back/forward button
@@ -289,6 +287,10 @@ const startSpatialGraphMode = async () => {
     // You need to shift+click to create the edge
     window.addEventListener('popstate', clearJustClickPanelId)
     window.addEventListener('resize', layoutGraph)
+    graph.onSelectNode(nodeId => {
+        RoamPanel.get(assumeExists(getPanelElement(nodeId))).select()
+        updateVimView()
+    })
 
     disconnectorFunctions = [
         () => window.removeEventListener('popstate', clearJustClickPanelId),
@@ -296,9 +298,9 @@ const startSpatialGraphMode = async () => {
         RoamEvent.onChangeBlock(layoutGraph),
         RoamEvent.onEditBlock(layoutGraph),
         RoamEvent.onBlurBlock(layoutGraph),
-        RoamEvent.onSidebarToggle(updateGraphToMatchOpenPanels),
-        RoamEvent.onSidebarChange(updateGraphToMatchOpenPanels),
-        RoamEvent.onChangePage(updateGraphToMatchOpenPanels),
+        RoamEvent.onSidebarToggle(() => updateGraphToMatchOpenPanels(false)),
+        RoamEvent.onSidebarChange(() => updateGraphToMatchOpenPanels(false)),
+        RoamEvent.onChangePage(() => updateGraphToMatchOpenPanels(false)),
         RoamEvent.onRenamePage(updateNodeNames),
     ]
     updateGraphToMatchOpenPanels(true)
@@ -490,6 +492,7 @@ class GraphVisualization {
         const missingNodes = this.cy.filter(element => element.isNode() && !getPanelElement(element.id()))
         missingNodes.connectedEdges().remove()
         missingNodes.remove()
+        this.ensureNodeIsSelected()
     }
 
     runLayout(firstRender: boolean = false) {
@@ -570,6 +573,23 @@ class GraphVisualization {
                 }
             )
         )
+    }
+
+    selectMiddleOfViewport() {
+        const middleNode = this.nodeInMiddleOfViewport()
+        this.selectNode(middleNode)
+    }
+
+    ensureNodeIsSelected() {
+        if (this.cy.nodes(':selected').length === 0) {
+            this.selectMiddleOfViewport()
+        }
+    }
+
+    onSelectNode(handleSelect: (nodeId: NodeId) => void) {
+        this.cy.on('select', () => {
+            handleSelect(this.cy.nodes(':selected').first().id())
+        })
     }
 
     static async init() {

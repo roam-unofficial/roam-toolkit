@@ -34,13 +34,16 @@ export const RoamEvent = {
         let stopObserving: DisconnectFn | null = null
         const observeSidebarPanels = () => {
             if (isSidebarShowing() && !stopObserving) {
-                stopObserving = onSelectorChange(Selectors.sidebarContent, handler)
+                stopObserving = onSelectorChange(Selectors.sidebarContent, () => {
+                    handler()
+                })
             } else if (stopObserving) {
                 stopObserving()
+                stopObserving = null
             }
         }
         // Start watching, if the sidebar is already open
-        // observeSidebarPanels()
+        observeSidebarPanels()
         return RoamEvent.onSidebarToggle(observeSidebarPanels)
     },
 

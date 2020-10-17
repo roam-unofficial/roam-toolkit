@@ -223,7 +223,6 @@ const blockScrollOverflow = (block: BlockElement): number => {
     // Scale padding along with CSS transform, from Spatial Graph Mode
     // Use width instead of height, cause it's larger and has less rounding error
     const scaledPadding = (width / block.offsetWidth) * SCROLL_PADDING
-    console.log(scaledPadding)
 
     const {top: panelTop, height: panelHeight} = assumeExists(block.closest(PANEL_SELECTOR)).getBoundingClientRect()
     const panelBottom = panelTop + panelHeight
