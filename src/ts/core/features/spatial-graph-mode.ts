@@ -19,8 +19,6 @@ import {updateVimView} from 'src/core/features/vim-mode/vim-view'
 /**
  * TODO Be able to resize nodes
  *
- * TODO Visually indicate if a main panel isn't "anchored" by a sidebar panel
- *
  * TODO Maybe allow cutting edges with double click?
  */
 
@@ -185,8 +183,8 @@ const startSpatialGraphMode = async () => {
     rememberLastInteractedPanel()
     const layoutGraph = () => graph.runLayout()
 
-    const tagMainPanel = (): NodeId => {
-        const mainPanel = assumeExists(document.querySelector('.roam-center > div'))
+    const tagMainPanel = (): [NodeId, PanelElement] => {
+        const mainPanel = assumeExists(document.querySelector('.roam-center > div')) as PanelElement
         mainPanel.classList.add(PANEL_SELECTOR)
         let nodeId
         if (document.querySelector(Selectors.dailyNotes)) {
@@ -201,7 +199,7 @@ const startSpatialGraphMode = async () => {
             }
         }
         mainPanel.id = namespaceId(nodeId)
-        return nodeId
+        return [nodeId, mainPanel]
     }
 
     const updateNodeNames = async (newTitle: string) => {
@@ -220,7 +218,7 @@ const startSpatialGraphMode = async () => {
 
     const tagAndCountPanels = (): {[id: string]: number} => {
         const idToCount: {[id: string]: number} = {}
-        const mainId = tagMainPanel()
+        const [mainId, mainPanel] = tagMainPanel()
         idToCount[mainId] = 1
 
         const panels = Array.from(document.querySelectorAll(Selectors.sidebarPage)) as PanelElement[]
@@ -234,6 +232,10 @@ const startSpatialGraphMode = async () => {
                     // Sidebar pages that duplicate the main page are are useful cause
                     // They anchor the main page's edges. Mark them so we can keep them.
                     panelElement.classList.add('roam-toolkit--panel-dupe-main')
+                    // Provide a visual indicator that the main panel is anchored by an invisible sidebar page
+                    mainPanel.classList.add('roam-toolkit--panel-anchored')
+                } else {
+                    mainPanel.classList.remove('roam-toolkit--panel-anchored')
                 }
             } else {
                 idToCount[panelId] = 1
@@ -645,6 +647,13 @@ class GraphVisualization {
                     position: absolute;
                     background: white;
                     overflow: scroll;
+                }
+                /* Indicate when a main panel's edges are anchored by a hidden sidebar*/
+                .roam-toolkit--panel-anchored::before {
+                    content: "⚓";
+                    left: 6px;
+                    top: 6px;
+                    position: absolute;
                 }
                 `,
                 GRAPH_MODE_CSS_ID
