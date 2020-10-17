@@ -158,7 +158,7 @@ export class RoamPanel {
         state.panels = new Map(state.panelOrder.map(id => [id, RoamPanel.get(id)]))
     }
 
-    private static get(panelId: PanelId): RoamPanel {
+    static get(panelId: PanelId): RoamPanel {
         // lazily create one if doesn't already exist
         if (!state.panels.has(panelId)) {
             state.panels.set(panelId, new RoamPanel(panelId))

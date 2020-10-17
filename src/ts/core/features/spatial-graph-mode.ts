@@ -1,3 +1,4 @@
+import {minBy} from 'lodash'
 import {browser} from 'webextension-polyfill-ts'
 import cytoscape, {NodeDataDefinition, NodeSingular} from 'cytoscape'
 // @ts-ignore
@@ -12,6 +13,8 @@ import {injectStyle} from 'src/core/common/css'
 import {Mouse} from 'src/core/common/mouse'
 import {delay} from 'src/core/common/async'
 import {getMode, Mode} from 'src/core/features/vim-mode/vim'
+import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-panel'
+import {updateVimView} from 'src/core/features/vim-mode/vim-view'
 
 /**
  * TODO Be able to resize nodes
@@ -21,20 +24,27 @@ import {getMode, Mode} from 'src/core/features/vim-mode/vim'
  * TODO Maybe allow cutting edges with double click?
  */
 
-const spatialShortcut = (key: string, label: string, onPress: () => void): Shortcut => ({
+const spatialShortcut = (key: string, label: string, onPress: (graph: GraphVisualization) => void): Shortcut => ({
     type: 'shortcut',
     id: `spatialGraphMode_${label}`,
     label,
     initValue: key,
     onPress: () => {
         if (getMode() === Mode.NORMAL) {
-            onPress()
+            const graph = GraphVisualization.get()
+            onPress(graph)
+
+            const middleNode = graph.nodeInMiddleOfViewport()
+            graph.selectNode(middleNode)
+            // This should probably emit an event, rather than directly much with vim state
+            RoamPanel.get(assumeExists(getPanelElement(middleNode.id()))).select()
+            updateVimView()
         }
     },
 })
 
-// Invert for natural scroll
 const PAN_SPEED = 20
+const MOVEMENT_SPEED = 100
 
 export const config: Feature = {
     id: 'spatial_graph_mode',
@@ -42,29 +52,41 @@ export const config: Feature = {
     warning: 'Will probably break custom css;',
     enabledByDefault: false,
     settings: [
-        spatialShortcut('Ctrl+ArrowUp', 'Zoom in', () => {
-            GraphVisualization.get().zoomBy(5 / 4)
+        spatialShortcut('Ctrl+ArrowUp', 'Zoom in', graph => {
+            graph.zoomBy(5 / 4)
         }),
-        spatialShortcut('Ctrl+ArrowDown', 'Zoom out', () => {
-            GraphVisualization.get().zoomBy(4 / 5)
+        spatialShortcut('Ctrl+ArrowDown', 'Zoom out', graph => {
+            graph.zoomBy(4 / 5)
         }),
-        spatialShortcut('Ctrl+0', 'Zoom in completely', () => {
-            GraphVisualization.get().zoomBy(10)
+        spatialShortcut('Ctrl+0', 'Zoom in completely', graph => {
+            graph.zoomBy(10)
         }),
-        spatialShortcut('Ctrl+9', 'Zoom out completely', () => {
-            GraphVisualization.get().zoomOutCompletely()
+        spatialShortcut('Ctrl+9', 'Zoom out completely', graph => {
+            graph.zoomOutCompletely()
         }),
-        spatialShortcut('ArrowLeft', 'Pan left', () => {
-            GraphVisualization.get().panBy(PAN_SPEED, 0)
+        spatialShortcut('ArrowLeft', 'Pan left', graph => {
+            graph.panBy(PAN_SPEED, 0)
         }),
-        spatialShortcut('ArrowDown', 'Pan down', () => {
-            GraphVisualization.get().panBy(0, -PAN_SPEED)
+        spatialShortcut('ArrowDown', 'Pan down', graph => {
+            graph.panBy(0, -PAN_SPEED)
         }),
-        spatialShortcut('ArrowUp', 'Pan up', () => {
-            GraphVisualization.get().panBy(0, PAN_SPEED)
+        spatialShortcut('ArrowUp', 'Pan up', graph => {
+            graph.panBy(0, PAN_SPEED)
         }),
-        spatialShortcut('ArrowRight', 'Pan right', () => {
-            GraphVisualization.get().panBy(-PAN_SPEED, 0)
+        spatialShortcut('ArrowRight', 'Pan right', graph => {
+            graph.panBy(-PAN_SPEED, 0)
+        }),
+        spatialShortcut('Shift+ArrowLeft', 'Move node left', graph => {
+            graph.moveSelectionBy(-MOVEMENT_SPEED, 0)
+        }),
+        spatialShortcut('Shift+ArrowDown', 'Move node down', graph => {
+            graph.moveSelectionBy(0, MOVEMENT_SPEED)
+        }),
+        spatialShortcut('Shift+ArrowUp', 'Move node up', graph => {
+            graph.moveSelectionBy(0, -MOVEMENT_SPEED)
+        }),
+        spatialShortcut('Shift+ArrowRight', 'Move node right', graph => {
+            graph.moveSelectionBy(MOVEMENT_SPEED, 0)
         }),
     ],
 }
@@ -130,14 +152,13 @@ let disconnectorFunctions: (() => void)[] = []
 let previousIdToCount: {[id: string]: number} = {}
 const startSpatialGraphMode = async () => {
     await waitForSelectorToExist(Selectors.mainContent)
+    await GraphVisualization.init()
+
     const graph = GraphVisualization.get()
-    // Wait for styles to finish applying, so panels have the right dimensions,
-    // and cytoscape has fully instantiated
-    await delay(300)
     rememberLastInteractedPanel()
     const layoutGraph = () => graph.runLayout()
 
-    const updateMainPanel = (): NodeId => {
+    const tagMainPanel = (): NodeId => {
         const mainPanel = assumeExists(document.querySelector('.roam-center > div'))
         mainPanel.classList.add(PANEL_SELECTOR)
         let nodeId
@@ -172,20 +193,26 @@ const startSpatialGraphMode = async () => {
 
     const tagAndCountPanels = (): {[id: string]: number} => {
         const idToCount: {[id: string]: number} = {}
-        const mainId = updateMainPanel()
+        const mainId = tagMainPanel()
         idToCount[mainId] = 1
 
         const panels = Array.from(document.querySelectorAll(Selectors.sidebarPage)) as PanelElement[]
         panels.forEach(panelElement => {
             panelElement.classList.add(PANEL_SELECTOR)
             const panelId = panelIdFromSidebarPage(panelElement)
-            panelElement.id = namespaceId(panelId)
             if (idToCount[panelId]) {
                 idToCount[panelId] += 1
                 panelElement.classList.add('roam-toolkit--panel-dupe')
+                if (panelId === mainId) {
+                    // Sidebar pages that duplicate the main page are are useful cause
+                    // They anchor the main page's edges. Mark them so we can keep them.
+                    panelElement.classList.add('roam-toolkit--panel-dupe-main')
+                }
             } else {
                 idToCount[panelId] = 1
-                panelElement.classList.remove('roam-toolkit--panel-dupe')
+                panelElement.classList.remove('roam-toolkit--panel-dupe', 'roam-toolkit--panel-dupe-main')
+                // Don't assign ids on the duplicate panels
+                panelElement.id = namespaceId(panelId)
             }
         })
         return idToCount
@@ -194,6 +221,22 @@ const startSpatialGraphMode = async () => {
     const updateGraphToMatchOpenPanels = (firstRender: boolean = false) => {
         // TODO extract the panel counting into a stateful sidebar manager
         const idToCount = tagAndCountPanels()
+        const redundantPanels = Array.from(document.getElementsByClassName('roam-toolkit--panel-dupe')).filter(
+            panelElement => !panelElement.classList.contains('roam-toolkit--panel-dupe-main')
+        )
+        // Avoid having identical sidebar pages open
+        if (redundantPanels.length > 0) {
+            redundantPanels.forEach(panel => {
+                if (panel) {
+                    const closeButton = panel.querySelector(Selectors.closeButton)
+                    if (closeButton) {
+                        Mouse.leftClick(closeButton as HTMLElement)
+                    }
+                }
+            })
+            // Skip re-rendering, cause the sidebar pages will change after closing the panel anyways
+            return
+        }
         Object.keys(idToCount)
             .concat(Object.keys(previousIdToCount))
             .forEach(id => {
@@ -204,22 +247,15 @@ const startSpatialGraphMode = async () => {
                         // It's impossible to link to daily notes
                         id === 'DAILY_NOTES' ? null : justClickedPanelId
                     )
-                    // Allow only one sidebar panel, to keep the edges when switching main page.
-                    // Disallow any more, cause they're redundant.
-                    if (idToCount[id] > 1) {
-                        const dupePanel = document.getElementById(namespaceId(id)) as PanelElement
-                        if (dupePanel) {
-                            const closeButton = dupePanel.querySelector(Selectors.closeButton)
-                            if (closeButton) {
-                                Mouse.leftClick(closeButton as HTMLElement)
-                            }
-                        }
-                    }
                 }
                 if ((idToCount[id] || 0) < previousIdToCount[id]) {
                     console.log(`Removed ${id}`)
                 }
             })
+        // Allow only one sidebar panel, to keep the edges when switching main page.
+        // Disallow any more, cause they're redundant.
+        console.log(previousIdToCount)
+        console.log(idToCount)
         previousIdToCount = idToCount
         graph.cleanMissingNodes()
         graph.runLayout(!firstRender)
@@ -282,7 +318,8 @@ class GraphVisualization {
                         // 'background-color': '#fff',
                         // 'background-opacity': 1,
                         // content: node => node.id().slice(20),
-                        content: node => `${node.position().x}, ${node.position().y}`,
+                        // CLEANUP
+                        // content: node => `${Math.round(node.position().x)}, ${Math.round(node.position().y)}`,
                     },
                 },
                 {
@@ -303,7 +340,10 @@ class GraphVisualization {
                     this.cy.pan().y
                 }px) scale(${this.cy.zoom()})`
                 // @ts-ignore just for debugging the pan
-                document.getElementById('find-or-create-input').placeholder = `${this.cy.pan().x}, ${this.cy.pan().y}`
+                // CLEANUP
+                // document.getElementById('find-or-create-input').placeholder = `${Math.round(
+                //     this.cy.pan().x
+                // )}, ${Math.round(this.cy.pan().y)}`
             })
         })
         this.cy.on('render', () => {
@@ -355,7 +395,6 @@ class GraphVisualization {
             // Don't attach redundant edges
             this.cy.$(`edge[source = "${fromPanel}"][target = "${toPanel}"]`).length === 0
         ) {
-            console.log(`Edge: ${fromPanel}---${toPanel}`)
             this.cy.edges().unselect()
             this.cy
                 .add({
@@ -368,8 +407,7 @@ class GraphVisualization {
         }
 
         // bring attention to the newly selected node
-        this.cy.nodes().unselect()
-        node.select()
+        this.selectNode(node)
         this.cy.promiseOn('layoutstop').then(() => {
             this.panTo(toPanel, fromPanel)
         })
@@ -387,11 +425,9 @@ class GraphVisualization {
                 this.renameNode(node, node.id().replace(`[[${before}]]`, `[[${after}]]`))
             }
         })
-        console.log(this.cy.nodes().map(node => node.id()))
     }
 
     renameNode(node: NodeSingular, name: string) {
-        console.log([node.id(), name])
         // node ids are immutable. We have to create a new one
         const newNode = this.cy.add({
             data: {
@@ -487,14 +523,40 @@ class GraphVisualization {
     }
 
     zoomOutCompletely() {
-        this.cy.fit(undefined, 100)
+        this.cy.fit(undefined, 50)
     }
 
     panBy(x: number, y: number) {
         this.cy.panBy({x, y})
     }
 
-    static get(): GraphVisualization {
+    selectNode(node: NodeSingular) {
+        this.cy.edges().unselect()
+        this.cy.nodes().unselect()
+        node.select().edges().select()
+    }
+
+    moveSelectionBy(x: number, y: number) {
+        this.cy.nodes(':selected').shift({x, y})
+    }
+
+    nodeInMiddleOfViewport(): NodeSingular {
+        const viewport = this.cy.extent()
+        const viewportMiddle = {
+            x: viewport.x1 + viewport.w / 2,
+            y: viewport.y1 + viewport.h / 2,
+        }
+        return assumeExists(
+            minBy(
+                this.cy.nodes().map(node => node),
+                node => {
+                    return distance(viewportMiddle, node.position())
+                }
+            )
+        )
+    }
+
+    static async init() {
         if (!GraphVisualization.instance) {
             const graphElement = document.createElement('div')
             graphElement.id = GRAPH_MASK_ID
@@ -562,8 +624,14 @@ class GraphVisualization {
             )
 
             GraphVisualization.instance = new GraphVisualization(graphElement)
+            // Wait for styles to finish applying, so panels have the right dimensions,
+            // and cytoscape has fully instantiated
+            await delay(300)
         }
-        return GraphVisualization.instance
+    }
+
+    static get(): GraphVisualization {
+        return assumeExists(GraphVisualization.instance)
     }
 
     static destroy() {
@@ -581,6 +649,10 @@ class GraphVisualization {
         }
     }
 }
+
+type Vector = {x: number; y: number}
+
+const distance = (v1: Vector, v2: Vector) => Math.sqrt((v1.x - v2.x) ** 2 + (v1.y - v2.y) ** 2)
 
 const stopSpatialGraphMode = () => {
     GraphVisualization.destroy()
