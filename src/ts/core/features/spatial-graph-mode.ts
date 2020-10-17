@@ -19,6 +19,15 @@ import {updateVimView} from 'src/core/features/vim-mode/vim-view'
 /**
  * TODO Be able to resize nodes
  *
+ * TODO Fix vim scrolling in sidebar in non-spatial mode
+ * (you can scroll between panels, but not within a panel)
+ * maybe have spatial mode override the choice of panel,
+ * but have vim mode default to a single sidebar panel
+ *
+ *
+ * TODO Be able to disable the graph mode, but still have it run in the background,
+ * so it can be resumed
+ *
  * TODO Maybe allow cutting edges with double click?
  */
 
@@ -247,6 +256,8 @@ const startSpatialGraphMode = async () => {
 
     const updateGraphToMatchOpenPanels = (firstRender: boolean = false) => {
         // TODO extract the panel counting into a stateful sidebar manager
+        // Maybe modify RoamEvent.changePanel, to include the "origin" panel,
+        // and the id of the panel added/removed
         const idToCount = tagAndCountPanels()
         Object.keys(idToCount)
             .concat(Object.keys(previousIdToCount))
@@ -339,6 +350,7 @@ class GraphVisualization {
                     selector: 'node',
                     css: {
                         shape: 'roundrectangle',
+                        // TODO allow configuring colors for themes
                         color: '#b5b5b5',
                         // 'background-color': '#fff',
                     },
@@ -353,6 +365,7 @@ class GraphVisualization {
             ],
         })
         const domViewport = getDomViewport()
+        // TODO move dom manipulation outside, leave this class purely concerned with Cytoscape
         this.cy.on('viewport resize render', () => {
             requestAnimationFrame(() => {
                 domViewport.style.width = `${this.cy.width()}px`
@@ -686,7 +699,7 @@ class GraphVisualization {
             GraphVisualization.instance.resetPanelStyles()
             const domViewport = getDomViewport()
             domViewport.style.width = '100vw'
-            domViewport.style.removeProperty('height')
+            domViewport.style.height = 'calc(100% - 45px)'
             domViewport.style.removeProperty('transform')
 
             document.getElementById(GRAPH_MODE_CSS_ID)?.remove()
