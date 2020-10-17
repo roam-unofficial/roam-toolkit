@@ -24,7 +24,12 @@ import {updateVimView} from 'src/core/features/vim-mode/vim-view'
  * TODO Maybe allow cutting edges with double click?
  */
 
-const spatialShortcut = (key: string, label: string, onPress: (graph: GraphVisualization) => void): Shortcut => ({
+const spatialShortcut = (
+    key: string,
+    label: string,
+    onPress: (graph: GraphVisualization) => void,
+    selectMiddleNode: boolean = true
+): Shortcut => ({
     type: 'shortcut',
     id: `spatialGraphMode_${label}`,
     label,
@@ -34,11 +39,13 @@ const spatialShortcut = (key: string, label: string, onPress: (graph: GraphVisua
             const graph = GraphVisualization.get()
             onPress(graph)
 
-            const middleNode = graph.nodeInMiddleOfViewport()
-            graph.selectNode(middleNode)
-            // This should probably emit an event, rather than directly much with vim state
-            RoamPanel.get(assumeExists(getPanelElement(middleNode.id()))).select()
-            updateVimView()
+            if (selectMiddleNode) {
+                const middleNode = graph.nodeInMiddleOfViewport()
+                graph.selectNode(middleNode)
+                // This should probably emit an event, rather than directly much with vim state
+                RoamPanel.get(assumeExists(getPanelElement(middleNode.id()))).select()
+                updateVimView()
+            }
         }
     },
 })
@@ -76,18 +83,38 @@ export const config: Feature = {
         spatialShortcut('ArrowRight', 'Pan right', graph => {
             graph.panBy(-PAN_SPEED, 0)
         }),
-        spatialShortcut('Shift+ArrowLeft', 'Move node left', graph => {
-            graph.moveSelectionBy(-MOVEMENT_SPEED, 0)
-        }),
-        spatialShortcut('Shift+ArrowDown', 'Move node down', graph => {
-            graph.moveSelectionBy(0, MOVEMENT_SPEED)
-        }),
-        spatialShortcut('Shift+ArrowUp', 'Move node up', graph => {
-            graph.moveSelectionBy(0, -MOVEMENT_SPEED)
-        }),
-        spatialShortcut('Shift+ArrowRight', 'Move node right', graph => {
-            graph.moveSelectionBy(MOVEMENT_SPEED, 0)
-        }),
+        spatialShortcut(
+            'Shift+ArrowLeft',
+            'Move node left',
+            graph => {
+                graph.moveSelectionBy(-MOVEMENT_SPEED, 0)
+            },
+            false
+        ),
+        spatialShortcut(
+            'Shift+ArrowDown',
+            'Move node down',
+            graph => {
+                graph.moveSelectionBy(0, MOVEMENT_SPEED)
+            },
+            false
+        ),
+        spatialShortcut(
+            'Shift+ArrowUp',
+            'Move node up',
+            graph => {
+                graph.moveSelectionBy(0, -MOVEMENT_SPEED)
+            },
+            false
+        ),
+        spatialShortcut(
+            'Shift+ArrowRight',
+            'Move node right',
+            graph => {
+                graph.moveSelectionBy(MOVEMENT_SPEED, 0)
+            },
+            false
+        ),
     ],
 }
 
