@@ -181,6 +181,11 @@ export class GraphVisualization {
             },
             easing: 'ease-out',
             duration: 200,
+            complete: () => {
+                // avoid accidentally selecting text dues to panels shifting underneath
+                // before getting a change to release the click
+                window.getSelection()?.removeAllRanges()
+            },
         })
     }
 
