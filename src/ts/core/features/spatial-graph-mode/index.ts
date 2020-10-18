@@ -44,9 +44,10 @@ export const spatialShortcut = (
             if (selectMiddleNode) {
                 graph.selectMiddleOfViewport()
             }
+            // Avoid using the arrow keys for scroll, if they're bound.
+            // But still allow regular keyboard navigation in insert mode
+            event.preventDefault()
         }
-        // Avoid using the arrow keys for scroll, if they're bound
-        event.preventDefault()
     },
 })
 
