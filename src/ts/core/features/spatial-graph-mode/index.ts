@@ -178,7 +178,6 @@ const startSpatialGraphMode = async () => {
 
     graph.onSelectNode(async nodeId => {
         if (isVimModeOn()) {
-            console.trace()
             const panel = assumeExists(RoamPanel.get(nodeId))
             RoamVimPanel.get(panel).select()
             updateVimView()

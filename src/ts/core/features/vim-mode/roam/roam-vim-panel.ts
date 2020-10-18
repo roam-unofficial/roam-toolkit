@@ -148,7 +148,6 @@ export class VimRoamPanel {
         RoamPanel.tagPanels()
         state.panelOrder = Array.from(document.querySelectorAll(PANEL_SELECTOR)) as PanelElement[]
         state.panels = new Map(state.panelOrder.map(id => [id, VimRoamPanel.get(id)]))
-        console.log(state)
     }
 
     static get(panelId: PanelId): VimRoamPanel {
