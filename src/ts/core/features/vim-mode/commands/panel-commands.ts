@@ -1,7 +1,7 @@
 import {map, nmap} from 'src/core/features/vim-mode/vim'
 import {Selectors} from 'src/core/roam/selectors'
 import {Mouse} from 'src/core/common/mouse'
-import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-panel'
+import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {RoamBlock} from 'src/core/features/vim-mode/roam/roam-block'
 
 const closeSidebarPage = () => {

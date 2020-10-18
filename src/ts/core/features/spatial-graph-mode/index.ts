@@ -1,7 +1,4 @@
 import {browser} from 'webextension-polyfill-ts'
-import cytoscape from 'cytoscape'
-// @ts-ignore
-import cola from 'cytoscape-cola'
 
 import {Feature, Settings, Shortcut} from 'src/core/settings'
 import {RoamEvent} from 'src/core/features/vim-mode/roam/roam-event'
@@ -153,8 +150,16 @@ const startSpatialGraphMode = async () => {
             return
         }
 
-        panelChange.addedPanels?.forEach(panelId => {
-            graph.addNode(panelId, panelChange.fromPanel)
+        panelChange.addedPanels?.forEach(({from, to}) => {
+            graph.addNode(to, from)
+        })
+
+        panelChange.removedPanels?.forEach(panel => {
+            // Only remove the panel if it's the last remaining one.
+            // We don't want to remove the whole node, if it's just a dupe
+            if (!RoamPanel.get(panel)) {
+                graph.removeNode(panel)
+            }
         })
 
         // Avoid having identical sidebar pages open
@@ -163,23 +168,22 @@ const startSpatialGraphMode = async () => {
         )
         if (redundantPanels.length > 0) {
             redundantPanels.forEach(panel => {
-                if (panel) {
-                    const closeButton = panel.querySelector(Selectors.closeButton)
-                    if (closeButton) {
-                        Mouse.leftClick(closeButton as HTMLElement)
-                    }
+                const closeButton = panel.querySelector(Selectors.closeButton)
+                if (closeButton) {
+                    Mouse.leftClick(closeButton as HTMLElement)
                 }
             })
             // Skip re-rendering, cause the sidebar pages will change after closing the panel anyways
             return
         }
 
-        graph.cleanMissingNodes()
+        graph.ensureNodeIsSelected()
         graph.runLayout(panelChange.isInitialAdd)
     }
 
-    graph.onSelectNode(nodeId => {
-        RoamVimPanel.get(assumeExists(RoamPanel.get(nodeId))).select()
+    graph.onSelectNode(async nodeId => {
+        const panel = assumeExists(RoamPanel.get(nodeId))
+        RoamVimPanel.get(panel).select()
         updateVimView()
     })
 
@@ -191,8 +195,6 @@ const startSpatialGraphMode = async () => {
         RoamPanel.onPanelChange(updateGraphToMatchOpenPanels),
     ]
 }
-
-cytoscape.use(cola)
 
 const stopSpatialGraphMode = () => {
     GraphVisualization.destroy()

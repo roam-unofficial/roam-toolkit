@@ -4,7 +4,7 @@ import {Selectors} from 'src/core/roam/selectors'
 import {assumeExists} from 'src/core/common/assert'
 import {BlockElement, BlockId, RoamBlock} from 'src/core/features/vim-mode/roam/roam-block'
 import {relativeItem} from 'src/core/common/array'
-import {PANEL_SELECTOR, PanelElement, tagPanels} from 'src/core/roam/roam-panel-tagger'
+import {PANEL_CSS_CLASS, PANEL_SELECTOR, PanelElement} from 'src/core/roam/panel/roam-panel-utils'
 
 type BlockNavigationState = {
     panelOrder: PanelId[]
@@ -191,6 +191,20 @@ export class RoamPanel {
     private lastVisibleBlock() {
         return assumeExists(findLast(this.blocks(), blockIsVisible), 'Could not find any visible block')
     }
+}
+
+/**
+ * Tag the main panel's parent with css, so panel elements can consistently be accessed
+ * using the same selector
+ */
+const tagPanels = () => {
+    const articleElement = assumeExists(document.querySelector(Selectors.mainContent))
+    // const mainPanel = assumeExists(articleElement.parentElement)
+    const mainPanel = articleElement
+    mainPanel.classList.add(PANEL_CSS_CLASS)
+    // const panels = Array.from(document.querySelectorAll(Selectors.sidebarScrollContainer)) as PanelElement[]
+    const panels = Array.from(document.querySelectorAll(Selectors.sidebarPage)) as PanelElement[]
+    panels.forEach(panelElement => panelElement.classList.add(PANEL_CSS_CLASS))
 }
 
 // Roughly two lines on either side

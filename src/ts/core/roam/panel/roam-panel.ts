@@ -1,74 +1,54 @@
-import {entries, mergeWith} from 'lodash'
-import {GraphVisualization} from 'src/core/features/spatial-graph-mode'
+import {entries} from 'lodash'
 import {assumeExists} from 'src/core/common/assert'
 import {Selectors} from 'src/core/roam/selectors'
 import {RoamEvent} from 'src/core/features/vim-mode/roam/roam-event'
 import {delay} from 'src/core/common/async'
-import {DisconnectFn} from 'src/core/common/mutation-observer'
+import {DisconnectFn} from 'src/core/common/event'
+import {toggleCssClass} from 'src/core/common/css'
+import {
+    namespaceId,
+    PANEL_CSS_CLASS,
+    PANEL_SELECTOR,
+    PanelElement,
+    PanelId,
+    plainId,
+} from 'src/core/roam/panel/roam-panel-utils'
+import {justClickedPanelId, rememberLastInteractedPanel} from 'src/core/roam/panel/roam-panel-origin'
 
-export type PanelElement = HTMLElement
-export type DomId = string
-export type PanelId = string
-
-export const PANEL_CSS_CLASS = 'roam-toolkit--panel'
-export const PANEL_SELECTOR = `.${PANEL_CSS_CLASS}`
-
-type PanelChange = {
-    type: 'ADD' | 'RENAME' | 'REMOVE'
-    // The panel the new one was opened from
-    fromPanel?: PanelId | null
-    // The panel the was just opened
-    panel: PanelId
-}
-
-export type DisconnectFn = () => void
-
-let justClickedPanelId: PanelId | null = null
-const clearJustClickedPanel = () => {
-    justClickedPanelId = null
-}
-const saveJustClickedPanel = (interactedElement: HTMLElement) => {
-    const justClickedPanel = interactedElement.closest(PANEL_SELECTOR)
-    if (!justClickedPanel) {
-        return
+export type PanelChange = {
+    // Is this initial bulk add?
+    isInitialAdd: boolean
+    // Panels that were just opened
+    addedPanels?: {
+        // The panel the new one was opened from
+        from: PanelId | null
+        to: PanelId
+    }[]
+    removedPanels?: PanelId[]
+    renamedPanel?: {
+        before: PanelId
+        after: PanelId
     }
-    justClickedPanelId = plainId(justClickedPanel.id)
-}
-const rememberLastInteractedPanel = (): DisconnectFn[] => {
-    clearJustClickedPanel()
-    return [
-        listenToEvent('mousedown', event => saveJustClickedPanel(event.target as HTMLElement)),
-        RoamEvent.onEditBlock(saveJustClickedPanel),
-    ]
 }
 
 type PanelToCount = {[id: string]: number}
 let previousIdToCount: PanelToCount = {}
 
 export const RoamPanel = {
-    onPanelChange(handleChange: (event: PanelChange[]) => void): DisconnectFn[] {
-        const emitEventsForPanelDiff = () => {
-            const idToDiff = getPanelCountDiff()
+    onPanelChange(handleChange: (event: PanelChange) => void): DisconnectFn {
+        const emitEventsForPanelDiff = (isInitialAdd: boolean = false) => {
+            const idDiffEntries = entries(getPanelCountDiff())
 
-            handleChange(
-                entries(idToDiff)
-                    .filter(([_, diff]) => diff !== 0)
-                    .map(([id, diff]) =>
-                        diff > 0
-                            ? {
-                                  type: 'ADD',
-                                  // The panel the new one was opened from
-                                  fromPanel: justClickedPanelId,
-                                  // The panel the was just opened
-                                  panel: id,
-                              }
-                            : {
-                                  type: 'REMOVE',
-                                  // The panel the was just opened
-                                  panel: id,
-                              }
-                    )
-            )
+            handleChange({
+                isInitialAdd,
+                addedPanels: idDiffEntries
+                    .filter(([_, diff]) => diff > 0)
+                    .map(([id]) => ({
+                        from: id === 'DAILY_NOTES' ? null : justClickedPanelId(),
+                        to: id,
+                    })),
+                removedPanels: idDiffEntries.filter(([_, diff]) => diff < 0).map(([id]) => id),
+            })
         }
 
         const emitRenameEvent = async (newTitle: string) => {
@@ -79,22 +59,29 @@ export const RoamPanel = {
             await delay(10)
             // Update panel counts, in case complex sidebar pages changed their names
             previousIdToCount = tagAndCountPanels()
-            handleChange([
-                {
-                    type: 'RENAME',
-                    fromPanel: oldId,
-                    panel: newTitle,
+            handleChange({
+                isInitialAdd: false,
+                renamedPanel: {
+                    before: oldId,
+                    after: newTitle,
                 },
-            ])
+            })
         }
 
-        return rememberLastInteractedPanel().concat([
-            listenToEvent('popstate', clearJustClickedPanel),
-            RoamEvent.onSidebarToggle(emitEventsForPanelDiff),
-            RoamEvent.onSidebarChange(emitEventsForPanelDiff),
-            RoamEvent.onChangePage(emitEventsForPanelDiff),
+        // Remove panels tags that may be lingering from vim mode
+        document.querySelectorAll(PANEL_SELECTOR).forEach(panel => panel.classList.remove(PANEL_CSS_CLASS))
+        emitEventsForPanelDiff(true)
+        const disconnectFns = [
+            rememberLastInteractedPanel(),
+            RoamEvent.onSidebarToggle(() => emitEventsForPanelDiff()),
+            RoamEvent.onSidebarChange(() => emitEventsForPanelDiff()),
+            RoamEvent.onChangePage(() => emitEventsForPanelDiff()),
             RoamEvent.onRenamePage(emitRenameEvent),
-        ])
+        ]
+        return () => {
+            previousIdToCount = {}
+            disconnectFns.forEach(disconnect => disconnect())
+        }
     },
 
     get(nodeId: PanelId): PanelElement | null {
@@ -102,26 +89,19 @@ export const RoamPanel = {
     },
 }
 
-const listenToEvent = (event: string, handler: (event: Event) => void): DisconnectFn => {
-    window.addEventListener(event, handler)
-    return () => window.removeEventListener(event, handler)
-}
-
-const getMainPanel = (): PanelElement => assumeExists(document.querySelector('.roam-center > div')) as HTMLElement
+const getMainPanel = (): PanelElement => assumeExists(document.querySelector(Selectors.mainContent)) as HTMLElement
 
 const getPanelCountDiff = (): PanelToCount => {
     const idToCount = tagAndCountPanels()
-    const idToDiff = mergeWith(
-        previousIdToCount,
-        idToCount,
-        (previousCount, count) => (previousCount || 0) - (count || 0)
-    )
+    const idToDiff: {[id: string]: number} = {}
+    Object.keys(idToCount)
+        .concat(Object.keys(previousIdToCount))
+        .forEach(id => {
+            idToDiff[id] = (idToCount[id] || 0) - (previousIdToCount[id] || 0)
+        })
     previousIdToCount = idToCount
     return idToDiff
 }
-
-const namespaceId = (nodeId: PanelId): DomId => `${PANEL_CSS_CLASS} ${nodeId}`
-const plainId = (namespacedId: DomId): PanelId => namespacedId.slice(20)
 
 const tagAndCountPanels = (): {[id: string]: number} => {
     const idToCount: {[id: string]: number} = {}
@@ -146,6 +126,7 @@ const tagAndCountPanels = (): {[id: string]: number} => {
 const tagMainPanel = (): PanelId => {
     const mainPanel = getMainPanel()
     const nodeId = panelIdFromMainPage(mainPanel)
+    mainPanel.classList.add(PANEL_CSS_CLASS)
     mainPanel.id = namespaceId(nodeId)
     return nodeId
 }
@@ -194,28 +175,4 @@ const panelIdFromMainPage = (mainPanelElement: PanelElement): PanelId => {
         }
     }
     return nodeId
-}
-
-/**
- * Tag the main panel's parent with css, so panel elements can consistently be accessed
- * using the same selector
- */
-export const tagPanels = () => {
-    if (GraphVisualization.instance) {
-        // Prefer the graph visualization's choice of panels if applicable
-        return
-    }
-    const articleElement = assumeExists(document.querySelector(Selectors.mainContent))
-    const mainPanel = assumeExists(articleElement.parentElement)
-    mainPanel.classList.add(PANEL_CSS_CLASS)
-    const panels = Array.from(document.querySelectorAll(Selectors.sidebarScrollContainer)) as PanelElement[]
-    panels.forEach(panelElement => panelElement.classList.add(PANEL_CSS_CLASS))
-}
-
-const toggleCssClass = (element: HTMLElement, className: string, toggleOn: boolean) => {
-    if (toggleOn) {
-        element.classList.add(className)
-    } else {
-        element.classList.remove(className)
-    }
 }

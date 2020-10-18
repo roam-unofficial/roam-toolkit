@@ -3,7 +3,7 @@ import {Selectors} from 'src/core/roam/selectors'
 import {delay} from 'src/core/common/async'
 
 import {clearVimView, updateVimView} from 'src/core/features/vim-mode/vim-view'
-import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-panel'
+import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {RoamEvent} from 'src/core/features/vim-mode/roam/roam-event'
 
 let disconnectHandlers: DisconnectFn[] = []

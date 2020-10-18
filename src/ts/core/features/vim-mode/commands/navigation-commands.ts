@@ -1,5 +1,5 @@
 import {nimap, nmap, nvmap, RoamVim} from 'src/core/features/vim-mode/vim'
-import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-panel'
+import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {closePageReferenceView, expandLastBreadcrumb, openMentions, openParentPage} from 'src/core/roam/references'
 
 export const NavigationCommands = [

@@ -3,7 +3,7 @@ import {Mode, nmap, nvmap, returnToNormalMode, RoamVim} from 'src/core/features/
 import {insertBlockAfter} from 'src/core/features/vim-mode/commands/insert-commands'
 import {Roam} from 'src/core/roam/roam'
 import {copyBlockEmbed, copyBlockReference} from 'src/core/roam/block'
-import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-panel'
+import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {RoamBlock} from 'src/core/features/vim-mode/roam/roam-block'
 
 const cutAndGoBackToNormal = async () => {

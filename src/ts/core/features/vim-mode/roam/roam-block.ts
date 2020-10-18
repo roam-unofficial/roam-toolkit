@@ -1,5 +1,5 @@
 import {assumeExists} from 'src/core/common/assert'
-import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-panel'
+import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {Roam} from 'src/core/roam/roam'
 
 export type BlockId = string

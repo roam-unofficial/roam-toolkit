@@ -3,7 +3,7 @@ import {getActiveEditElement} from 'src/core/common/dom'
 import {Selectors} from 'src/core/roam/selectors'
 import {delay, repeatAsync} from 'src/core/common/async'
 import {Shortcut} from 'src/core/settings'
-import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-panel'
+import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {Keyboard} from 'src/core/common/keyboard'
 import {RoamHighlight} from 'src/core/features/vim-mode/roam/roam-highlight'
 
