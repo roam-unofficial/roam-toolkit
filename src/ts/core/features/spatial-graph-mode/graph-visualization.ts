@@ -38,7 +38,9 @@ export class GraphVisualization {
                 {
                     selector: 'edge',
                     css: {
-                        color,
+                        'line-color': color,
+                        'target-arrow-color': color,
+                        'source-arrow-color': color,
                         'curve-style': 'bezier',
                         'target-arrow-shape': 'triangle',
                     },
@@ -292,7 +294,7 @@ export class GraphVisualization {
     onSelectNode(handleSelect: (nodeId: PanelId) => void) {
         this.cy.on('select', () => {
             const node = this.cy.nodes(':selected').first()
-            if (node) {
+            if (node.length > 0) {
                 handleSelect(node.id())
             }
         })
