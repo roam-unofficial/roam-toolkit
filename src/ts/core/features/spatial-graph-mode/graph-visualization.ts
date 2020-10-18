@@ -58,8 +58,6 @@ export class GraphVisualization {
         // TODO move dom manipulation outside, leave this class purely concerned with Cytoscape
         this.cy.on('viewport resize render', () => {
             requestAnimationFrame(() => {
-                domViewport.style.width = `${this.cy.width()}px`
-                domViewport.style.height = `${this.cy.height()}px`
                 domViewport.style.transform = `translate(${this.cy.pan().x}px, ${
                     this.cy.pan().y
                 }px) scale(${this.cy.zoom()})`
@@ -310,14 +308,13 @@ export class GraphVisualization {
             graphElement.id = GRAPH_MASK_ID
             document.body.prepend(graphElement)
 
-            const domViewport = getDomViewport()
             injectStyle(
                 `
                 #${GRAPH_MASK_ID} {
                     position: fixed;
-                    left: ${Math.round(domViewport.offsetLeft)}px;
+                    left: 0;
                     right: 0;
-                    top: ${Math.round(domViewport.offsetTop)}px;
+                    top: 0;
                     bottom: 0;
                 }
                 :root {
@@ -351,10 +348,21 @@ export class GraphVisualization {
                 .roam-body-main {
                     /* match Cytoscape's zoom origin */
                     transform-origin: 0 0;
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    bottom: 0 !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
                 }
                 .roam-center {
                     /* cancel position: static on the main panel */
-                    position: absolute;
+                    position: initial;
+                }
+                .roam-center .roam-toolkit--panel {
+                    /* cancel out margins that custom themes might add */
+                    margin: 0 !important;
                 }
                 .roam-toolkit--panel {
                     /* min-width doesn't really work, it jams up against #roam-right-sidebar-content */
@@ -363,9 +371,9 @@ export class GraphVisualization {
                     min-height: ${GraphModeSettings.get('Min Height')};
                     max-height: ${GraphModeSettings.get('Max Height')};
                     border-radius: 5px;
-                    position: absolute;
+                    position: absolute !important;
                     background: white;
-                    overflow: scroll;
+                    overflow-y: scroll !important;
                     margin: 0 !important;
                 }
                 /* The innermost sidebar div plays best with custom themes */
