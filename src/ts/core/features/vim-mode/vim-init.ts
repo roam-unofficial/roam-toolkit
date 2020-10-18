@@ -58,5 +58,8 @@ export const startVimMode = async () => {
 
 export const stopVimMode = () => {
     disconnectHandlers.forEach(disconnect => disconnect())
+    disconnectHandlers = []
     clearVimView()
 }
+
+export const isVimModeOn = () => disconnectHandlers.length > 0

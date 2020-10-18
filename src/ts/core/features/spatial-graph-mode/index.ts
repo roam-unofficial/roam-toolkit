@@ -12,6 +12,7 @@ import {updateVimView} from 'src/core/features/vim-mode/vim-view'
 import {PanelChange, RoamPanel} from 'src/core/roam/panel/roam-panel'
 import {DisconnectFn, listenToEvent} from 'src/core/common/event'
 import {GraphVisualization} from 'src/core/features/spatial-graph-mode/graph-visualization'
+import {isVimModeOn} from 'src/core/features/vim-mode/vim-init'
 
 /**
  * TODO Be able to resize nodes
@@ -176,9 +177,11 @@ const startSpatialGraphMode = async () => {
     }
 
     graph.onSelectNode(async nodeId => {
-        const panel = assumeExists(RoamPanel.get(nodeId))
-        RoamVimPanel.get(panel).select()
-        updateVimView()
+        if (isVimModeOn()) {
+            const panel = assumeExists(RoamPanel.get(nodeId))
+            RoamVimPanel.get(panel).select()
+            updateVimView()
+        }
     })
 
     disconnectFunctions = [
