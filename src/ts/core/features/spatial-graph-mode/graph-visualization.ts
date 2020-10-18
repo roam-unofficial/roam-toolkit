@@ -47,6 +47,9 @@ export class GraphVisualization {
                     selector: ':selected',
                     css: {
                         'background-color': selectionColor,
+                        'line-color': selectionColor,
+                        'target-arrow-color': selectionColor,
+                        'source-arrow-color': selectionColor,
                     },
                 },
             ],
@@ -290,7 +293,10 @@ export class GraphVisualization {
 
     onSelectNode(handleSelect: (nodeId: PanelId) => void) {
         this.cy.on('select', () => {
-            handleSelect(this.cy.nodes(':selected').first().id())
+            const node = this.cy.nodes(':selected').first()
+            if (node) {
+                handleSelect(node.id())
+            }
         })
     }
 
