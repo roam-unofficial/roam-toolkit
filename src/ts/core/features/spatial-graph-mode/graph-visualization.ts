@@ -7,18 +7,16 @@ import {PanelId} from 'src/core/roam/panel/roam-panel-utils'
 import {minBy} from 'lodash'
 import {injectStyle} from 'src/core/common/css'
 import {delay} from 'src/core/common/async'
+import {GraphModeSettings} from 'src/core/features/spatial-graph-mode/graph-mode-settings'
 
 const GRAPH_MASK_ID = 'roam-toolkit-graph-mode--mask'
 const GRAPH_MODE_CSS_ID = 'roam-toolkit-graph-mode'
 
 const getDomViewport = (): HTMLElement => assumeExists(document.querySelector('.roam-body-main')) as HTMLElement
 
-const MIN_PANEL_HEIGHT = '150px'
-const MAX_PANEL_HEIGHT = '80%'
-const PANEL_WIDTH = '550px'
-
 const MIN_EDGE_LENGTH = 50
 
+console.log('USE')
 cytoscape.use(cola)
 
 export class GraphVisualization {
@@ -26,6 +24,8 @@ export class GraphVisualization {
     cy: cytoscape.Core
 
     constructor(container: HTMLElement) {
+        const color = GraphModeSettings.get('Node Color')
+        const selectionColor = GraphModeSettings.get('Selection Color')
         this.cy = cytoscape({
             container,
             style: [
@@ -33,16 +33,21 @@ export class GraphVisualization {
                     selector: 'node',
                     css: {
                         shape: 'roundrectangle',
-                        // TODO allow configuring colors for themes
-                        color: '#b5b5b5',
-                        // 'background-color': '#fff',
+                        'background-color': color,
                     },
                 },
                 {
                     selector: 'edge',
                     css: {
+                        color,
                         'curve-style': 'bezier',
                         'target-arrow-shape': 'triangle',
+                    },
+                },
+                {
+                    selector: ':selected',
+                    css: {
+                        'background-color': selectionColor,
                     },
                 },
             ],
@@ -347,10 +352,11 @@ export class GraphVisualization {
                     position: absolute;
                 }
                 .roam-toolkit--panel {
-                    width: ${PANEL_WIDTH};
+                    min-width: ${GraphModeSettings.get('Min Width')};
+                    max-width: ${GraphModeSettings.get('Max Width')};
                     height: auto !important; /* prevent the main panel from stretching 100% */
-                    min-height: ${MIN_PANEL_HEIGHT};
-                    max-height: ${MAX_PANEL_HEIGHT};
+                    min-height: ${GraphModeSettings.get('Min Height')};
+                    max-height: ${GraphModeSettings.get('Max Height')};
                     border-radius: 5px;
                     position: absolute;
                     background: white;
