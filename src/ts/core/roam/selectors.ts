@@ -13,6 +13,7 @@ export const Selectors = {
     sidebarContent: '.sidebar-content',
     sidebarPage: '.sidebar-content > div > div',
     sidebar: '#right-sidebar',
+    sidebarScrollContainer: '#roam-right-sidebar-content',
 
     leftPanel: '.roam-sidebar-container',
 

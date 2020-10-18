@@ -6,7 +6,7 @@ export const onSelectorChange = (
     selector: string,
     handleChange: (changedElement: HTMLElement) => void,
     observeChildren: boolean = false,
-    observeAttributes: boolean = true
+    observeAttributes: boolean = false
 ): DisconnectFn =>
     observeElement(
         assumeExists(document.querySelector(selector)) as HTMLElement,

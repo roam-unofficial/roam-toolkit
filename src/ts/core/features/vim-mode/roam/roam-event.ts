@@ -78,16 +78,11 @@ export const RoamEvent = {
         // Only the content changes when switching between pages
         let stopObservingContent = onSelectorChange(Selectors.mainContent, handler)
         // The main panel changes when switching between daily notes and regular pages
-        const stopObservingMainPanel = onSelectorChange(
-            Selectors.mainPanel,
-            () => {
-                handler()
-                stopObservingContent()
-                stopObservingContent = onSelectorChange(Selectors.mainContent, handler)
-            },
-            false,
-            false // avoid detecting spatial graph mode transforms
-        )
+        const stopObservingMainPanel = onSelectorChange(Selectors.mainPanel, () => {
+            handler()
+            stopObservingContent()
+            stopObservingContent = onSelectorChange(Selectors.mainContent, handler)
+        })
 
         return () => {
             stopObservingContent()
