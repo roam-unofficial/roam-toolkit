@@ -16,7 +16,6 @@ const getDomViewport = (): HTMLElement => assumeExists(document.querySelector('.
 
 const MIN_EDGE_LENGTH = 50
 
-console.log('USE')
 cytoscape.use(cola)
 
 export class GraphVisualization {
@@ -352,8 +351,8 @@ export class GraphVisualization {
                     position: absolute;
                 }
                 .roam-toolkit--panel {
-                    min-width: ${GraphModeSettings.get('Min Width')};
-                    max-width: ${GraphModeSettings.get('Max Width')};
+                    /* min-width doesn't really work, it jams up against #roam-right-sidebar-content */
+                    width: ${GraphModeSettings.get('Width')};
                     height: auto !important; /* prevent the main panel from stretching 100% */
                     min-height: ${GraphModeSettings.get('Min Height')};
                     max-height: ${GraphModeSettings.get('Max Height')};

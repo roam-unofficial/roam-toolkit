@@ -158,6 +158,11 @@ const startSpatialGraphMode = async () => {
     ]
 }
 
+/**
+ * Cleaning up is very important for Spatial Mode!
+ * If some handlers aren't cleaned up, zombie handlers might break
+ * vim mode, or future invocations of graph mode.
+ */
 const stopSpatialGraphMode = () => {
     disconnectFunctions.forEach(disconnect => disconnect())
     GraphVisualization.destroy()

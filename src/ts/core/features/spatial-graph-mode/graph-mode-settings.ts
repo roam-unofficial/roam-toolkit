@@ -11,8 +11,7 @@ const _settings: {[label: string]: string} = {}
 
 export const GraphModeSettings = {
     all: [
-        spatialSetting('Min Width', '550px'),
-        spatialSetting('Max Width', '550px'),
+        spatialSetting('Width', '550px'),
         spatialSetting('Min Height', '150px'),
         spatialSetting('Max Height', '80%'),
         spatialSetting('Node Color', '#999'),
