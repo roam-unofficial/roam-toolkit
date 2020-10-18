@@ -35,7 +35,7 @@ const spatialShortcut = (
     id: `spatialGraphMode_${label}`,
     label,
     initValue: key,
-    onPress: () => {
+    onPress: event => {
         if (getMode() === Mode.NORMAL) {
             const graph = GraphVisualization.get()
             onPress(graph)
@@ -44,6 +44,8 @@ const spatialShortcut = (
                 graph.selectMiddleOfViewport()
             }
         }
+        // Avoid using the arrow keys for scroll, if they're bound
+        event.preventDefault()
     },
 })
 
