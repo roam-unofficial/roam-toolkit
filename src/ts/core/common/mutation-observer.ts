@@ -19,7 +19,7 @@ const observeElement = (
     observeInside: HTMLElement,
     handleChange: (changedElement: HTMLElement) => void,
     observeChildren: boolean = false,
-    observeAttributes: boolean = true
+    observeAttributes: boolean = false
 ): DisconnectFn => {
     const waitForLoad = new MutationObserver(mutations => {
         handleChange(mutations[0].target as HTMLElement)

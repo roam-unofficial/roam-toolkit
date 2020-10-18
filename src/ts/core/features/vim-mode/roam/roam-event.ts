@@ -31,20 +31,27 @@ export const RoamEvent = {
 
     // Triggers when opening or closing an article in the sidebar
     onSidebarChange(handler: () => void): DisconnectFn {
-        let stopObserving: DisconnectFn | null = null
-        const observeSidebarPanels = () => {
-            if (isSidebarShowing() && !stopObserving) {
-                stopObserving = onSelectorChange(Selectors.sidebarContent, () => {
-                    handler()
-                })
-            } else if (stopObserving) {
-                stopObserving()
-                stopObserving = null
+        let _stopObservingInside: DisconnectFn | null = null
+        const observeSidebarPages = () => {
+            if (isSidebarShowing()) {
+                _stopObservingInside = _stopObservingInside || onSelectorChange(Selectors.sidebarContent, handler)
+            } else {
+                stopObservingInside()
+            }
+        }
+        const stopObservingInside = () => {
+            if (_stopObservingInside) {
+                _stopObservingInside()
+                _stopObservingInside = null
             }
         }
         // Start watching, if the sidebar is already open
-        observeSidebarPanels()
-        return RoamEvent.onSidebarToggle(observeSidebarPanels)
+        observeSidebarPages()
+        const stopObserving = RoamEvent.onSidebarToggle(observeSidebarPages)
+        return () => {
+            stopObserving()
+            stopObservingInside()
+        }
     },
 
     onEditBlock(handler: (element: BlockElement) => void): DisconnectFn {

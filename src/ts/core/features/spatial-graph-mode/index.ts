@@ -7,7 +7,7 @@ import {Selectors} from 'src/core/roam/selectors'
 import {assumeExists} from 'src/core/common/assert'
 import {Mouse} from 'src/core/common/mouse'
 import {getMode, Mode} from 'src/core/features/vim-mode/vim'
-import {VimRoamPanel as RoamVimPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
+import {VimRoamPanel, VimRoamPanel as RoamVimPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {updateVimView} from 'src/core/features/vim-mode/vim-view'
 import {PanelChange, RoamPanel} from 'src/core/roam/panel/roam-panel'
 import {DisconnectFn, listenToEvent} from 'src/core/common/event'
@@ -178,6 +178,7 @@ const startSpatialGraphMode = async () => {
 
     graph.onSelectNode(async nodeId => {
         if (isVimModeOn()) {
+            console.trace()
             const panel = assumeExists(RoamPanel.get(nodeId))
             RoamVimPanel.get(panel).select()
             updateVimView()
@@ -194,6 +195,6 @@ const startSpatialGraphMode = async () => {
 }
 
 const stopSpatialGraphMode = () => {
-    GraphVisualization.destroy()
     disconnectFunctions.forEach(disconnect => disconnect())
+    GraphVisualization.destroy()
 }

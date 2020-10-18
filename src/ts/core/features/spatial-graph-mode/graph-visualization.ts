@@ -285,6 +285,10 @@ export class GraphVisualization {
         })
     }
 
+    destroy() {
+        this.cy.destroy()
+    }
+
     static async init() {
         if (!GraphVisualization.instance) {
             const graphElement = document.createElement('div')
@@ -381,6 +385,7 @@ export class GraphVisualization {
     static destroy() {
         if (GraphVisualization.instance) {
             GraphVisualization.instance.resetPanelStyles()
+            GraphVisualization.instance.destroy()
             const domViewport = getDomViewport()
             domViewport.style.width = '100vw'
             domViewport.style.height = 'calc(100% - 45px)'
