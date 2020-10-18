@@ -14,6 +14,7 @@ import {DisconnectFn, listenToEvent} from 'src/core/common/event'
 import {GraphVisualization} from 'src/core/features/spatial-graph-mode/graph-visualization'
 import {isVimModeOn} from 'src/core/features/vim-mode/vim-init'
 import {GraphModeSettings} from 'src/core/features/spatial-graph-mode/graph-mode-settings'
+import {delay} from 'src/core/common/async'
 
 /**
  * TODO Be able to resize nodes
@@ -152,6 +153,7 @@ const startSpatialGraphMode = async () => {
 
     disconnectFunctions = [
         listenToEvent('resize', () => graph.runLayout()),
+        RoamEvent.onFoldBlock(() => graph.runLayout()),
         RoamEvent.onChangeBlock(() => graph.runLayout()),
         RoamEvent.onEditBlock(() => graph.runLayout()),
         RoamEvent.onBlurBlock(() => graph.runLayout()),

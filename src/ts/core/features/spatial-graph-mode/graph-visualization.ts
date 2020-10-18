@@ -345,7 +345,7 @@ export class GraphVisualization {
                 }
 
                 /* The container that holds everything */
-                .roam-body-main {
+                .roam-main .roam-body-main {
                     /* match Cytoscape's zoom origin */
                     transform-origin: 0 0;
                     position: fixed !important;

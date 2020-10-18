@@ -2,6 +2,8 @@ import {BlockElement} from 'src/core/features/vim-mode/roam/roam-block'
 import {DisconnectFn, onSelectorChange, waitForSelectorToExist} from 'src/core/common/mutation-observer'
 import {Selectors} from 'src/core/roam/selectors'
 import {assumeExists} from 'src/core/common/assert'
+import {listenToEvent} from 'src/core/common/event'
+import {delay} from 'src/core/common/async'
 
 const onBlockEvent = (eventType: string, handler: (element: BlockElement) => void) => {
     const handleBlockEvent = (event: Event) => {
@@ -52,6 +54,17 @@ export const RoamEvent = {
             stopObserving()
             stopObservingInside()
         }
+    },
+
+    onFoldBlock(handler: () => void): DisconnectFn {
+        return listenToEvent('click', async (event: Event) => {
+            const element = event.target as HTMLElement
+            if (element.classList.contains('rm-caret')) {
+                // resize panels after folding. folding sometimes takes a while
+                await delay(100)
+                handler()
+            }
+        })
     },
 
     onEditBlock(handler: (element: BlockElement) => void): DisconnectFn {
