@@ -13,7 +13,7 @@ const GRAPH_MODE_CSS_ID = 'roam-toolkit-graph-mode'
 
 const getDomViewport = (): HTMLElement => assumeExists(document.querySelector('.roam-body-main')) as HTMLElement
 
-const MIN_PANEL_HEIGHT = '200px'
+const MIN_PANEL_HEIGHT = '150px'
 const MAX_PANEL_HEIGHT = '80%'
 const PANEL_WIDTH = '550px'
 

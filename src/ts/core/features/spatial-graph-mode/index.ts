@@ -7,7 +7,7 @@ import {Selectors} from 'src/core/roam/selectors'
 import {assumeExists} from 'src/core/common/assert'
 import {Mouse} from 'src/core/common/mouse'
 import {getMode, Mode} from 'src/core/features/vim-mode/vim'
-import {RoamPanel as RoamVimPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
+import {VimRoamPanel as RoamVimPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {updateVimView} from 'src/core/features/vim-mode/vim-view'
 import {PanelChange, RoamPanel} from 'src/core/roam/panel/roam-panel'
 import {DisconnectFn, listenToEvent} from 'src/core/common/event'
@@ -17,12 +17,6 @@ import {GraphVisualization} from 'src/core/features/spatial-graph-mode/graph-vis
  * TODO Be able to resize nodes
  * https://github.com/iVis-at-Bilkent/cytoscape.js-node-editing
  * Need to impose dimensions if manually adjusted, but react to DOM otherwise
- *
- * TODO Fix vim scrolling in sidebar in non-spatial mode
- * (you can scroll between panels, but not within a panel)
- * maybe have spatial mode override the choice of panel,
- * but have vim mode default to a single sidebar panel
- *
  *
  * TODO Be able to disable the graph mode, but still have it run in the background,
  * so it can be resumed

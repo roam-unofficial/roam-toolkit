@@ -4,11 +4,12 @@ import {Selectors} from 'src/core/roam/selectors'
 import {assumeExists} from 'src/core/common/assert'
 import {BlockElement, BlockId, RoamBlock} from 'src/core/features/vim-mode/roam/roam-block'
 import {relativeItem} from 'src/core/common/array'
-import {PANEL_CSS_CLASS, PANEL_SELECTOR, PanelElement} from 'src/core/roam/panel/roam-panel-utils'
+import {PANEL_SELECTOR, PanelElement} from 'src/core/roam/panel/roam-panel-utils'
+import {RoamPanel} from 'src/core/roam/panel/roam-panel'
 
 type BlockNavigationState = {
     panelOrder: PanelId[]
-    panels: Map<PanelId, RoamPanel>
+    panels: Map<PanelId, VimRoamPanel>
     focusedPanel: PanelIndex
 }
 
@@ -26,15 +27,9 @@ type PanelId = PanelElement
 type PanelIndex = number
 
 /**
- * A "Panel" is a viewport that contains blocks. For now, there is just
- * the Main panel and the Right panel. It is analogous a vim window
- *
- * In the future, each page in the right panel could be controlled as it's
- * own "panel", which might be useful for Matsuchak/Masonry mode
- *
- * The generically reusable parts of this should probably move to core/roam
+ * This is the panel related logic specific to scrolling and navigating blocks
  */
-export class RoamPanel {
+export class VimRoamPanel {
     private readonly element: PanelElement
     private _selectedBlockId: BlockId | null
     /**
@@ -122,43 +117,44 @@ export class RoamPanel {
         this.element.scrollIntoView({behavior: 'smooth'})
     }
 
-    static selected(): RoamPanel {
+    static selected(): VimRoamPanel {
         // Select the next closest panel when closing the last panel
         state.focusedPanel = Math.min(state.focusedPanel, state.panelOrder.length - 1)
-        return RoamPanel.get(state.panelOrder[state.focusedPanel])
+        return VimRoamPanel.get(state.panelOrder[state.focusedPanel])
     }
 
-    static fromBlock(blockElement: BlockElement): RoamPanel {
-        return RoamPanel.get(assumeExists(blockElement.closest(PANEL_SELECTOR)) as PanelElement)
+    static fromBlock(blockElement: BlockElement): VimRoamPanel {
+        return VimRoamPanel.get(assumeExists(blockElement.closest(PANEL_SELECTOR)) as PanelElement)
     }
 
-    private static at(panelIndex: PanelIndex): RoamPanel {
+    private static at(panelIndex: PanelIndex): VimRoamPanel {
         panelIndex = clamp(panelIndex, 0, state.panelOrder.length - 1)
-        return RoamPanel.get(state.panelOrder[panelIndex])
+        return VimRoamPanel.get(state.panelOrder[panelIndex])
     }
 
-    static mainPanel(): RoamPanel {
-        return RoamPanel.at(0)
+    static mainPanel(): VimRoamPanel {
+        return VimRoamPanel.at(0)
     }
 
-    static previousPanel(): RoamPanel {
-        return RoamPanel.at(state.focusedPanel - 1)
+    static previousPanel(): VimRoamPanel {
+        return VimRoamPanel.at(state.focusedPanel - 1)
     }
 
-    static nextPanel(): RoamPanel {
-        return RoamPanel.at(state.focusedPanel + 1)
+    static nextPanel(): VimRoamPanel {
+        return VimRoamPanel.at(state.focusedPanel + 1)
     }
 
     static updateSidePanels() {
-        tagPanels()
+        RoamPanel.tagPanels()
         state.panelOrder = Array.from(document.querySelectorAll(PANEL_SELECTOR)) as PanelElement[]
-        state.panels = new Map(state.panelOrder.map(id => [id, RoamPanel.get(id)]))
+        state.panels = new Map(state.panelOrder.map(id => [id, VimRoamPanel.get(id)]))
+        console.log(state)
     }
 
-    static get(panelId: PanelId): RoamPanel {
+    static get(panelId: PanelId): VimRoamPanel {
         // lazily create one if doesn't already exist
         if (!state.panels.has(panelId)) {
-            state.panels.set(panelId, new RoamPanel(panelId))
+            state.panels.set(panelId, new VimRoamPanel(panelId))
         }
         return assumeExists(state.panels.get(panelId))
     }
@@ -191,20 +187,6 @@ export class RoamPanel {
     private lastVisibleBlock() {
         return assumeExists(findLast(this.blocks(), blockIsVisible), 'Could not find any visible block')
     }
-}
-
-/**
- * Tag the main panel's parent with css, so panel elements can consistently be accessed
- * using the same selector
- */
-const tagPanels = () => {
-    const articleElement = assumeExists(document.querySelector(Selectors.mainContent))
-    // const mainPanel = assumeExists(articleElement.parentElement)
-    const mainPanel = articleElement
-    mainPanel.classList.add(PANEL_CSS_CLASS)
-    // const panels = Array.from(document.querySelectorAll(Selectors.sidebarScrollContainer)) as PanelElement[]
-    const panels = Array.from(document.querySelectorAll(Selectors.sidebarPage)) as PanelElement[]
-    panels.forEach(panelElement => panelElement.classList.add(PANEL_CSS_CLASS))
 }
 
 // Roughly two lines on either side

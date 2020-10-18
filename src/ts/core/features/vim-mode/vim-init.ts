@@ -3,7 +3,7 @@ import {Selectors} from 'src/core/roam/selectors'
 import {delay} from 'src/core/common/async'
 
 import {clearVimView, updateVimView} from 'src/core/features/vim-mode/vim-view'
-import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
+import {VimRoamPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {RoamEvent} from 'src/core/features/vim-mode/roam/roam-event'
 
 let disconnectHandlers: DisconnectFn[] = []
@@ -21,8 +21,8 @@ export const startVimMode = async () => {
     disconnectHandlers = [
         // Select block when clicked
         RoamEvent.onEditBlock(blockElement => {
-            RoamPanel.fromBlock(blockElement).select()
-            RoamPanel.selected().selectBlock(blockElement.id)
+            VimRoamPanel.fromBlock(blockElement).select()
+            VimRoamPanel.selected().selectBlock(blockElement.id)
             updateVimView()
         }),
 
@@ -32,27 +32,27 @@ export const startVimMode = async () => {
         // Re-select main panel block after the closing right panel
         RoamEvent.onSidebarToggle(isRightPanelOn => {
             if (!isRightPanelOn) {
-                RoamPanel.mainPanel().select()
+                VimRoamPanel.mainPanel().select()
             }
-            RoamPanel.updateSidePanels()
+            VimRoamPanel.updateSidePanels()
             updateVimView()
         }),
 
         // Select first block in right panel when closing pages in right panel
         RoamEvent.onSidebarChange(() => {
-            RoamPanel.updateSidePanels()
+            VimRoamPanel.updateSidePanels()
             updateVimView()
         }),
 
         // Select first block when switching pages
         RoamEvent.onChangePage(() => {
-            RoamPanel.updateSidePanels()
-            RoamPanel.mainPanel().selectFirstBlock()
+            VimRoamPanel.updateSidePanels()
+            VimRoamPanel.mainPanel().selectFirstBlock()
             updateVimView()
         }),
     ]
 
-    RoamPanel.updateSidePanels()
+    VimRoamPanel.updateSidePanels()
     updateVimView()
 }
 
