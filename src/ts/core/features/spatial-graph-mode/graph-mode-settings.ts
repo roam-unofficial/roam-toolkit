@@ -21,6 +21,7 @@ export const GraphModeSettings = {
         spatialSetting('Animation Duration (ms)', '200'),
         spatialSetting('Layout Duration (ms)', '200'),
         spatialSetting('Node Spacing', '50'),
+        spatialSetting('Follow nodes on open (off/pan/panZoom)', 'pan'),
     ],
 
     get: (label: string) => _settings[label],

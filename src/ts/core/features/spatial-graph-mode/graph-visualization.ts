@@ -13,6 +13,7 @@ const GRAPH_MASK_ID = 'roam-toolkit-graph-mode--mask'
 const GRAPH_MODE_CSS_ID = 'roam-toolkit-graph-mode'
 
 const getDomViewport = (): HTMLElement => assumeExists(document.querySelector('.roam-body-main')) as HTMLElement
+const unselectText = () => window.getSelection()?.removeAllRanges()
 
 cytoscape.use(cola)
 
@@ -139,7 +140,11 @@ export class GraphVisualization {
         // bring attention to the newly selected node
         this.selectNode(node)
         this.cy.promiseOn('layoutstop').then(() => {
-            this.panTo(toPanel, fromPanel)
+            const followBehavior = GraphModeSettings.get('Follow nodes on open (off/pan/panZoom)')
+            if (followBehavior === 'pan' || followBehavior === 'panZoom') {
+                this.panTo(toPanel, fromPanel, followBehavior, unselectText)
+            }
+            unselectText()
         })
     }
 
@@ -186,24 +191,30 @@ export class GraphVisualization {
         node.remove()
     }
 
-    panTo(toPanel: PanelId, fromPanel: PanelId | null = null) {
+    panTo(toPanel: PanelId, fromPanel: PanelId | null = null, behavior: 'pan' | 'panZoom', handleComplete: () => void) {
         let nodesToFocus = this.cy.getElementById(toPanel)
         if (fromPanel) {
             nodesToFocus = nodesToFocus.union(this.cy.getElementById(fromPanel))
         }
         this.cy.stop(true, true) // stop the previous animation
+        const panOptions =
+            behavior === 'pan'
+                ? {
+                      center: {
+                          eles: nodesToFocus,
+                      },
+                  }
+                : {
+                      fit: {
+                          eles: nodesToFocus,
+                          padding: 50,
+                      },
+                  }
         this.cy.animate({
-            fit: {
-                eles: nodesToFocus,
-                padding: 50,
-            },
+            ...panOptions,
             easing: 'ease-out',
             duration: getAnimationDuration(),
-            complete: () => {
-                // avoid accidentally selecting text dues to panels shifting underneath
-                // before getting a change to release the click
-                window.getSelection()?.removeAllRanges()
-            },
+            complete: handleComplete,
         })
     }
 
