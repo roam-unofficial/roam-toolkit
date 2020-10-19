@@ -3,7 +3,7 @@ import cytoscape, {NodeDataDefinition, NodeSingular} from 'cytoscape'
 import cola from 'cytoscape-cola'
 import {assumeExists} from 'src/core/common/assert'
 import {RoamPanel} from 'src/core/roam/panel/roam-panel'
-import {PanelId} from 'src/core/roam/panel/roam-panel-utils'
+import {PanelElement, PanelId} from 'src/core/roam/panel/roam-panel-utils'
 import {minBy} from 'lodash'
 import {injectStyle} from 'src/core/common/css'
 import {delay} from 'src/core/common/async'
@@ -14,13 +14,16 @@ const GRAPH_MODE_CSS_ID = 'roam-toolkit-graph-mode'
 
 const getDomViewport = (): HTMLElement => assumeExists(document.querySelector('.roam-body-main')) as HTMLElement
 
-const MIN_EDGE_LENGTH = 50
-
 cytoscape.use(cola)
 
 export class GraphVisualization {
     static instance: GraphVisualization | null
     cy: cytoscape.Core
+    // Queue position updates into batches.
+    // This prevents the layout thrashing when alternating between reading/writing
+    // Node positions to the DOM
+    // https://developers.google.com/web/fundamentals/performance/rendering/avoid-large-complex-layouts-and-layout-thrashing
+    positionUpdates: Map<PanelElement, {left: string; top: string}>
 
     constructor(container: HTMLElement) {
         const color = GraphModeSettings.get('Node Color')
@@ -58,29 +61,37 @@ export class GraphVisualization {
         })
         const domViewport = getDomViewport()
         // TODO move dom manipulation outside, leave this class purely concerned with Cytoscape
-        this.cy.on('viewport resize render', () => {
+        this.cy.on('viewport resize', () => {
             requestAnimationFrame(() => {
                 domViewport.style.transform = `translate(${this.cy.pan().x}px, ${
                     this.cy.pan().y
                 }px) scale(${this.cy.zoom()})`
             })
         })
-        this.cy.on('render', () => {
-            requestAnimationFrame(() => {
-                // @ts-ignore .json() is just an object in the types
-                const nodes = this.cy.json().elements.nodes
-                if (nodes) {
-                    nodes.forEach((node: NodeDataDefinition) => {
-                        const panel = assumeExists(RoamPanel.get(assumeExists(node.data.id)))
-                        const position = assumeExists(node.position)
-                        panel.style.left = `${Math.round(position.x - panel.offsetWidth / 2)}px`
-                        panel.style.top = `${Math.round(position.y - panel.offsetHeight / 2) + 5}px`
-                    })
-                }
-            })
-        })
+        this.positionUpdates = new Map()
+        this.cy.on('position', event => this.queuePositionUpdate(event.target))
+        this.cy.on('render', () => this.flushPositionUpdates())
         this.cy.maxZoom(1)
         this.cy.minZoom(0.2)
+    }
+
+    private queuePositionUpdate(node: NodeSingular) {
+        const panel = assumeExists(RoamPanel.get(assumeExists(node.id())))
+        const position = assumeExists(node.position())
+        this.positionUpdates.set(panel, {
+            left: `${Math.round(position.x - panel.offsetWidth / 2)}px`,
+            top: `${Math.round(position.y - panel.offsetHeight / 2) + 5}px`,
+        })
+    }
+
+    private flushPositionUpdates() {
+        requestAnimationFrame(() => {
+            this.positionUpdates.forEach(({left, top}, panel) => {
+                panel.style.left = left
+                panel.style.top = top
+            })
+            this.positionUpdates = new Map()
+        })
     }
 
     addNode(toPanel: PanelId, fromPanel: PanelId | null = null) {
@@ -96,7 +107,7 @@ export class GraphVisualization {
                 const fromNode = this.cy.getElementById(fromPanel)
                 node.position({
                     // Grow the graph towards the right
-                    x: fromNode.position().x + fromNode.width() + MIN_EDGE_LENGTH,
+                    x: fromNode.position().x + fromNode.width() + getNodeSpacing(),
                     // Tiny random offset prevents nodes from getting jammed if it spawns
                     // in the exact same location as another
                     y: fromNode.position().y + Math.random() * 10,
@@ -187,7 +198,7 @@ export class GraphVisualization {
                 padding: 50,
             },
             easing: 'ease-out',
-            duration: 200,
+            duration: getAnimationDuration(),
             complete: () => {
                 // avoid accidentally selecting text dues to panels shifting underneath
                 // before getting a change to release the click
@@ -215,8 +226,11 @@ export class GraphVisualization {
                 // @ts-ignore randomize when laying out for the first time, to avoid seizures from all the nodes being jammed on the same space
                 randomize: firstRender,
                 // @ts-ignore
-                maxSimulationTime: firstRender ? 1000 : 200,
-                nodeSpacing: () => MIN_EDGE_LENGTH,
+                animate: getLayoutDuration() > 0,
+                // @ts-ignore
+                maxSimulationTime: getLayoutDuration() || 1000,
+                // @ts-ignore if maxSimulationTime is too low, the layout doesn't actually run
+                nodeSpacing: getNodeSpacing,
             })
             .stop()
             .run()
@@ -424,6 +438,10 @@ export class GraphVisualization {
         }
     }
 }
+
+const getAnimationDuration = (): number => Number.parseInt(GraphModeSettings.get('Animation Duration (ms)'), 10)
+const getLayoutDuration = (): number => Number.parseInt(GraphModeSettings.get('Layout Duration (ms)'), 10)
+const getNodeSpacing = (): number => Number.parseInt(GraphModeSettings.get('Node Spacing'), 10)
 
 type Vector = {x: number; y: number}
 

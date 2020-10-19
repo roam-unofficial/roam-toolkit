@@ -18,6 +18,9 @@ export const GraphModeSettings = {
         spatialSetting('Selection Color', '#1667d3'),
         spatialSetting('Keyboard Pan Speed', '20'),
         spatialSetting('Keyboard Drag Speed', '100'),
+        spatialSetting('Animation Duration (ms)', '200'),
+        spatialSetting('Layout Duration (ms)', '200'),
+        spatialSetting('Node Spacing', '50'),
     ],
 
     get: (label: string) => _settings[label],

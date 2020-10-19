@@ -14,7 +14,6 @@ import {DisconnectFn, listenToEvent} from 'src/core/common/event'
 import {GraphVisualization} from 'src/core/features/spatial-graph-mode/graph-visualization'
 import {isVimModeOn} from 'src/core/features/vim-mode/vim-init'
 import {GraphModeSettings} from 'src/core/features/spatial-graph-mode/graph-mode-settings'
-import {delay} from 'src/core/common/async'
 
 /**
  * TODO Be able to resize nodes
@@ -58,7 +57,9 @@ const dragSpeed = () => Number.parseInt(GraphModeSettings.get('Keyboard Drag Spe
 export const config: Feature = {
     id: 'spatial_graph_mode',
     name: 'Spatial Graph Mode',
-    warning: 'Will probably break custom css;',
+    // Moving around in the graph view updates the style of the main body,
+    // which makes elements reflow, due to [style*="..."] selectors applying again.
+    warning: 'Will lag if your CSS theme uses [style=*] selectors!',
     enabledByDefault: false,
     settings: [
         ...GraphModeSettings.all,
