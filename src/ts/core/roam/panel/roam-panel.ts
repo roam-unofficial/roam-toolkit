@@ -79,7 +79,7 @@ export const RoamPanel = {
         }
     },
 
-    get(nodeId: PanelId): PanelElement | null {
+    getPanel(nodeId: PanelId): PanelElement | null {
         return document.getElementById(namespaceId(nodeId))
     },
 
@@ -159,12 +159,15 @@ const tagSidebarPanel = (
     toggleCssClass(sidebarPage, 'roam-toolkit--panel-dupe-main', duplicatesMain)
 }
 
+const firstBlockId = (panelElement: PanelElement) =>
+    assumeExists(panelElement.querySelector(`${Selectors.block}, ${Selectors.blockInput}`)?.id)
+
 const panelIdFromSidebarPage = (sidebarPage: PanelElement): string => {
     const header = assumeExists(sidebarPage.querySelector('[draggable] > .level2, [draggable] > div')) as HTMLElement
     const headerText = assumeExists(header.innerText)
     if (headerText === 'Block Outline') {
         // Need Selectors.blockInput, because ctrl+shift+o opens a panel with the block already focused
-        return assumeExists(sidebarPage.querySelector(`${Selectors.block}, ${Selectors.blockInput}`)?.id)
+        return firstBlockId(sidebarPage)
     }
     return headerText
 }
@@ -174,18 +177,28 @@ const getComplexPageName = (mainTitle: HTMLElement) =>
         .map(node => (node as Text).data || `[[${(node as HTMLElement).dataset?.linkTitle}]]`)
         .join('')
 
-const panelIdFromMainPage = (mainPanelElement: PanelElement): PanelId => {
-    let nodeId
+const panelIdFromMainPage = (mainPage: PanelElement): PanelId => {
     if (document.querySelector(Selectors.dailyNotes)) {
-        nodeId = 'DAILY_NOTES'
-    } else {
-        const mainTitle = mainPanelElement.querySelector('.rm-title-display > span') as HTMLElement
-        if (mainTitle) {
-            nodeId = getComplexPageName(mainTitle)
-        } else {
-            const mainTitleTextArea = mainPanelElement.querySelector('.rm-title-textarea') as HTMLTextAreaElement
-            nodeId = mainTitleTextArea.value
-        }
+        return 'DAILY_NOTES'
     }
-    return nodeId
+
+    const mainTitle = mainPage.querySelector('.rm-title-display > span') as HTMLElement
+    if (mainTitle) {
+        return getComplexPageName(mainTitle)
+    }
+
+    const mainTitleTextArea = mainPage.querySelector('.rm-title-textarea') as HTMLTextAreaElement
+    if (mainTitleTextArea) {
+        return mainTitleTextArea.value
+    }
+
+    if (mainPage.querySelector('.rm-zoom')) {
+        // Treat block outlines on the main page as having the same id
+        // As the main page itself, so we don't create/destroy panels
+        // when zooming in/out
+        const firstBreadcrumb = assumeExists(mainPage.querySelector('.rm-zoom-item-content')) as HTMLElement
+        return firstBreadcrumb.innerText
+    }
+
+    throw new Error('Could not identify the main panel')
 }

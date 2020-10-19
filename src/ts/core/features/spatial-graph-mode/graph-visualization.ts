@@ -77,7 +77,7 @@ export class GraphVisualization {
     }
 
     private queuePositionUpdate(node: NodeSingular) {
-        const panel = assumeExists(RoamPanel.get(assumeExists(node.id())))
+        const panel = assumeExists(RoamPanel.getPanel(assumeExists(node.id())))
         const position = assumeExists(node.position())
         this.positionUpdates.set(panel, {
             left: `${Math.round(position.x - panel.offsetWidth / 2)}px`,
@@ -224,7 +224,7 @@ export class GraphVisualization {
 
     runLayout(firstRender: boolean = false) {
         this.cy.$('node').forEach(node => {
-            const domNode = RoamPanel.get(node.id())
+            const domNode = RoamPanel.getPanel(node.id())
             if (domNode) {
                 node.style('width', domNode.offsetWidth + 10)
                 node.style('height', domNode.offsetHeight + 20)
@@ -252,7 +252,7 @@ export class GraphVisualization {
         const nodes = this.cy.json().elements.nodes
         if (nodes) {
             nodes.forEach((node: NodeDataDefinition) => {
-                const panel = assumeExists(RoamPanel.get(assumeExists(node.data.id)))
+                const panel = assumeExists(RoamPanel.getPanel(assumeExists(node.data.id)))
                 panel.style.removeProperty('left')
                 panel.style.removeProperty('top')
             })

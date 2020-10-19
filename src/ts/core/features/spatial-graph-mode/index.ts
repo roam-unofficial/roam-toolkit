@@ -120,7 +120,7 @@ const startSpatialGraphMode = async () => {
         panelChange.removedPanels?.forEach(panel => {
             // Only remove the panel if it's the last remaining one.
             // We don't want to remove the whole node, if it's just a dupe
-            if (!RoamPanel.get(panel)) {
+            if (!RoamPanel.getPanel(panel)) {
                 graph.removeNode(panel)
             }
         })
@@ -146,7 +146,7 @@ const startSpatialGraphMode = async () => {
 
     graph.onSelectNode(nodeId => {
         if (isVimModeOn()) {
-            const panel = assumeExists(RoamPanel.get(nodeId))
+            const panel = assumeExists(RoamPanel.getPanel(nodeId))
             RoamVimPanel.get(panel).select()
             updateVimView()
         }
