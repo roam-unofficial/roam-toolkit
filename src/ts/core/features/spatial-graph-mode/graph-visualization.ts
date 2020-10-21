@@ -77,12 +77,18 @@ export class GraphVisualization {
     }
 
     private queuePositionUpdate(node: NodeSingular) {
-        const panel = assumeExists(RoamPanel.getPanel(assumeExists(node.id())))
-        const position = assumeExists(node.position())
-        this.positionUpdates.set(panel, {
-            left: `${Math.round(position.x - panel.offsetWidth / 2)}px`,
-            top: `${Math.round(position.y - panel.offsetHeight / 2) + 5}px`,
-        })
+        const panel = RoamPanel.getPanel(node.id())
+        // Gracefully do nothing if the panel has already disappeared.
+        // That way, we won't queue obsolete position updates
+        // if we re-layout just before the node is removed.
+        // (e.g. zooming into a block on daily notes)
+        if (panel) {
+            const position = assumeExists(node.position())
+            this.positionUpdates.set(panel, {
+                left: `${Math.round(position.x - panel.offsetWidth / 2)}px`,
+                top: `${Math.round(position.y - panel.offsetHeight / 2) + 5}px`,
+            })
+        }
     }
 
     private flushPositionUpdates() {
@@ -223,7 +229,7 @@ export class GraphVisualization {
     }
 
     runLayout(firstRender: boolean = false) {
-        this.cy.$('node').forEach(node => {
+        this.cy.nodes().forEach(node => {
             const domNode = RoamPanel.getPanel(node.id())
             if (domNode) {
                 node.style('width', domNode.offsetWidth + 10)
