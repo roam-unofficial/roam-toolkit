@@ -224,19 +224,16 @@ export class GraphVisualization {
         })
     }
 
-    panToSelectionIfNeeded() {
+    panToSelectionIfNeeded(padding: number = 50) {
         const selectionBox = this.selectedNodes().boundingBox({})
         const viewport = this.cy.extent()
 
-        const overflowRight = Math.max(0, selectionBox.x2 - viewport.x2)
-        const overflowLeft = Math.max(0, viewport.x1 - selectionBox.x1)
-        const overflowTop = Math.max(0, viewport.y1 - selectionBox.y1)
-        const overflowBottom = Math.max(0, selectionBox.y2 - viewport.y2)
+        const overflowRight = Math.max(0, selectionBox.x2 - viewport.x2 + padding)
+        const overflowLeft = Math.max(0, viewport.x1 - selectionBox.x1 + padding)
+        const overflowTop = Math.max(0, viewport.y1 - selectionBox.y1 + padding)
+        const overflowBottom = Math.max(0, selectionBox.y2 - viewport.y2 + padding)
 
-        this.panBy(
-            -(overflowRight || -overflowLeft) * this.cy.zoom(),
-            -(overflowBottom || -overflowTop) * this.cy.zoom()
-        )
+        this.panBy((overflowRight || -overflowLeft) * this.cy.zoom(), (overflowBottom || -overflowTop) * this.cy.zoom())
     }
 
     removeNode(panel: PanelId) {
@@ -297,7 +294,9 @@ export class GraphVisualization {
     }
 
     panBy(x: number, y: number) {
-        this.cy.panBy({x, y})
+        // cy.panBy pans the whole layout, rather than the camera,
+        // which is kinda unintuitive
+        this.cy.panBy({x: -x, y: -y})
     }
 
     getNode(nodeId: PanelId): NodeSingular {
