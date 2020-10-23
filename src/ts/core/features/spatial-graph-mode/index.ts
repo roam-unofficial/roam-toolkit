@@ -14,6 +14,8 @@ import {DisconnectFn, listenToEvent} from 'src/core/common/event'
 import {GraphVisualization} from 'src/core/features/spatial-graph-mode/graph-visualization'
 import {isVimModeOn} from 'src/core/features/vim-mode/vim-init'
 import {GraphModeSettings} from 'src/core/features/spatial-graph-mode/graph-mode-settings'
+import {BlockElement} from 'src/core/features/vim-mode/roam/roam-block'
+import {PANEL_SELECTOR, plainId} from 'src/core/roam/panel/roam-panel-utils'
 
 /**
  * TODO Be able to resize nodes
@@ -63,18 +65,22 @@ export const config: Feature = {
     enabledByDefault: false,
     settings: [
         ...GraphModeSettings.all,
-        spatialShortcut('Ctrl+ArrowUp', 'Zoom in', graph => graph.zoomBy(5 / 4)),
-        spatialShortcut('Ctrl+ArrowDown', 'Zoom out', graph => graph.zoomBy(4 / 5)),
+        spatialShortcut('Ctrl+=', 'Zoom in', graph => graph.zoomBy(5 / 4)),
+        spatialShortcut('Ctrl+-', 'Zoom out', graph => graph.zoomBy(4 / 5)),
         spatialShortcut('Ctrl+0', 'Zoom in completely', graph => graph.zoomBy(10)),
         spatialShortcut('Ctrl+9', 'Zoom out completely', graph => graph.zoomOutCompletely()),
-        spatialShortcut('ArrowLeft', 'Pan left', graph => graph.panBy(panSpeed(), 0)),
-        spatialShortcut('ArrowDown', 'Pan down', graph => graph.panBy(0, -panSpeed())),
-        spatialShortcut('ArrowUp', 'Pan up', graph => graph.panBy(0, panSpeed())),
-        spatialShortcut('ArrowRight', 'Pan right', graph => graph.panBy(-panSpeed(), 0)),
-        spatialShortcut('Shift+ArrowLeft', 'Move node left', graph => graph.dragSelectionBy(-dragSpeed(), 0), false),
-        spatialShortcut('Shift+ArrowDown', 'Move node down', graph => graph.dragSelectionBy(0, dragSpeed()), false),
-        spatialShortcut('Shift+ArrowUp', 'Move node up', graph => graph.dragSelectionBy(0, -dragSpeed()), false),
-        spatialShortcut('Shift+ArrowRight', 'Move node right', graph => graph.dragSelectionBy(dragSpeed(), 0), false),
+        spatialShortcut('Ctrl+ArrowLeft', 'Pan left', graph => graph.panBy(panSpeed(), 0)),
+        spatialShortcut('Ctrl+ArrowDown', 'Pan down', graph => graph.panBy(0, -panSpeed())),
+        spatialShortcut('Ctrl+ArrowUp', 'Pan up', graph => graph.panBy(0, panSpeed())),
+        spatialShortcut('Ctrl+ArrowRight', 'Pan right', graph => graph.panBy(-panSpeed(), 0)),
+        spatialShortcut('Ctrl+Shift+h', 'Move node left', graph => graph.dragSelectionBy(-dragSpeed(), 0), false),
+        spatialShortcut('Ctrl+Shift+j', 'Move node down', graph => graph.dragSelectionBy(0, dragSpeed()), false),
+        spatialShortcut('Ctrl+Shift+k', 'Move node up', graph => graph.dragSelectionBy(0, -dragSpeed()), false),
+        spatialShortcut('Ctrl+Shift+l', 'Move node right', graph => graph.dragSelectionBy(dragSpeed(), 0), false),
+        spatialShortcut('Ctrl+h', 'Select left of current selection', graph => graph.selectLeft(), false),
+        spatialShortcut('Ctrl+j', 'Select down of current selection', graph => graph.selectDown(), false),
+        spatialShortcut('Ctrl+k', 'Select up of current selection', graph => graph.selectUp(), false),
+        spatialShortcut('Ctrl+l', 'Select right of current selection', graph => graph.selectRight(), false),
     ],
 }
 
@@ -152,12 +158,21 @@ const startSpatialGraphMode = async () => {
         }
     })
 
+    // Follow the just selected node, if the whole layout translates
+    // (e.g. due to a window resize)
+    const layoutWhileKeepingNodeInView = async (block: BlockElement) => {
+        const parentPanelId = plainId(assumeExists(block.closest(PANEL_SELECTOR)).id)
+        graph.selectNodeById(parentPanelId)
+        await graph.runLayout()
+        graph.panToSelectionIfNeeded()
+    }
+
     disconnectFunctions = [
         listenToEvent('resize', () => graph.runLayout()),
         RoamEvent.onFoldBlock(() => graph.runLayout()),
-        RoamEvent.onChangeBlock(() => graph.runLayout()),
-        RoamEvent.onEditBlock(() => graph.runLayout()),
-        RoamEvent.onBlurBlock(() => graph.runLayout()),
+        RoamEvent.onChangeBlock(layoutWhileKeepingNodeInView),
+        RoamEvent.onEditBlock(layoutWhileKeepingNodeInView),
+        RoamEvent.onBlurBlock(layoutWhileKeepingNodeInView),
         RoamPanel.onPanelChange(updateGraphToMatchOpenPanels),
     ]
 }

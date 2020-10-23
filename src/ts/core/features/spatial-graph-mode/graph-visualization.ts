@@ -1,4 +1,4 @@
-import cytoscape, {NodeDataDefinition, NodeSingular} from 'cytoscape'
+import cytoscape, {NodeCollection, NodeDataDefinition, NodeSingular} from 'cytoscape'
 // @ts-ignore
 import cola from 'cytoscape-cola'
 import {assumeExists} from 'src/core/common/assert'
@@ -19,7 +19,7 @@ cytoscape.use(cola)
 
 export class GraphVisualization {
     static instance: GraphVisualization | null
-    cy: cytoscape.Core
+    private cy: cytoscape.Core
     // Queue position updates into batches.
     // This prevents the layout thrashing when alternating between reading/writing
     // Node positions to the DOM
@@ -224,11 +224,26 @@ export class GraphVisualization {
         })
     }
 
+    panToSelectionIfNeeded() {
+        const selectionBox = this.selectedNodes().boundingBox({})
+        const viewport = this.cy.extent()
+
+        const overflowRight = Math.max(0, selectionBox.x2 - viewport.x2)
+        const overflowLeft = Math.max(0, viewport.x1 - selectionBox.x1)
+        const overflowTop = Math.max(0, viewport.y1 - selectionBox.y1)
+        const overflowBottom = Math.max(0, selectionBox.y2 - viewport.y2)
+
+        this.panBy(
+            -(overflowRight || -overflowLeft) * this.cy.zoom(),
+            -(overflowBottom || -overflowTop) * this.cy.zoom()
+        )
+    }
+
     removeNode(panel: PanelId) {
         this.cy.getElementById(panel).remove()
     }
 
-    runLayout(firstRender: boolean = false) {
+    runLayout(firstRender: boolean = false): Promise<any> {
         this.cy.nodes().forEach(node => {
             const domNode = RoamPanel.getPanel(node.id())
             if (domNode) {
@@ -251,6 +266,8 @@ export class GraphVisualization {
             })
             .stop()
             .run()
+
+        return this.cy.promiseOn('layoutstop')
     }
 
     resetPanelStyles() {
@@ -283,16 +300,70 @@ export class GraphVisualization {
         this.cy.panBy({x, y})
     }
 
+    getNode(nodeId: PanelId): NodeSingular {
+        return this.cy.getElementById(nodeId)
+    }
+
+    selectedNodes(): NodeCollection {
+        return this.cy.nodes(':selected')
+    }
+
     selectNode(node: NodeSingular) {
         this.cy.edges().unselect()
         this.cy.nodes().unselect()
         node.select().edges().select()
     }
 
+    selectNodeById(nodeId: PanelId) {
+        this.selectNode(this.getNode(nodeId))
+    }
+
     dragSelectionBy(x: number, y: number) {
         const zoom = this.cy.zoom()
-        this.cy.nodes(':selected').shift({x: x / zoom, y: y / zoom})
-        this.panBy(-x, -y)
+        this.selectedNodes().shift({x: x / zoom, y: y / zoom})
+        this.panToSelectionIfNeeded()
+    }
+
+    selectRight() {
+        this.selectClosestInCone(0, 140)
+    }
+
+    selectUp() {
+        this.selectClosestInCone(90, 140)
+    }
+
+    selectLeft() {
+        this.selectClosestInCone(180, 140)
+    }
+
+    selectDown() {
+        this.selectClosestInCone(-90, 140)
+    }
+
+    selectClosestInCone(coneCenter: number, coneWidth: number, doublingAngle = 45) {
+        const selection = this.selectedNodes().first()
+        const lowerAngle = coneCenter - coneWidth / 2
+        const higherAngle = coneCenter + coneWidth / 2
+        const polarDistances = this.cy
+            .nodes()
+            .filter(node => node.id() !== selection.id())
+            .map((node: NodeSingular) => ({
+                node,
+                angle: getAngle(selection.position(), node.position(), lowerAngle),
+                distance: getDistance(selection.position(), node.position()),
+            }))
+
+        // Treat nodes offset by the doublingAngle as twice as far away
+        const adjustedDistance = (distance: number, offsetFromConeCenter: number) =>
+            (distance * (doublingAngle + Math.abs(offsetFromConeCenter))) / doublingAngle
+        const closestInCone = minBy(
+            polarDistances.filter(({angle}) => lowerAngle < angle && angle < higherAngle),
+            ({distance, angle}) => adjustedDistance(distance, angle - coneCenter)
+        )?.node
+        if (closestInCone) {
+            this.selectNode(closestInCone)
+            this.panToSelectionIfNeeded()
+        }
     }
 
     nodeInMiddleOfViewport(): NodeSingular {
@@ -305,7 +376,7 @@ export class GraphVisualization {
             minBy(
                 this.cy.nodes().map(node => node),
                 node => {
-                    return distance(viewportMiddle, node.position())
+                    return getDistance(viewportMiddle, node.position())
                 }
             )
         )
@@ -317,7 +388,7 @@ export class GraphVisualization {
     }
 
     ensureNodeIsSelected() {
-        if (this.cy.nodes(':selected').length === 0) {
+        if (this.selectedNodes().length === 0) {
             this.selectMiddleOfViewport()
         }
     }
@@ -462,4 +533,11 @@ const getNodeSpacing = (): number => Number.parseInt(GraphModeSettings.get('Node
 
 type Vector = {x: number; y: number}
 
-const distance = (v1: Vector, v2: Vector) => Math.sqrt((v1.x - v2.x) ** 2 + (v1.y - v2.y) ** 2)
+const getDistance = (v1: Vector, v2: Vector) => Math.sqrt((v1.x - v2.x) ** 2 + (v1.y - v2.y) ** 2)
+// degrees from startingAt -> startingAt + 360
+const getAngle = (v1: Vector, v2: Vector, startingAt = 0) => {
+    // Normally, it'd be v2.y - v1.y, but the y axis is flipped
+    const radians = Math.atan2(v1.y - v2.y, v2.x - v1.x)
+    const degrees = (radians * 360) / (2 * Math.PI)
+    return ((degrees + 360 - startingAt) % 360) + startingAt
+}
