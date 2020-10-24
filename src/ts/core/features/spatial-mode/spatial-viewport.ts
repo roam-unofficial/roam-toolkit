@@ -20,7 +20,7 @@ export class SpatialViewport {
         this.cy.minZoom(0.2)
     }
 
-    panTo(toPanel: PanelId, fromPanel: PanelId | null = null, behavior: 'pan' | 'panZoom', handleComplete: () => void) {
+    panTo(toPanel: PanelId, fromPanel: PanelId | null = null, behavior: 'pan' | 'panZoom'): Promise<any> {
         let nodesToFocus = this.cy.getElementById(toPanel)
         if (fromPanel) {
             nodesToFocus = nodesToFocus.union(this.cy.getElementById(fromPanel))
@@ -39,11 +39,13 @@ export class SpatialViewport {
                           padding: 50,
                       },
                   }
-        this.cy.animate({
-            ...panOptions,
-            easing: 'ease-out',
-            duration: SpatialSettings.getPanDuration(),
-            complete: handleComplete,
+        return new Promise<any>(resolve => {
+            this.cy.animate({
+                ...panOptions,
+                easing: 'ease-out',
+                duration: SpatialSettings.getPanDuration(),
+                complete: resolve,
+            })
         })
     }
 

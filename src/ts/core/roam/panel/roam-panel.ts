@@ -132,7 +132,7 @@ const tagAndCountPanels = (): {[id: string]: number} => {
     const mainId = tagMainPanelId()
     idToCount[mainId] = 1
 
-    const sidebarPages = Array.from(document.querySelectorAll(Selectors.sidebarPage)) as PanelElement[]
+    const sidebarPages: PanelElement[] = Array.from(document.querySelectorAll(Selectors.sidebarPage))
     sidebarPages.forEach(sidebarPage => {
         const panelId = panelIdFromSidebarPage(sidebarPage)
         if (idToCount[panelId]) {

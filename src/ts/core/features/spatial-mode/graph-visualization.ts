@@ -126,10 +126,10 @@ export class GraphVisualization {
 
         // bring attention to the newly selected node
         this.viewport.selectNode(node)
-        this.cy.promiseOn('layoutstop').then(() => {
+        this.cy.promiseOn('layoutstop').then(async () => {
             const followBehavior = SpatialSettings.get('Follow nodes on open (off/pan/panZoom)')
             if (followBehavior === 'pan' || followBehavior === 'panZoom') {
-                this.viewport.panTo(toPanel, fromPanel, followBehavior, unselectText)
+                await this.viewport.panTo(toPanel, fromPanel, followBehavior)
             }
             unselectText()
         })

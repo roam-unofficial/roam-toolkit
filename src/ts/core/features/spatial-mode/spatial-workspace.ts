@@ -23,7 +23,7 @@ export const restoreWorkspace = async (graph: GraphVisualization) => {
     // Open sidebar pages
     outerLinks.forEach(link => Mouse.leftClick(link, true))
     // Open main page
-    Mouse.leftClick(outerLinks[0] as HTMLElement)
+    Mouse.leftClick(outerLinks[0])
 
     /** assume the format of the page is:
      * - [[main page]]
