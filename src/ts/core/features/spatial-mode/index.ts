@@ -19,15 +19,21 @@ import {BlockElement} from 'src/core/features/vim-mode/roam/roam-block'
 import {GraphData, GraphVisualization} from './graph-visualization'
 import {SpatialSettings} from './spatial-settings'
 import {SpatialViewport} from './spatial-viewport'
+import {restoreWorkspace, saveWorkspace} from 'src/core/features/spatial-mode/spatial-workspace'
 
-const spatialShortcut = (key: string, label: string, onPress: (graph: SpatialViewport) => void): Shortcut => ({
+const spatialShortcut = (
+    key: string,
+    label: string,
+    onPress: (viewport: SpatialViewport, graph: GraphVisualization) => void
+): Shortcut => ({
     type: 'shortcut',
     id: `spatialMode_${label}`,
     label,
     initValue: key,
     onPress: () => {
         if (getMode() === Mode.NORMAL) {
-            onPress(GraphVisualization.get().viewport)
+            const graph = GraphVisualization.get()
+            onPress(graph.viewport, graph)
         }
     },
 })
@@ -73,6 +79,8 @@ export const config: Feature = {
         spatialShortcut('Ctrl+j', 'Select down of current selection', viewport => viewport.selectDown()),
         spatialShortcut('Ctrl+k', 'Select up of current selection', viewport => viewport.selectUp()),
         spatialShortcut('Ctrl+l', 'Select right of current selection', viewport => viewport.selectRight()),
+        spatialShortcut('Ctrl+Shift+s', 'Save workspace to clipboard', (_, graph) => saveWorkspace(graph)),
+        spatialShortcut('Ctrl+Shift+o', 'Restore workspace from page', (_, graph) => restoreWorkspace(graph)),
     ],
 }
 

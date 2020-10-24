@@ -1,6 +1,4 @@
 import {entries} from 'lodash'
-
-import {assumeExists} from 'src/core/common/assert'
 import {Selectors} from 'src/core/roam/selectors'
 import {RoamEvent} from 'src/core/roam/roam-event'
 import {delay} from 'src/core/common/async'
@@ -10,6 +8,7 @@ import {toggleCssClass, toggleCssClassForAll} from 'src/core/common/css'
 import {GraphVisualization} from 'src/core/features/spatial-mode/graph-visualization'
 
 import {
+    getMainPanel,
     namespaceId,
     PANEL_CSS_CLASS,
     PanelElement,
@@ -115,8 +114,6 @@ const DEFAULT_SCROLL_PANELS = `.roam-center > div:first-child, ${Selectors.sideb
 // Use the innermost div, cause some css themes color them to look like a card
 const GRAPH_MODE_SCROLL_PANELS = `${Selectors.mainContent}, ${Selectors.sidebarPage}`
 
-const getMainPanel = (): PanelElement => assumeExists(document.querySelector(Selectors.mainContent)) as HTMLElement
-
 const getPanelCountDiff = (): PanelToCount => {
     const idToCount = tagAndCountPanels()
     const idToDiff: {[id: string]: number} = {}
@@ -152,9 +149,8 @@ const tagAndCountPanels = (): {[id: string]: number} => {
 
 // Tagging panels with IDs allow easy syncing with the graph visualization
 const tagMainPanelId = (): PanelId => {
-    const mainPanel = getMainPanel()
-    const nodeId = panelIdFromMainPage(mainPanel)
-    mainPanel.id = namespaceId(nodeId)
+    const nodeId = panelIdFromMainPage()
+    getMainPanel().id = namespaceId(nodeId)
     return nodeId
 }
 

@@ -31,7 +31,8 @@ const getComplexPageName = (mainTitle: HTMLElement) =>
         .map(node => (node as Text).data || `[[${(node as HTMLElement).dataset?.linkTitle}]]`)
         .join('')
 
-export const panelIdFromMainPage = (mainPage: PanelElement): PanelId => {
+export const panelIdFromMainPage = (): PanelId => {
+    const mainPage = getMainPanel()
     if (document.querySelector(Selectors.dailyNotes)) {
         return 'DAILY_NOTES'
     }
@@ -58,3 +59,6 @@ export const panelIdFromMainPage = (mainPage: PanelElement): PanelId => {
 
     throw new Error('Could not identify the main panel')
 }
+
+export const getMainPanel = (): PanelElement =>
+    assumeExists(document.querySelector(Selectors.mainContent)) as HTMLElement

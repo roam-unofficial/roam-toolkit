@@ -231,17 +231,18 @@ export class GraphVisualization {
     }
 
     load(savedData: GraphData) {
+        this.cy.stop()
         this.cy.batch(() => {
             savedData.nodes.forEach(({id, position, width, height}) => {
-                this.cy
-                    .add({
+                let node = this.cy.getElementById(id)
+                if (!node) {
+                    node = this.cy.add({
                         data: {
                             id,
                         },
                     })
-                    .position(position)
-                    .style('width', width)
-                    .style('height', height)
+                }
+                node.position(position).style('width', width).style('height', height)
             })
             savedData.edges.forEach(({source, target}) => {
                 this.cy.add({
