@@ -198,8 +198,12 @@ export class GraphVisualization {
                 randomize: firstRender,
                 // @ts-ignore
                 animate: SpatialSettings.getLayoutDuration() > 0,
-                // @ts-ignore
-                maxSimulationTime: SpatialSettings.getLayoutDuration() || 1000,
+                // @ts-ignore don't actually shorten the simulation, otherwise it gets stuck prematurely
+                maxSimulationTime: 1000,
+                // @ts-ignore instead, we skip frames
+                refresh: 1000 / (SpatialSettings.getLayoutDuration() || 1),
+                // @ts-ignore don't actually shorten the simulation, otherwise it gets stuck prematurely
+                convergenceThreshold: SpatialSettings.getConvergenceThreshold(),
                 // @ts-ignore if maxSimulationTime is too low, the layout doesn't actually run
                 nodeSpacing: SpatialSettings.getNodeSpacing(),
             })

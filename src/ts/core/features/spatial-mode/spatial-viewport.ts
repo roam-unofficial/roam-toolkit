@@ -42,7 +42,7 @@ export class SpatialViewport {
         this.cy.animate({
             ...panOptions,
             easing: 'ease-out',
-            duration: SpatialSettings.getAnimationDuration(),
+            duration: SpatialSettings.getPanDuration(),
             complete: handleComplete,
         })
     }

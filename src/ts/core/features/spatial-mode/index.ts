@@ -22,7 +22,7 @@ import {SpatialViewport} from './spatial-viewport'
 
 const spatialShortcut = (key: string, label: string, onPress: (graph: SpatialViewport) => void): Shortcut => ({
     type: 'shortcut',
-    id: `spatialGraphMode_${label}`,
+    id: `spatialMode_${label}`,
     label,
     initValue: key,
     onPress: () => {
@@ -33,7 +33,7 @@ const spatialShortcut = (key: string, label: string, onPress: (graph: SpatialVie
 })
 
 export const config: Feature = {
-    id: 'spatial_graph_mode',
+    id: 'spatial_mode',
     name: 'Spatial Graph Mode',
     // Moving around in the graph view updates the style of the main body,
     // which makes elements reflow, due to [style*="..."] selectors applying again.
@@ -77,7 +77,7 @@ export const config: Feature = {
 }
 
 const toggleSpatialGraphModeDependingOnSetting = () => {
-    Settings.isActive('spatial_graph_mode').then(active => {
+    Settings.isActive('spatial_mode').then(active => {
         if (active) {
             // Re-initialize if a setting changed
             let graphData
