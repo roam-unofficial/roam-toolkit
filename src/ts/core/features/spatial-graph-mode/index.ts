@@ -17,19 +17,14 @@ import {GraphModeSettings} from 'src/core/features/spatial-graph-mode/graph-mode
 import {BlockElement} from 'src/core/features/vim-mode/roam/roam-block'
 import {PANEL_SELECTOR, plainId} from 'src/core/roam/panel/roam-panel-utils'
 
-export const spatialShortcut = (
-    key: string,
-    label: string,
-    onPress: (graph: GraphVisualization) => void
-): Shortcut => ({
+const spatialShortcut = (key: string, label: string, onPress: (graph: GraphVisualization) => void): Shortcut => ({
     type: 'shortcut',
     id: `spatialGraphMode_${label}`,
     label,
     initValue: key,
     onPress: () => {
         if (getMode() === Mode.NORMAL) {
-            const graph = GraphVisualization.get()
-            onPress(graph)
+            onPress(GraphVisualization.get())
         }
     },
 })
@@ -82,12 +77,12 @@ const toggleSpatialGraphModeDependingOnSetting = () => {
     Settings.isActive('spatial_graph_mode').then(active => {
         if (active) {
             // Re-initialize if a setting changed
+            let graphData
             if (GraphVisualization.instance) {
-                const previousGraphData = stopSpatialGraphMode()
-                startSpatialGraphMode(previousGraphData)
-            } else {
-                startSpatialGraphMode()
+                graphData = GraphVisualization.get().save()
+                stopSpatialGraphMode()
             }
+            startSpatialGraphMode(graphData)
         } else {
             stopSpatialGraphMode()
         }
@@ -116,6 +111,7 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
     const updateGraphToMatchOpenPanels = (panelChange: PanelChange) => {
         if (panelChange.renamedPanel) {
             graph.replaceNodeNames(panelChange.renamedPanel.before, panelChange.renamedPanel.after)
+            // TODO do we need this return?
             return
         }
 
@@ -142,6 +138,7 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
                     Mouse.leftClick(closeButton as HTMLElement)
                 }
             })
+            // TODO do we need this return?
             // Skip re-rendering, cause the sidebar pages will change after closing the panel anyways
             return
         }
@@ -158,8 +155,8 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
         }
     })
 
-    // Follow the just selected node, if the whole layout translates
-    // (e.g. due to a window resize)
+    // Follow the just selected node, if the layout tugs the node
+    // out from underneath us (e.g. due to a window resize)
     const layoutWhileKeepingNodeInView = async (block: BlockElement) => {
         const parentPanelId = plainId(assumeExists(block.closest(PANEL_SELECTOR)).id)
         graph.selectNodeById(parentPanelId)
@@ -182,9 +179,7 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
  * If some handlers aren't cleaned up, zombie handlers might break
  * vim mode, or future invocations of graph mode.
  */
-const stopSpatialGraphMode = (): GraphData => {
+const stopSpatialGraphMode = () => {
     disconnectFunctions.forEach(disconnect => disconnect())
-    const graphData = GraphVisualization.get().save()
     GraphVisualization.destroy()
-    return graphData
 }

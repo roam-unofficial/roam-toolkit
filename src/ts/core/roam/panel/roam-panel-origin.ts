@@ -20,7 +20,10 @@ export const justClickedPanelId = (): PanelId | null => _justClickedPanelId
 
 /**
  * Spatial Graph Mode needs to know where new panels are opened from,
- * so it can draw edges between panels
+ * so it can draw edges between panels.
+ *
+ * To know the "origin" panel, we track any event that could lead to to opening
+ * new panel, and remember which panel that event came from.
  */
 export const rememberLastInteractedPanel = (): DisconnectFn => {
     clearJustClickedPanel()

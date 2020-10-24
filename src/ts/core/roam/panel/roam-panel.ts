@@ -5,7 +5,15 @@ import {RoamEvent} from 'src/core/features/vim-mode/roam/roam-event'
 import {delay} from 'src/core/common/async'
 import {DisconnectFn} from 'src/core/common/event'
 import {toggleCssClass, toggleCssClassForAll} from 'src/core/common/css'
-import {namespaceId, PANEL_CSS_CLASS, PanelElement, PanelId, plainId} from 'src/core/roam/panel/roam-panel-utils'
+import {
+    namespaceId,
+    PANEL_CSS_CLASS,
+    PanelElement,
+    PanelId,
+    panelIdFromMainPage,
+    panelIdFromSidebarPage,
+    plainId,
+} from 'src/core/roam/panel/roam-panel-utils'
 import {justClickedPanelId, rememberLastInteractedPanel} from 'src/core/roam/panel/roam-panel-origin'
 import {GraphVisualization} from 'src/core/features/spatial-graph-mode/graph-visualization'
 
@@ -32,6 +40,10 @@ let previousIdToCount: PanelToCount = {}
  * A "Panel" is a viewport that contains blocks. It is analogous a vim window
  */
 export const RoamPanel = {
+    /**
+     * To know which sidebars were opened/closed, we track previously opened sidebar pages,
+     * and diff the pages anytime something changes. Kinda like an inverse virtual dom.
+     */
     onPanelChange(handleChange: (event: PanelChange) => void): DisconnectFn {
         const emitEventsForPanelDiff = (isInitialAdd: boolean = false) => {
             const idDiffEntries = entries(getPanelCountDiff())
@@ -41,6 +53,7 @@ export const RoamPanel = {
                 addedPanels: idDiffEntries
                     .filter(([_, diff]) => diff > 0)
                     .map(([id]) => ({
+                        // It's impossible to link to "Daily Notes"
                         from: id === 'DAILY_NOTES' ? null : justClickedPanelId(),
                         to: id,
                     })),
@@ -52,7 +65,7 @@ export const RoamPanel = {
             const mainPanel = getMainPanel()
             const oldId = plainId(mainPanel.id)
             mainPanel.id = namespaceId(newTitle)
-            // Wait for sidebar pages to update their titles
+            // Only emit the event after sidebar pages finish updating their titles
             await delay(10)
             // Update panel counts, in case complex sidebar pages changed their names
             previousIdToCount = tagAndCountPanels()
@@ -74,6 +87,7 @@ export const RoamPanel = {
             RoamEvent.onRenamePage(emitRenameEvent),
         ]
         return () => {
+            // TODO can we just clear when we start listening instead?
             previousIdToCount = {}
             disconnectFns.forEach(disconnect => disconnect())
         }
@@ -153,52 +167,9 @@ const tagSidebarPanel = (
         // Only assign dom id to the first panel
         sidebarPage.id = namespaceId(panelId)
     }
-    // Spatial graph mode can use this to close duplicates.
-    // The classes can also helpful for debugging
+    // Tag panels duplicate panels, that should be closed later.
+    // We tag them in the DOM, cause stringing along variables gets messy.
+    // The classes are also helpful for debugging
     toggleCssClass(sidebarPage, 'roam-toolkit--panel-dupe', isDuplicate)
     toggleCssClass(sidebarPage, 'roam-toolkit--panel-dupe-main', duplicatesMain)
-}
-
-const firstBlockId = (panelElement: PanelElement) =>
-    assumeExists(panelElement.querySelector(`${Selectors.block}, ${Selectors.blockInput}`)?.id)
-
-const panelIdFromSidebarPage = (sidebarPage: PanelElement): string => {
-    const header = assumeExists(sidebarPage.querySelector('[draggable] > .level2, [draggable] > div')) as HTMLElement
-    const headerText = assumeExists(header.innerText)
-    if (headerText === 'Block Outline') {
-        // Need Selectors.blockInput, because ctrl+shift+o opens a panel with the block already focused
-        return firstBlockId(sidebarPage)
-    }
-    return headerText
-}
-
-const getComplexPageName = (mainTitle: HTMLElement) =>
-    (Array.from(mainTitle.childNodes) as (HTMLElement | Text)[])
-        .map(node => (node as Text).data || `[[${(node as HTMLElement).dataset?.linkTitle}]]`)
-        .join('')
-
-const panelIdFromMainPage = (mainPage: PanelElement): PanelId => {
-    if (document.querySelector(Selectors.dailyNotes)) {
-        return 'DAILY_NOTES'
-    }
-
-    const mainTitle = mainPage.querySelector('.rm-title-display > span') as HTMLElement
-    if (mainTitle) {
-        return getComplexPageName(mainTitle)
-    }
-
-    const mainTitleTextArea = mainPage.querySelector('.rm-title-textarea') as HTMLTextAreaElement
-    if (mainTitleTextArea) {
-        return mainTitleTextArea.value
-    }
-
-    if (mainPage.querySelector('.rm-zoom')) {
-        // Treat block outlines on the main page as having the same id
-        // As the main page itself, so we don't create/destroy panels
-        // when zooming in/out
-        const firstBreadcrumb = assumeExists(mainPage.querySelector('.rm-zoom-item-content')) as HTMLElement
-        return firstBreadcrumb.innerText
-    }
-
-    throw new Error('Could not identify the main panel')
 }
