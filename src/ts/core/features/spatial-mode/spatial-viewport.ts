@@ -109,7 +109,7 @@ export class SpatialViewport {
         this.selectClosestInCone(-90, 140)
     }
 
-    private selectClosestInCone(coneCenter: number, coneWidth: number, doublingAngle = 45) {
+    private selectClosestInCone(coneCenter: number, coneWidth: number, doublingAngle = 70) {
         const selection = this.selectedNodes().first()
         const lowerAngle = coneCenter - coneWidth / 2
         const higherAngle = coneCenter + coneWidth / 2
