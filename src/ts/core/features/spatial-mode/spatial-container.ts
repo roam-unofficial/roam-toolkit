@@ -77,10 +77,10 @@ export const getCytoscapeContainer = () => {
         }
         .${PANEL_CSS_CLASS} {
             /* min-width doesn't really work, it jams up against #roam-right-sidebar-content */
-            width: ${SpatialSettings.get('Width')};
+            width: ${SpatialSettings.get('Width')} !important;
             height: auto !important; /* prevent the main panel from stretching 100% */
-            min-height: ${SpatialSettings.get('Min Height')};
-            max-height: ${SpatialSettings.get('Max Height')};
+            min-height: ${SpatialSettings.get('Min Height')} !important;
+            max-height: ${SpatialSettings.get('Max Height')} !important;
             border-radius: 5px;
             position: absolute !important;
             background: white;
