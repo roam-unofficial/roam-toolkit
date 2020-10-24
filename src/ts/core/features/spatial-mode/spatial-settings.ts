@@ -22,7 +22,7 @@ export const SpatialSettings = {
         spatialSetting('Follow nodes on open (off/pan/panZoom)', 'pan'),
         spatialSetting('Pan Animation Duration (ms) or 0', '100'),
         spatialSetting('Max Layout Duration (ms) or 0', '1000'),
-        spatialSetting('Layout Convergence Threshold', '0.05'),
+        spatialSetting('Layout Threshold (0-1, small is orderly)', '0.03'),
     ],
 
     get: (label: string) => settingsCache[label],
@@ -32,7 +32,8 @@ export const SpatialSettings = {
     getPanDuration: (): number => Number.parseInt(SpatialSettings.get('Pan Animation Duration (ms) or 0'), 10),
     getLayoutDuration: (): number => Number.parseInt(SpatialSettings.get('Max Layout Duration (ms) or 0'), 10),
     getNodeSpacing: (): number => Number.parseInt(SpatialSettings.get('Node Spacing'), 10),
-    getConvergenceThreshold: (): number => Number.parseFloat(SpatialSettings.get('Convergence Threshold')),
+    getConvergenceThreshold: (): number =>
+        Number.parseFloat(SpatialSettings.get('Layout Threshold (0-1, small is orderly)')),
 
     // Cache the settings when feature is activated, so we don't have to use async
     refresh: () =>
