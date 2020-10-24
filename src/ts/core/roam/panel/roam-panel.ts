@@ -48,6 +48,8 @@ export const RoamPanel = {
      * and diff the pages anytime something changes. Kinda like an inverse virtual dom.
      */
     onPanelChange(handleChange: (event: PanelChange) => void): DisconnectFn {
+        previousIdToCount = {}
+
         const emitEventsForPanelDiff = (isInitialAdd: boolean = false) => {
             const idDiffEntries = entries(getPanelCountDiff())
 
@@ -89,11 +91,7 @@ export const RoamPanel = {
             RoamEvent.onChangePage(() => emitEventsForPanelDiff()),
             RoamEvent.onRenamePage(emitRenameEvent),
         ]
-        return () => {
-            // TODO can we just clear when we start listening instead?
-            previousIdToCount = {}
-            disconnectFns.forEach(disconnect => disconnect())
-        }
+        return () => disconnectFns.forEach(disconnect => disconnect())
     },
 
     getPanel(nodeId: PanelId): PanelElement | null {

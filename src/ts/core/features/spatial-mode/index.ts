@@ -114,8 +114,6 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
     const updateGraphToMatchOpenPanels = (panelChange: PanelChange) => {
         if (panelChange.renamedPanel) {
             graph.replaceNodeNames(panelChange.renamedPanel.before, panelChange.renamedPanel.after)
-            // TODO do we need this return?
-            return
         }
 
         panelChange.addedPanels?.forEach(({from, to}) => {
@@ -141,9 +139,6 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
                     Mouse.leftClick(closeButton as HTMLElement)
                 }
             })
-            // TODO do we need this return?
-            // Skip re-rendering, cause the sidebar pages will change after closing the panel anyways
-            return
         }
 
         graph.viewport.ensureNodeIsSelected()
@@ -158,21 +153,21 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
         }
     })
 
-    // Follow the just selected node, if the layout tugs the node
-    // out from underneath us (e.g. due to a window resize)
-    const layoutWhileKeepingNodeInView = async (block: BlockElement) => {
+    const layoutAndKeepPanelInView = async (block: BlockElement) => {
         const parentPanelId = plainId(assumeExists(block.closest(PANEL_SELECTOR)).id)
         graph.viewport.selectNodeById(parentPanelId)
         await graph.runLayout()
+        // Follow the just selected node, if the layout tugs the node
+        // out from underneath the current viewport (e.g. due to a window resize)
         graph.viewport.panToSelectionIfNeeded()
     }
 
     disconnectFunctions = [
         listenToEvent('resize', () => graph.runLayout()),
         RoamEvent.onFoldBlock(() => graph.runLayout()),
-        RoamEvent.onChangeBlock(layoutWhileKeepingNodeInView),
-        RoamEvent.onEditBlock(layoutWhileKeepingNodeInView),
-        RoamEvent.onBlurBlock(layoutWhileKeepingNodeInView),
+        RoamEvent.onChangeBlock(layoutAndKeepPanelInView),
+        RoamEvent.onEditBlock(layoutAndKeepPanelInView),
+        RoamEvent.onBlurBlock(layoutAndKeepPanelInView),
         RoamPanel.onPanelChange(updateGraphToMatchOpenPanels),
     ]
 }
