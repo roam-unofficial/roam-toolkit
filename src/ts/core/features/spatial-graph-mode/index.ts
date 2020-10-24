@@ -11,7 +11,7 @@ import {VimRoamPanel as RoamVimPanel} from 'src/core/features/vim-mode/roam/roam
 import {updateVimView} from 'src/core/features/vim-mode/vim-view'
 import {PanelChange, RoamPanel} from 'src/core/roam/panel/roam-panel'
 import {DisconnectFn, listenToEvent} from 'src/core/common/event'
-import {GraphVisualization} from 'src/core/features/spatial-graph-mode/graph-visualization'
+import {GraphData, GraphVisualization} from 'src/core/features/spatial-graph-mode/graph-visualization'
 import {isVimModeOn} from 'src/core/features/vim-mode/vim-init'
 import {GraphModeSettings} from 'src/core/features/spatial-graph-mode/graph-mode-settings'
 import {BlockElement} from 'src/core/features/vim-mode/roam/roam-block'
@@ -89,9 +89,11 @@ const toggleSpatialGraphModeDependingOnSetting = () => {
         if (active) {
             // Re-initialize if a setting changed
             if (GraphVisualization.instance) {
-                stopSpatialGraphMode()
+                const previousGraphData = stopSpatialGraphMode()
+                startSpatialGraphMode(previousGraphData)
+            } else {
+                startSpatialGraphMode()
             }
-            startSpatialGraphMode()
         } else {
             stopSpatialGraphMode()
         }
@@ -107,11 +109,15 @@ browser.runtime.onMessage.addListener(async message => {
 toggleSpatialGraphModeDependingOnSetting()
 
 let disconnectFunctions: DisconnectFn[] = []
-const startSpatialGraphMode = async () => {
+const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
     await GraphModeSettings.refresh()
     await waitForSelectorToExist(Selectors.mainContent)
     await GraphVisualization.init()
     const graph = GraphVisualization.get()
+
+    if (previousGraphData) {
+        graph.load(previousGraphData)
+    }
 
     const updateGraphToMatchOpenPanels = (panelChange: PanelChange) => {
         if (panelChange.renamedPanel) {
@@ -147,7 +153,7 @@ const startSpatialGraphMode = async () => {
         }
 
         graph.ensureNodeIsSelected()
-        graph.runLayout(panelChange.isInitialAdd)
+        graph.runLayout(panelChange.isInitialAdd && !previousGraphData)
     }
 
     graph.onSelectNode(nodeId => {
@@ -182,7 +188,9 @@ const startSpatialGraphMode = async () => {
  * If some handlers aren't cleaned up, zombie handlers might break
  * vim mode, or future invocations of graph mode.
  */
-const stopSpatialGraphMode = () => {
+const stopSpatialGraphMode = (): GraphData => {
     disconnectFunctions.forEach(disconnect => disconnect())
+    const graphData = GraphVisualization.get().save()
     GraphVisualization.destroy()
+    return graphData
 }

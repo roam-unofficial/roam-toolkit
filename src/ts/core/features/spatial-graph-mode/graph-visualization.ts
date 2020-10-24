@@ -17,6 +17,24 @@ const unselectText = () => window.getSelection()?.removeAllRanges()
 
 cytoscape.use(cola)
 
+type Position = {x: number; y: number}
+export type GraphData = {
+    nodes: NodeData[]
+    edges: EdgeData[]
+    zoom: number
+    pan: Position
+}
+type NodeData = {
+    id: string
+    position: Position
+    width: number
+    height: number
+}
+type EdgeData = {
+    source: string
+    target: string
+}
+
 export class GraphVisualization {
     static instance: GraphVisualization | null
     private cy: cytoscape.Core
@@ -398,6 +416,49 @@ export class GraphVisualization {
             if (node.length > 0) {
                 handleSelect(node.id())
             }
+        })
+    }
+
+    save(): GraphData {
+        return {
+            nodes: this.cy.nodes().map(node => ({
+                id: node.id(),
+                position: node.position(),
+                width: node.width(),
+                height: node.height(),
+            })),
+            edges: this.cy.edges().map(edge => ({
+                source: edge.source().id(),
+                target: edge.target().id(),
+            })),
+            zoom: this.cy.zoom(),
+            pan: this.cy.pan(),
+        }
+    }
+
+    load(savedData: GraphData) {
+        this.cy.batch(() => {
+            savedData.nodes.forEach(({id, position, width, height}) => {
+                this.cy
+                    .add({
+                        data: {
+                            id,
+                        },
+                    })
+                    .position(position)
+                    .style('width', width)
+                    .style('height', height)
+            })
+            savedData.edges.forEach(({source, target}) => {
+                this.cy.add({
+                    data: {
+                        source,
+                        target,
+                    },
+                })
+            })
+            this.cy.zoom(savedData.zoom)
+            this.cy.pan(savedData.pan)
         })
     }
 
