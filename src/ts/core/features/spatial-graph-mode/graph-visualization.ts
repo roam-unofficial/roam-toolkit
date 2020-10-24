@@ -132,7 +132,7 @@ export class GraphVisualization {
                 const fromNode = this.cy.getElementById(fromPanel)
                 node.position({
                     // Grow the graph towards the right
-                    x: fromNode.position().x + fromNode.width() + getNodeSpacing(),
+                    x: fromNode.position().x + fromNode.width() + GraphModeSettings.getNodeSpacing(),
                     // Tiny random offset prevents nodes from getting jammed if it spawns
                     // in the exact same location as another
                     y: fromNode.position().y + Math.random() * 10,
@@ -237,7 +237,7 @@ export class GraphVisualization {
         this.cy.animate({
             ...panOptions,
             easing: 'ease-out',
-            duration: getAnimationDuration(),
+            duration: GraphModeSettings.getAnimationDuration(),
             complete: handleComplete,
         })
     }
@@ -273,11 +273,11 @@ export class GraphVisualization {
                 // @ts-ignore randomize when laying out for the first time, to avoid seizures from all the nodes being jammed on the same space
                 randomize: firstRender,
                 // @ts-ignore
-                animate: getLayoutDuration() > 0,
+                animate: GraphModeSettings.getLayoutDuration() > 0,
                 // @ts-ignore
-                maxSimulationTime: getLayoutDuration() || 1000,
+                maxSimulationTime: GraphModeSettings.getLayoutDuration() || 1000,
                 // @ts-ignore if maxSimulationTime is too low, the layout doesn't actually run
-                nodeSpacing: getNodeSpacing,
+                nodeSpacing: GraphModeSettings.getNodeSpacing(),
             })
             .stop()
             .run()
@@ -586,10 +586,6 @@ export class GraphVisualization {
         }
     }
 }
-
-const getAnimationDuration = (): number => Number.parseInt(GraphModeSettings.get('Animation Duration (ms)'), 10)
-const getLayoutDuration = (): number => Number.parseInt(GraphModeSettings.get('Layout Duration (ms)'), 10)
-const getNodeSpacing = (): number => Number.parseInt(GraphModeSettings.get('Node Spacing'), 10)
 
 type Vector = {x: number; y: number}
 

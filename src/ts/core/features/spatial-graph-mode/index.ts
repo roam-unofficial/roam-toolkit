@@ -17,44 +17,22 @@ import {GraphModeSettings} from 'src/core/features/spatial-graph-mode/graph-mode
 import {BlockElement} from 'src/core/features/vim-mode/roam/roam-block'
 import {PANEL_SELECTOR, plainId} from 'src/core/roam/panel/roam-panel-utils'
 
-/**
- * TODO Be able to resize nodes
- * https://github.com/iVis-at-Bilkent/cytoscape.js-node-editing
- * Need to impose dimensions if manually adjusted, but react to DOM otherwise
- *
- * TODO Be able to disable the graph mode, but still have it run in the background,
- * so it can be resumed
- *
- * TODO Maybe allow cutting edges with double click?
- */
-
 export const spatialShortcut = (
     key: string,
     label: string,
-    onPress: (graph: GraphVisualization) => void,
-    selectMiddleNode: boolean = true
+    onPress: (graph: GraphVisualization) => void
 ): Shortcut => ({
     type: 'shortcut',
     id: `spatialGraphMode_${label}`,
     label,
     initValue: key,
-    onPress: event => {
+    onPress: () => {
         if (getMode() === Mode.NORMAL) {
             const graph = GraphVisualization.get()
             onPress(graph)
-
-            if (selectMiddleNode) {
-                graph.selectMiddleOfViewport()
-            }
-            // Avoid using the arrow keys for scroll, if they're bound.
-            // But still allow regular keyboard navigation in insert mode
-            event.preventDefault()
         }
     },
 })
-
-const panSpeed = () => Number.parseInt(GraphModeSettings.get('Keyboard Pan Speed'), 10)
-const dragSpeed = () => Number.parseInt(GraphModeSettings.get('Keyboard Drag Speed'), 10)
 
 export const config: Feature = {
     id: 'spatial_graph_mode',
@@ -69,18 +47,34 @@ export const config: Feature = {
         spatialShortcut('Ctrl+-', 'Zoom out', graph => graph.zoomBy(4 / 5)),
         spatialShortcut('Ctrl+0', 'Zoom in completely', graph => graph.zoomBy(10)),
         spatialShortcut('Ctrl+9', 'Zoom out completely', graph => graph.zoomOutCompletely()),
-        spatialShortcut('Ctrl+ArrowLeft', 'Pan left', graph => graph.panBy(-panSpeed(), 0)),
-        spatialShortcut('Ctrl+ArrowDown', 'Pan down', graph => graph.panBy(0, panSpeed())),
-        spatialShortcut('Ctrl+ArrowUp', 'Pan up', graph => graph.panBy(0, -panSpeed())),
-        spatialShortcut('Ctrl+ArrowRight', 'Pan right', graph => graph.panBy(panSpeed(), 0)),
-        spatialShortcut('Ctrl+Shift+h', 'Move node left', graph => graph.dragSelectionBy(-dragSpeed(), 0), false),
-        spatialShortcut('Ctrl+Shift+j', 'Move node down', graph => graph.dragSelectionBy(0, dragSpeed()), false),
-        spatialShortcut('Ctrl+Shift+k', 'Move node up', graph => graph.dragSelectionBy(0, -dragSpeed()), false),
-        spatialShortcut('Ctrl+Shift+l', 'Move node right', graph => graph.dragSelectionBy(dragSpeed(), 0), false),
-        spatialShortcut('Ctrl+h', 'Select left of current selection', graph => graph.selectLeft(), false),
-        spatialShortcut('Ctrl+j', 'Select down of current selection', graph => graph.selectDown(), false),
-        spatialShortcut('Ctrl+k', 'Select up of current selection', graph => graph.selectUp(), false),
-        spatialShortcut('Ctrl+l', 'Select right of current selection', graph => graph.selectRight(), false),
+        spatialShortcut('Ctrl+ArrowLeft', 'Pan left', graph => {
+            graph.panBy(-GraphModeSettings.panSpeed(), 0)
+        }),
+        spatialShortcut('Ctrl+ArrowDown', 'Pan down', graph => {
+            graph.panBy(0, GraphModeSettings.panSpeed())
+        }),
+        spatialShortcut('Ctrl+ArrowUp', 'Pan up', graph => {
+            graph.panBy(0, -GraphModeSettings.panSpeed())
+        }),
+        spatialShortcut('Ctrl+ArrowRight', 'Pan right', graph => {
+            graph.panBy(GraphModeSettings.panSpeed(), 0)
+        }),
+        spatialShortcut('Ctrl+Shift+h', 'Move node left', graph => {
+            graph.dragSelectionBy(-GraphModeSettings.dragSpeed(), 0)
+        }),
+        spatialShortcut('Ctrl+Shift+j', 'Move node down', graph => {
+            graph.dragSelectionBy(0, GraphModeSettings.dragSpeed())
+        }),
+        spatialShortcut('Ctrl+Shift+k', 'Move node up', graph => {
+            graph.dragSelectionBy(0, -GraphModeSettings.dragSpeed())
+        }),
+        spatialShortcut('Ctrl+Shift+l', 'Move node right', graph => {
+            graph.dragSelectionBy(GraphModeSettings.dragSpeed(), 0)
+        }),
+        spatialShortcut('Ctrl+h', 'Select left of current selection', graph => graph.selectLeft()),
+        spatialShortcut('Ctrl+j', 'Select down of current selection', graph => graph.selectDown()),
+        spatialShortcut('Ctrl+k', 'Select up of current selection', graph => graph.selectUp()),
+        spatialShortcut('Ctrl+l', 'Select right of current selection', graph => graph.selectRight()),
     ],
 }
 

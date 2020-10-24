@@ -7,7 +7,7 @@ const spatialSetting = (label: string, value: string) => ({
     initValue: value,
 })
 
-const _settings: {[label: string]: string} = {}
+const settingsCache: {[label: string]: string} = {}
 
 export const GraphModeSettings = {
     all: [
@@ -24,13 +24,19 @@ export const GraphModeSettings = {
         spatialSetting('Follow nodes on open (off/pan/panZoom)', 'pan'),
     ],
 
-    get: (label: string) => _settings[label],
+    get: (label: string) => settingsCache[label],
+
+    panSpeed: (): number => Number.parseInt(GraphModeSettings.get('Keyboard Pan Speed'), 10),
+    dragSpeed: (): number => Number.parseInt(GraphModeSettings.get('Keyboard Drag Speed'), 10),
+    getAnimationDuration: (): number => Number.parseInt(GraphModeSettings.get('Animation Duration (ms)'), 10),
+    getLayoutDuration: (): number => Number.parseInt(GraphModeSettings.get('Layout Duration (ms)'), 10),
+    getNodeSpacing: (): number => Number.parseInt(GraphModeSettings.get('Node Spacing'), 10),
 
     // Cache the settings when feature is activated, so we don't have to use async
     refresh: () =>
         Promise.all(
             GraphModeSettings.all.map(async ({label}) => {
-                _settings[label] = await Settings.get('spatial_graph_mode', `spatialGraphMode_${label}`)
+                settingsCache[label] = await Settings.get('spatial_graph_mode', `spatialGraphMode_${label}`)
             })
         ),
 }
