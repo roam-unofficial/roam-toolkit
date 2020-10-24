@@ -9,7 +9,7 @@ const spatialSetting = (label: string, value: string) => ({
 
 const settingsCache: {[label: string]: string} = {}
 
-export const GraphModeSettings = {
+export const SpatialSettings = {
     all: [
         spatialSetting('Width', '550px'),
         spatialSetting('Min Height', '150px'),
@@ -26,16 +26,16 @@ export const GraphModeSettings = {
 
     get: (label: string) => settingsCache[label],
 
-    panSpeed: (): number => Number.parseInt(GraphModeSettings.get('Keyboard Pan Speed'), 10),
-    dragSpeed: (): number => Number.parseInt(GraphModeSettings.get('Keyboard Drag Speed'), 10),
-    getAnimationDuration: (): number => Number.parseInt(GraphModeSettings.get('Animation Duration (ms)'), 10),
-    getLayoutDuration: (): number => Number.parseInt(GraphModeSettings.get('Layout Duration (ms)'), 10),
-    getNodeSpacing: (): number => Number.parseInt(GraphModeSettings.get('Node Spacing'), 10),
+    panSpeed: (): number => Number.parseInt(SpatialSettings.get('Keyboard Pan Speed'), 10),
+    dragSpeed: (): number => Number.parseInt(SpatialSettings.get('Keyboard Drag Speed'), 10),
+    getAnimationDuration: (): number => Number.parseInt(SpatialSettings.get('Animation Duration (ms)'), 10),
+    getLayoutDuration: (): number => Number.parseInt(SpatialSettings.get('Layout Duration (ms)'), 10),
+    getNodeSpacing: (): number => Number.parseInt(SpatialSettings.get('Node Spacing'), 10),
 
     // Cache the settings when feature is activated, so we don't have to use async
     refresh: () =>
         Promise.all(
-            GraphModeSettings.all.map(async ({label}) => {
+            SpatialSettings.all.map(async ({label}) => {
                 settingsCache[label] = await Settings.get('spatial_graph_mode', `spatialGraphMode_${label}`)
             })
         ),

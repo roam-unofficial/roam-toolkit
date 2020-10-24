@@ -1,30 +1,33 @@
 import {browser} from 'webextension-polyfill-ts'
-
 import {Feature, Settings, Shortcut} from 'src/core/settings'
-import {RoamEvent} from 'src/core/features/vim-mode/roam/roam-event'
 import {waitForSelectorToExist} from 'src/core/common/mutation-observer'
-import {Selectors} from 'src/core/roam/selectors'
 import {assumeExists} from 'src/core/common/assert'
 import {Mouse} from 'src/core/common/mouse'
+import {DisconnectFn, listenToEvent} from 'src/core/common/event'
+
+import {Selectors} from 'src/core/roam/selectors'
+import {RoamEvent} from 'src/core/roam/roam-event'
+import {PANEL_SELECTOR, plainId} from 'src/core/roam/panel/roam-panel-utils'
+
 import {getMode, Mode} from 'src/core/features/vim-mode/vim'
 import {VimRoamPanel as RoamVimPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {updateVimView} from 'src/core/features/vim-mode/vim-view'
 import {PanelChange, RoamPanel} from 'src/core/roam/panel/roam-panel'
-import {DisconnectFn, listenToEvent} from 'src/core/common/event'
-import {GraphData, GraphVisualization} from 'src/core/features/spatial-graph-mode/graph-visualization'
 import {isVimModeOn} from 'src/core/features/vim-mode/vim-init'
-import {GraphModeSettings} from 'src/core/features/spatial-graph-mode/graph-mode-settings'
 import {BlockElement} from 'src/core/features/vim-mode/roam/roam-block'
-import {PANEL_SELECTOR, plainId} from 'src/core/roam/panel/roam-panel-utils'
 
-const spatialShortcut = (key: string, label: string, onPress: (graph: GraphVisualization) => void): Shortcut => ({
+import {GraphData, GraphVisualization} from './graph-visualization'
+import {SpatialSettings} from './spatial-settings'
+import {SpatialViewport} from './spatial-viewport'
+
+const spatialShortcut = (key: string, label: string, onPress: (graph: SpatialViewport) => void): Shortcut => ({
     type: 'shortcut',
     id: `spatialGraphMode_${label}`,
     label,
     initValue: key,
     onPress: () => {
         if (getMode() === Mode.NORMAL) {
-            onPress(GraphVisualization.get())
+            onPress(GraphVisualization.get().viewport)
         }
     },
 })
@@ -37,39 +40,39 @@ export const config: Feature = {
     warning: 'Will lag if your CSS theme uses [style=*] selectors!',
     enabledByDefault: false,
     settings: [
-        ...GraphModeSettings.all,
-        spatialShortcut('Ctrl+=', 'Zoom in', graph => graph.zoomBy(5 / 4)),
-        spatialShortcut('Ctrl+-', 'Zoom out', graph => graph.zoomBy(4 / 5)),
-        spatialShortcut('Ctrl+0', 'Zoom in completely', graph => graph.zoomBy(10)),
-        spatialShortcut('Ctrl+9', 'Zoom out completely', graph => graph.zoomOutCompletely()),
-        spatialShortcut('Ctrl+ArrowLeft', 'Pan left', graph => {
-            graph.panBy(-GraphModeSettings.panSpeed(), 0)
+        ...SpatialSettings.all,
+        spatialShortcut('Ctrl+=', 'Zoom in', viewport => viewport.zoomBy(5 / 4)),
+        spatialShortcut('Ctrl+-', 'Zoom out', viewport => viewport.zoomBy(4 / 5)),
+        spatialShortcut('Ctrl+0', 'Zoom in completely', viewport => viewport.zoomBy(10)),
+        spatialShortcut('Ctrl+9', 'Zoom out completely', viewport => viewport.zoomOutCompletely()),
+        spatialShortcut('Ctrl+ArrowLeft', 'Pan left', viewport => {
+            viewport.panBy(-SpatialSettings.panSpeed(), 0)
         }),
-        spatialShortcut('Ctrl+ArrowDown', 'Pan down', graph => {
-            graph.panBy(0, GraphModeSettings.panSpeed())
+        spatialShortcut('Ctrl+ArrowDown', 'Pan down', viewport => {
+            viewport.panBy(0, SpatialSettings.panSpeed())
         }),
-        spatialShortcut('Ctrl+ArrowUp', 'Pan up', graph => {
-            graph.panBy(0, -GraphModeSettings.panSpeed())
+        spatialShortcut('Ctrl+ArrowUp', 'Pan up', viewport => {
+            viewport.panBy(0, -SpatialSettings.panSpeed())
         }),
-        spatialShortcut('Ctrl+ArrowRight', 'Pan right', graph => {
-            graph.panBy(GraphModeSettings.panSpeed(), 0)
+        spatialShortcut('Ctrl+ArrowRight', 'Pan right', viewport => {
+            viewport.panBy(SpatialSettings.panSpeed(), 0)
         }),
-        spatialShortcut('Ctrl+Shift+h', 'Move node left', graph => {
-            graph.dragSelectionBy(-GraphModeSettings.dragSpeed(), 0)
+        spatialShortcut('Ctrl+Shift+h', 'Move node left', viewport => {
+            viewport.dragSelectionBy(-SpatialSettings.dragSpeed(), 0)
         }),
-        spatialShortcut('Ctrl+Shift+j', 'Move node down', graph => {
-            graph.dragSelectionBy(0, GraphModeSettings.dragSpeed())
+        spatialShortcut('Ctrl+Shift+j', 'Move node down', viewport => {
+            viewport.dragSelectionBy(0, SpatialSettings.dragSpeed())
         }),
-        spatialShortcut('Ctrl+Shift+k', 'Move node up', graph => {
-            graph.dragSelectionBy(0, -GraphModeSettings.dragSpeed())
+        spatialShortcut('Ctrl+Shift+k', 'Move node up', viewport => {
+            viewport.dragSelectionBy(0, -SpatialSettings.dragSpeed())
         }),
-        spatialShortcut('Ctrl+Shift+l', 'Move node right', graph => {
-            graph.dragSelectionBy(GraphModeSettings.dragSpeed(), 0)
+        spatialShortcut('Ctrl+Shift+l', 'Move node right', viewport => {
+            viewport.dragSelectionBy(SpatialSettings.dragSpeed(), 0)
         }),
-        spatialShortcut('Ctrl+h', 'Select left of current selection', graph => graph.selectLeft()),
-        spatialShortcut('Ctrl+j', 'Select down of current selection', graph => graph.selectDown()),
-        spatialShortcut('Ctrl+k', 'Select up of current selection', graph => graph.selectUp()),
-        spatialShortcut('Ctrl+l', 'Select right of current selection', graph => graph.selectRight()),
+        spatialShortcut('Ctrl+h', 'Select left of current selection', viewport => viewport.selectLeft()),
+        spatialShortcut('Ctrl+j', 'Select down of current selection', viewport => viewport.selectDown()),
+        spatialShortcut('Ctrl+k', 'Select up of current selection', viewport => viewport.selectUp()),
+        spatialShortcut('Ctrl+l', 'Select right of current selection', viewport => viewport.selectRight()),
     ],
 }
 
@@ -99,7 +102,7 @@ toggleSpatialGraphModeDependingOnSetting()
 
 let disconnectFunctions: DisconnectFn[] = []
 const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
-    await GraphModeSettings.refresh()
+    await SpatialSettings.refresh()
     await waitForSelectorToExist(Selectors.mainContent)
     await GraphVisualization.init()
     const graph = GraphVisualization.get()
@@ -143,11 +146,11 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
             return
         }
 
-        graph.ensureNodeIsSelected()
+        graph.viewport.ensureNodeIsSelected()
         graph.runLayout(panelChange.isInitialAdd && !previousGraphData)
     }
 
-    graph.onSelectNode(nodeId => {
+    graph.viewport.onSelectNode(nodeId => {
         if (isVimModeOn()) {
             const panel = assumeExists(RoamPanel.getPanel(nodeId))
             RoamVimPanel.get(panel).select()
@@ -159,9 +162,9 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
     // out from underneath us (e.g. due to a window resize)
     const layoutWhileKeepingNodeInView = async (block: BlockElement) => {
         const parentPanelId = plainId(assumeExists(block.closest(PANEL_SELECTOR)).id)
-        graph.selectNodeById(parentPanelId)
+        graph.viewport.selectNodeById(parentPanelId)
         await graph.runLayout()
-        graph.panToSelectionIfNeeded()
+        graph.viewport.panToSelectionIfNeeded()
     }
 
     disconnectFunctions = [
@@ -181,5 +184,5 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
  */
 const stopSpatialGraphMode = () => {
     disconnectFunctions.forEach(disconnect => disconnect())
-    GraphVisualization.destroy()
+    GraphVisualization.cleanup()
 }

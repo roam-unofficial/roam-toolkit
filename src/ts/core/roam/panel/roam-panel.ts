@@ -1,10 +1,14 @@
 import {entries} from 'lodash'
+
 import {assumeExists} from 'src/core/common/assert'
 import {Selectors} from 'src/core/roam/selectors'
-import {RoamEvent} from 'src/core/features/vim-mode/roam/roam-event'
+import {RoamEvent} from 'src/core/roam/roam-event'
 import {delay} from 'src/core/common/async'
 import {DisconnectFn} from 'src/core/common/event'
 import {toggleCssClass, toggleCssClassForAll} from 'src/core/common/css'
+
+import {GraphVisualization} from 'src/core/features/spatial-mode/graph-visualization'
+
 import {
     namespaceId,
     PANEL_CSS_CLASS,
@@ -13,9 +17,8 @@ import {
     panelIdFromMainPage,
     panelIdFromSidebarPage,
     plainId,
-} from 'src/core/roam/panel/roam-panel-utils'
-import {justClickedPanelId, rememberLastInteractedPanel} from 'src/core/roam/panel/roam-panel-origin'
-import {GraphVisualization} from 'src/core/features/spatial-graph-mode/graph-visualization'
+} from './roam-panel-utils'
+import {justClickedPanelId, rememberLastInteractedPanel} from './roam-panel-origin'
 
 export type PanelChange = {
     // Is this initial bulk add?

@@ -1,6 +1,7 @@
 import {DisconnectFn, listenToEvent} from 'src/core/common/event'
-import {RoamEvent} from 'src/core/features/vim-mode/roam/roam-event'
-import {PANEL_SELECTOR, PanelId, plainId} from 'src/core/roam/panel/roam-panel-utils'
+import {RoamEvent} from 'src/core/roam/roam-event'
+
+import {PANEL_SELECTOR, PanelId, plainId} from './roam-panel-utils'
 
 let _justClickedPanelId: PanelId | null = null
 
