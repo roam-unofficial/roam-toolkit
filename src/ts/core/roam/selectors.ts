@@ -7,6 +7,7 @@ export const Selectors = {
     blockBulletView: '.block-bullet-view',
     title: '.rm-title-display',
 
+    main: '.roam-main',
     mainContent: '.roam-article',
     mainPanel: '.roam-body-main',
 
