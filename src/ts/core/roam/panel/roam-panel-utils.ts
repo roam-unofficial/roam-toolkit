@@ -23,6 +23,11 @@ export const panelIdFromSidebarPage = (sidebarPage: PanelElement): PanelId => {
         // Need Selectors.blockInput, because ctrl+shift+o opens a panel with the block already focused
         return firstBlockId(sidebarPage)
     }
+
+    const headerCollapsedLink = header.querySelector('div > a') as HTMLElement
+    if (headerCollapsedLink) {
+        return headerCollapsedLink.innerText
+    }
     return panelIdFromMainPage(sidebarPage)
 }
 
