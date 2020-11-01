@@ -110,7 +110,7 @@ export const RoamPanel = {
 
 // Treat each sidebar as an individual panel in spatial graph mode
 // If we're not in graph mode, then just use the default scroll containers
-const DEFAULT_SCROLL_PANELS = `.roam-center > div:first-child, ${Selectors.sidebarScrollContainer}`
+const DEFAULT_SCROLL_PANELS = `${Selectors.mainBody} > div:first-child, ${Selectors.sidebarScrollContainer}`
 // Use the innermost div, cause some css themes color them to look like a card
 const GRAPH_MODE_SCROLL_PANELS = `${Selectors.mainContent}, ${Selectors.sidebarPage}`
 

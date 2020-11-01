@@ -3,8 +3,23 @@ import cytoscape, {NodeDataDefinition, NodeSingular} from 'cytoscape'
 import {assumeExists} from 'src/core/common/assert'
 import {PanelElement} from 'src/core/roam/panel/roam-panel-utils'
 import {RoamPanel} from 'src/core/roam/panel/roam-panel'
+import {Selectors} from 'src/core/roam/selectors'
 
-const getDomViewport = (): HTMLElement => assumeExists(document.querySelector('.roam-body-main')) as HTMLElement
+const transformViewport = (x: number, y: number, scale: number) => {
+    const mainViewport = assumeExists(document.querySelector(Selectors.mainBody)) as HTMLElement
+    const sideViewport = assumeExists(document.querySelector(Selectors.sidebar)) as HTMLElement
+    mainViewport.style.transform = `translate(${x}px, ${y}px) scale(${scale})`
+    sideViewport.style.transform = `translate(${x}px, ${y}px) scale(${scale})`
+}
+
+const resetViewport = () => {
+    const mainViewport = assumeExists(document.querySelector(Selectors.mainBody)) as HTMLElement
+    const sideViewport = assumeExists(document.querySelector(Selectors.sidebar)) as HTMLElement
+    mainViewport.style.width = '100vw'
+    mainViewport.style.height = 'calc(100% - 45px)'
+    mainViewport.style.removeProperty('transform')
+    sideViewport.style.removeProperty('transform')
+}
 
 /**
  * Responsible for updating DOM elements to match Cytoscape
@@ -21,12 +36,9 @@ export class SpatialDomSynchronizer {
         this.cy = cy
         this.positionUpdates = new Map()
 
-        const domViewport = getDomViewport()
         this.cy.on('viewport resize', () => {
             requestAnimationFrame(() => {
-                domViewport.style.transform = `translate(${this.cy.pan().x}px, ${
-                    this.cy.pan().y
-                }px) scale(${this.cy.zoom()})`
+                transformViewport(this.cy.pan().x, this.cy.pan().y, this.cy.zoom())
             })
         })
         this.cy.on('position', event => this.queuePositionUpdate(event.target))
@@ -72,9 +84,6 @@ export class SpatialDomSynchronizer {
 
     resetStyles() {
         this.resetPanelStyles()
-        const domViewport = getDomViewport()
-        domViewport.style.width = '100vw'
-        domViewport.style.height = 'calc(100% - 45px)'
-        domViewport.style.removeProperty('transform')
+        resetViewport()
     }
 }

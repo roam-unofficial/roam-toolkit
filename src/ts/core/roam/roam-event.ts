@@ -96,17 +96,27 @@ export const RoamEvent = {
 
     onChangePage(handler: () => void): DisconnectFn {
         // Only the content changes when switching between pages
-        let stopObservingContent = onSelectorChange(Selectors.mainContent, handler)
-        // The main panel changes when switching between daily notes and regular pages
-        const stopObservingMainPanel = onSelectorChange(Selectors.mainPanel, () => {
-            handler()
+        let stopObservingContent = () => {}
+        const reobserveContent = () => {
             stopObservingContent()
             stopObservingContent = onSelectorChange(Selectors.mainContent, handler)
-        })
+        }
+        // The main panel changes when switching between daily notes and regular pages
+        let stopObservingMain = () => {}
+        const reobserveMain = () => {
+            stopObservingMain()
+            stopObservingMain = onSelectorChange(Selectors.main, () => {
+                reobserveContent()
+                handler()
+            })
+        }
+
+        reobserveContent()
+        reobserveMain()
 
         return () => {
             stopObservingContent()
-            stopObservingMainPanel()
+            stopObservingMain()
         }
     },
 }

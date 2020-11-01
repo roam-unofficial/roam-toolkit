@@ -2,8 +2,8 @@ import {Feature, Settings} from '../settings'
 import {Navigation} from '../roam/navigation'
 import {browser} from 'webextension-polyfill-ts'
 import {createPopper, Instance} from '@popperjs/core'
-import {delay} from '../common/async';
-import {Selectors} from '../roam/selectors';
+import {delay} from '../common/async'
+import {Selectors} from '../roam/selectors'
 
 export const config: Feature = {
     id: 'live_preview',
@@ -179,7 +179,7 @@ class PreviewIframe {
     }
 
     private async prepIframeForDisplay(url: string) {
-        if (!await this.stillHoveringOverSameObjectAfterDelay()) return
+        if (!(await this.stillHoveringOverSameObjectAfterDelay())) return
 
         // this pre-loads the iframe, (which is shown after a delay)
         this.iframe.src = url
@@ -192,7 +192,7 @@ class PreviewIframe {
         const hoverTargetAtCallTime = this.hoveredElement
         await delay(millis)
 
-        return hoverTargetAtCallTime === this.hoveredElement;
+        return hoverTargetAtCallTime === this.hoveredElement
     }
 
     private makePopper(target: HTMLElement) {
@@ -237,7 +237,7 @@ class PreviewIframe {
         .roam-topbar {
             display: none !important;
         }
-        ${Selectors.mainPanel} {
+        ${Selectors.mainBody} {
             top: 0px !important;
         }
         #buffer {
