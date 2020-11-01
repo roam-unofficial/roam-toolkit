@@ -26,6 +26,9 @@ export const panelIdFromSidebarPage = (sidebarPage: PanelElement): PanelId => {
 
     const headerCollapsedLink = header.querySelector('div > a') as HTMLElement
     if (headerCollapsedLink) {
+        if (headerText.includes('References to: ')) {
+            return `References to: ${headerCollapsedLink.innerText}`
+        }
         return headerCollapsedLink.innerText
     }
     return panelIdFromMainPage(sidebarPage)
