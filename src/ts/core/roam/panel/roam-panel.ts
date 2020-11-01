@@ -149,7 +149,7 @@ const tagAndCountPanels = (): {[id: string]: number} => {
 
 // Tagging panels with IDs allow easy syncing with the graph visualization
 const tagMainPanelId = (): PanelId => {
-    const nodeId = panelIdFromMainPage()
+    const nodeId = panelIdFromMainPage(getMainPanel())
     getMainPanel().id = namespaceId(nodeId)
     return nodeId
 }

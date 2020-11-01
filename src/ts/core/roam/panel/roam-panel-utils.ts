@@ -17,13 +17,13 @@ const firstBlockId = (panelElement: PanelElement) =>
     assumeExists(panelElement.querySelector(`${Selectors.block}, ${Selectors.blockInput}`)?.id)
 
 export const panelIdFromSidebarPage = (sidebarPage: PanelElement): PanelId => {
-    const header = assumeExists(sidebarPage.querySelector('[draggable] > .level2, [draggable] > div')) as HTMLElement
+    const header = assumeExists(sidebarPage.querySelector('.window-headers')) as HTMLElement
     const headerText = assumeExists(header.innerText)
     if (headerText === 'Block Outline') {
         // Need Selectors.blockInput, because ctrl+shift+o opens a panel with the block already focused
         return firstBlockId(sidebarPage)
     }
-    return headerText
+    return panelIdFromMainPage(sidebarPage)
 }
 
 const getComplexPageName = (mainTitle: HTMLElement) =>
@@ -31,8 +31,7 @@ const getComplexPageName = (mainTitle: HTMLElement) =>
         .map(node => (node as Text).data || `[[${(node as HTMLElement).dataset?.linkTitle}]]`)
         .join('')
 
-export const panelIdFromMainPage = (): PanelId => {
-    const mainPage = getMainPanel()
+export const panelIdFromMainPage = (mainPage: PanelElement): PanelId => {
     if (document.querySelector(Selectors.dailyNotes)) {
         return 'DAILY_NOTES'
     }
