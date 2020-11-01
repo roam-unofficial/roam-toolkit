@@ -83,7 +83,7 @@ export const RoamEvent = {
         })
     },
 
-    onRenamePage(handler: (newTitle: string) => void): DisconnectFn {
+    onRenamePage(handler: (renameTextArea: string) => void): DisconnectFn {
         const handleTitleEvent = (event: Event) => {
             const element = event.target as HTMLTextAreaElement
             if (element.classList.contains('rm-title-textarea')) {

@@ -18,6 +18,7 @@ import {
     plainId,
 } from './roam-panel-utils'
 import {justClickedPanelId, rememberLastInteractedPanel} from './roam-panel-origin'
+import {assumeExists} from 'src/core/common/assert'
 
 export type PanelChange = {
     // Is this initial bulk add?
@@ -66,9 +67,9 @@ export const RoamPanel = {
         }
 
         const emitRenameEvent = async (newTitle: string) => {
-            const mainPanel = getMainPanel()
-            const oldId = plainId(mainPanel.id)
-            mainPanel.id = namespaceId(newTitle)
+            const oldId = assumeExists(justClickedPanelId())
+            const justRenamedPanel = assumeExists(RoamPanel.getPanel(oldId))
+            justRenamedPanel.id = namespaceId(newTitle)
             // Only emit the event after sidebar pages finish updating their titles
             await delay(10)
             // Update panel counts, in case complex sidebar pages changed their names

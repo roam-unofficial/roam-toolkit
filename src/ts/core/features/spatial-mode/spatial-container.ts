@@ -1,7 +1,7 @@
 import {injectStyle} from 'src/core/common/css'
 
 import {SpatialSettings} from './spatial-settings'
-import {PANEL_CSS_CLASS, PANEL_SELECTOR} from 'src/core/roam/panel/roam-panel-utils'
+import {PANEL_SELECTOR} from 'src/core/roam/panel/roam-panel-utils'
 import {Selectors} from 'src/core/roam/selectors'
 
 const SPATIAL_MASK_ID = 'roam-toolkit-spatial-mode--mask'
