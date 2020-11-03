@@ -34,7 +34,7 @@ export const getCytoscapeContainer = () => {
         }
 
         /* REMOVE UI CRUFT */
-        ${Selectors.sidebar} {
+        ${Selectors.sidebar}, ${Selectors.sidebar} > div {
             background-color: transparent;
         }
         ${Selectors.sidebar} > div:first-child, /* sidebar toggle */
