@@ -15,7 +15,6 @@ import {
     PanelId,
     panelIdFromPage,
     panelIdFromSidebarPage,
-    plainId,
 } from './roam-panel-utils'
 import {justClickedPanelId, rememberLastInteractedPanel} from './roam-panel-origin'
 import {assumeExists} from 'src/core/common/assert'
