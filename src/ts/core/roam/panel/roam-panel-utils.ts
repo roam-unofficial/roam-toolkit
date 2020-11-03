@@ -31,7 +31,7 @@ export const panelIdFromSidebarPage = (sidebarPage: PanelElement): PanelId => {
         }
         return headerCollapsedLink.innerText
     }
-    return panelIdFromMainPage(sidebarPage)
+    return panelIdFromPage(sidebarPage)
 }
 
 const getComplexPageName = (mainTitle: HTMLElement) =>
@@ -39,28 +39,28 @@ const getComplexPageName = (mainTitle: HTMLElement) =>
         .map(node => (node as Text).data || `[[${(node as HTMLElement).dataset?.linkTitle}]]`)
         .join('')
 
-export const panelIdFromMainPage = (mainPage: PanelElement): PanelId => {
-    if (document.querySelector(Selectors.dailyNotes)) {
+export const panelIdFromPage = (page: PanelElement): PanelId => {
+    if (page.closest(Selectors.dailyNotes)) {
         return 'DAILY_NOTES'
     }
 
-    const mainTitle = mainPage.querySelector('.rm-title-display > span') as HTMLElement
+    const mainTitle = page.querySelector('.rm-title-display > span') as HTMLElement
     if (mainTitle) {
         return getComplexPageName(mainTitle)
     }
 
     // Renaming the Main Page
-    const mainTitleTextArea = mainPage.querySelector('.rm-title-textarea') as HTMLTextAreaElement
+    const mainTitleTextArea = page.querySelector('.rm-title-textarea') as HTMLTextAreaElement
     if (mainTitleTextArea) {
         return mainTitleTextArea.value
     }
 
     // Block Outline
-    if (mainPage.querySelector('.rm-zoom')) {
+    if (page.querySelector('.rm-zoom')) {
         // Treat block outlines on the main page as having the same id
         // As the main page itself, so we don't create/destroy panels
         // when zooming in/out
-        const firstBreadcrumb = assumeExists(mainPage.querySelector('.rm-zoom-item-content')) as HTMLElement
+        const firstBreadcrumb = assumeExists(page.querySelector('.rm-zoom-item-content')) as HTMLElement
         return firstBreadcrumb.innerText
     }
 

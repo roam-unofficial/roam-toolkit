@@ -13,7 +13,7 @@ import {
     PANEL_CSS_CLASS,
     PanelElement,
     PanelId,
-    panelIdFromMainPage,
+    panelIdFromPage,
     panelIdFromSidebarPage,
     plainId,
 } from './roam-panel-utils'
@@ -150,7 +150,7 @@ const tagAndCountPanels = (): {[id: string]: number} => {
 
 // Tagging panels with IDs allow easy syncing with the graph visualization
 const tagMainPanelId = (): PanelId => {
-    const nodeId = panelIdFromMainPage(getMainPanel())
+    const nodeId = panelIdFromPage(getMainPanel())
     getMainPanel().id = namespaceId(nodeId)
     return nodeId
 }
