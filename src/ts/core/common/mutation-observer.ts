@@ -40,10 +40,15 @@ const observeElement = (
 export const waitForSelectorToExist = (
     selector: string,
     observeInside: HTMLElement = document.body
+): Promise<HTMLElement> => waitForSelectionToExist(element => element.querySelector(selector), observeInside)
+
+export const waitForSelectionToExist = (
+    selectionFn: (element: HTMLElement) => HTMLElement | null,
+    observeInside = document.body
 ): Promise<HTMLElement> => {
     return new Promise(resolve => {
         const resolveIfElementExists = () => {
-            const element = observeInside.querySelector(selector) as HTMLElement
+            const element = selectionFn(observeInside)
             if (element) {
                 resolve(element)
                 return true

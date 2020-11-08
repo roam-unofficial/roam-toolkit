@@ -70,6 +70,7 @@ export class GraphVisualization {
     static instance: GraphVisualization | null
 
     private cy: cytoscape.Core
+    private layout: cytoscape.Layouts | null
     private synchronizer: SpatialDomSynchronizer
     viewport: SpatialViewport
 
@@ -78,6 +79,7 @@ export class GraphVisualization {
             container,
             style: getCytoscapeStyles(),
         })
+        this.layout = null
         this.synchronizer = new SpatialDomSynchronizer(this.cy)
         this.viewport = new SpatialViewport(this.cy)
     }
@@ -190,7 +192,9 @@ export class GraphVisualization {
                 node.style('height', panelElement.offsetHeight + 20)
             }
         })
-        this.cy
+
+        this.layout?.stop()
+        this.layout = this.cy
             .layout({
                 name: 'cola',
                 fit: false,
@@ -207,10 +211,16 @@ export class GraphVisualization {
                 // @ts-ignore if maxSimulationTime is too low, the layout doesn't actually run
                 nodeSpacing: SpatialSettings.getNodeSpacing(),
             })
-            .stop()
             .run()
 
-        return this.cy.promiseOn('layoutstop')
+        return this.waitForLayout()
+    }
+
+    private async waitForLayout() {
+        if (this.layout) {
+            await this.layout.promiseOn('layoutstop')
+            this.layout = null
+        }
     }
 
     save(): GraphData {
@@ -230,8 +240,9 @@ export class GraphVisualization {
         }
     }
 
-    load(savedData: GraphData) {
-        this.cy.stop()
+    async load(savedData: GraphData) {
+        this.layout?.stop()
+        await this.waitForLayout()
         this.cy.batch(() => {
             savedData.nodes.forEach(({id, position, width, height}) => {
                 let node = this.cy.getElementById(id)
@@ -252,9 +263,13 @@ export class GraphVisualization {
                     },
                 })
             })
-            this.cy.zoom(savedData.zoom)
-            this.cy.pan(savedData.pan)
         })
+        // Stop viewport animations that may have started up after adding nodes
+        this.cy.stop(true, true)
+        await delay(10)
+
+        this.cy.zoom(savedData.zoom)
+        this.cy.pan(savedData.pan)
     }
 
     cleanup() {
