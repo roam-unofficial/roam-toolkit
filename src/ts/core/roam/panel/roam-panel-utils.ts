@@ -24,13 +24,15 @@ export const panelIdFromSidebarPage = (sidebarPage: PanelElement): PanelId => {
         return firstBlockId(sidebarPage)
     }
 
+    if (header.innerText.startsWith('References to:')) {
+        return header.innerText
+    }
+
     const headerCollapsedLink = header.querySelector('div > a') as HTMLElement
     if (headerCollapsedLink) {
-        if (headerText.includes('References to: ')) {
-            return `References to: ${headerCollapsedLink.innerText}`
-        }
         return headerCollapsedLink.innerText
     }
+
     return panelIdFromPage(sidebarPage)
 }
 
