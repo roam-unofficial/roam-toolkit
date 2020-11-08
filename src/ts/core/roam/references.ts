@@ -22,15 +22,9 @@ const parentPageLink = (blockElement: BlockElement | null): HTMLElement | null =
         return referenceCard?.querySelector(Selectors.pageReferenceLink) as HTMLElement
     }
 
-    const mainPanel = blockElement?.closest(Selectors.mainContent)
-    if (mainPanel) {
-        return mainPanel.querySelector(Selectors.title) as HTMLElement
-    }
-
-    const sidePanel = blockElement?.closest(Selectors.sidebarPage)
-    if (sidePanel) {
-        // Block outline uses h2, regular sidebar pages use h1
-        return sidePanel?.querySelector('h2 span, h1 a') as HTMLElement
+    const panel = blockElement?.closest(`${Selectors.mainContent}, ${Selectors.sidebarPage}`)
+    if (panel) {
+        return panel.querySelector(Selectors.title) as HTMLElement
     }
 
     return null
