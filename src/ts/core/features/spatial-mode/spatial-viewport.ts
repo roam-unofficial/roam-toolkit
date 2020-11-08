@@ -81,6 +81,11 @@ export class SpatialViewport {
         this.cy.panBy({x: -x, y: -y})
     }
 
+    zoomIntoSelection() {
+        this.zoomBy(10)
+        this.cy.center(this.selectedNodes())
+    }
+
     selectedNodes(): NodeCollection {
         return this.cy.nodes(':selected')
     }

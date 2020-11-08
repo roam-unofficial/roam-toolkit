@@ -49,7 +49,7 @@ export const config: Feature = {
         ...SpatialSettings.all,
         spatialShortcut('Ctrl+=', 'Zoom in', viewport => viewport.zoomBy(5 / 4)),
         spatialShortcut('Ctrl+-', 'Zoom out', viewport => viewport.zoomBy(4 / 5)),
-        spatialShortcut('Ctrl+0', 'Zoom in completely', viewport => viewport.zoomBy(10)),
+        spatialShortcut('Ctrl+0', 'Zoom in completely', viewport => viewport.zoomIntoSelection()),
         spatialShortcut('Ctrl+9', 'Zoom out completely', viewport => viewport.zoomOutCompletely()),
         spatialShortcut('Ctrl+ArrowLeft', 'Pan left', viewport => {
             viewport.panBy(-SpatialSettings.panSpeed(), 0)
