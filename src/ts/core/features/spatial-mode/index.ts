@@ -156,8 +156,11 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
     graph.viewport.onSelectNode(nodeId => {
         if (isVimModeOn()) {
             const panel = assumeExists(RoamPanel.getPanel(nodeId))
-            RoamVimPanel.get(panel).select()
-            updateVimView()
+            // Collapsed panels might not have any vim blocks
+            if (panel.querySelector(Selectors.block)) {
+                RoamVimPanel.get(panel).select()
+                updateVimView()
+            }
         }
     })
 
