@@ -15,8 +15,6 @@ const transformViewport = (x: number, y: number, scale: number) => {
 const resetViewport = () => {
     const mainViewport = assumeExists(document.querySelector(Selectors.mainBody)) as HTMLElement
     const sideViewport = assumeExists(document.querySelector(Selectors.sidebar)) as HTMLElement
-    mainViewport.style.width = '100vw'
-    mainViewport.style.height = 'calc(100% - 45px)'
     mainViewport.style.removeProperty('transform')
     sideViewport.style.removeProperty('transform')
 }
@@ -29,7 +27,7 @@ export class SpatialDomSynchronizer {
     // This prevents the layout thrashing when alternating between reading/writing
     // Node positions to the DOM
     // https://developers.google.com/web/fundamentals/performance/rendering/avoid-large-complex-layouts-and-layout-thrashing
-    private positionUpdates: Map<PanelElement, {left: string; top: string}>
+    private positionUpdates: Map<PanelElement, {left: number; top: number}>
     private cy: cytoscape.Core
 
     constructor(cy: cytoscape.Core) {
@@ -38,7 +36,7 @@ export class SpatialDomSynchronizer {
 
         this.cy.on('viewport resize', () => {
             requestAnimationFrame(() => {
-                transformViewport(this.cy.pan().x, this.cy.pan().y, this.cy.zoom())
+                transformViewport(Math.round(this.cy.pan().x), Math.round(this.cy.pan().y), this.cy.zoom())
             })
         })
         this.cy.on('position', event => this.queuePositionUpdate(event.target))
@@ -54,8 +52,8 @@ export class SpatialDomSynchronizer {
         if (panel) {
             const position = assumeExists(node.position())
             this.positionUpdates.set(panel, {
-                left: `${Math.round(position.x - panel.offsetWidth / 2)}px`,
-                top: `${Math.round(position.y - panel.offsetHeight / 2) + 5}px`,
+                left: Math.round(position.x - panel.offsetWidth / 2),
+                top: Math.round(position.y - panel.offsetHeight / 2) + 5,
             })
         }
     }
@@ -63,8 +61,8 @@ export class SpatialDomSynchronizer {
     private flushPositionUpdates() {
         requestAnimationFrame(() => {
             this.positionUpdates.forEach(({left, top}, panel) => {
-                panel.style.left = left
-                panel.style.top = top
+                setStyleIfDifferentEnough(panel, 'left', left)
+                setStyleIfDifferentEnough(panel, 'top', top)
             })
             this.positionUpdates = new Map()
         })
@@ -85,5 +83,15 @@ export class SpatialDomSynchronizer {
     resetStyles() {
         this.resetPanelStyles()
         resetViewport()
+    }
+}
+
+/**
+ * Ignore 1px changes, so the panels don't flicker when you enter/exit blocks
+ */
+const setStyleIfDifferentEnough = (element: HTMLElement, propertyName: 'left' | 'top', pixels: number) => {
+    const style = element.style[propertyName]
+    if (!style || Math.abs(parseInt(style, 10) - pixels) > 1) {
+        element.style[propertyName] = `${pixels}px`
     }
 }

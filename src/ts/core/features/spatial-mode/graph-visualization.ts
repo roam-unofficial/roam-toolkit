@@ -185,13 +185,15 @@ export class GraphVisualization {
     }
 
     runLayout(firstRender: boolean = false): Promise<any> {
-        this.cy.nodes().forEach(node => {
-            const panelElement = RoamPanel.getPanel(node.id())
-            if (panelElement) {
-                node.style('width', panelElement.offsetWidth + 10)
-                node.style('height', panelElement.offsetHeight + 20)
-            }
-        })
+        this.cy.batch(() => {
+            this.cy.nodes().forEach(node => {
+                const panelElement = RoamPanel.getPanel(node.id())
+                if (panelElement) {
+                    setStyleIfDifferentEnough(node, 'width', panelElement.offsetWidth + 10)
+                    setStyleIfDifferentEnough(node, 'height', panelElement.offsetHeight + 20)
+                }
+            })
+        });
 
         this.layout?.stop()
         this.layout = this.cy
@@ -297,5 +299,16 @@ export class GraphVisualization {
             removeCytoscapeContainer()
             GraphVisualization.instance = null
         }
+    }
+}
+
+
+/**
+ * Ignore 1px changes, so the panels don't flicker when you enter/exit blocks
+ */
+const setStyleIfDifferentEnough = (node: NodeSingular, propertyName: string, value: number) => {
+    const style = node.style(propertyName)
+    if (!style || Math.abs(parseInt(style, 10) - value) > 5) {
+        node.style(propertyName, value)
     }
 }
