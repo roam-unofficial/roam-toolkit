@@ -51,16 +51,16 @@ export const config: Feature = {
         spatialShortcut('Ctrl+-', 'Zoom out', viewport => viewport.zoomBy(4 / 5)),
         spatialShortcut('Ctrl+0', 'Zoom in completely', viewport => viewport.zoomIntoSelection()),
         spatialShortcut('Ctrl+9', 'Zoom out completely', viewport => viewport.zoomOutCompletely()),
-        spatialShortcut('Ctrl+ArrowLeft', 'Pan left', viewport => {
+        spatialShortcut('Ctrl+Command+ArrowLeft', 'Pan left', viewport => {
             viewport.panBy(-SpatialSettings.panSpeed(), 0)
         }),
-        spatialShortcut('Ctrl+ArrowDown', 'Pan down', viewport => {
+        spatialShortcut('Ctrl+Command+ArrowDown', 'Pan down', viewport => {
             viewport.panBy(0, SpatialSettings.panSpeed())
         }),
-        spatialShortcut('Ctrl+ArrowUp', 'Pan up', viewport => {
+        spatialShortcut('Ctrl+Command+ArrowUp', 'Pan up', viewport => {
             viewport.panBy(0, -SpatialSettings.panSpeed())
         }),
-        spatialShortcut('Ctrl+ArrowRight', 'Pan right', viewport => {
+        spatialShortcut('Ctrl+Command+ArrowRight', 'Pan right', viewport => {
             viewport.panBy(SpatialSettings.panSpeed(), 0)
         }),
         spatialShortcut('Ctrl+Shift+h', 'Move node left', viewport => {
