@@ -1,4 +1,4 @@
-import cytoscape, {NodeSingular} from 'cytoscape'
+import cytoscape, {EdgeSingular, NodeSingular} from 'cytoscape'
 // @ts-ignore
 import cola from 'cytoscape-cola'
 import {assumeExists} from 'src/core/common/assert'
@@ -113,7 +113,7 @@ export class GraphVisualization {
             // Don't attach edges back to self
             fromPanel !== toPanel &&
             // Don't attach redundant edges
-            this.cy.$(`edge[source = "${fromPanel}"][target = "${toPanel}"]`).length === 0
+            !this.getEdge(fromPanel, toPanel)
         ) {
             this.cy.edges().unselect()
             this.cy
@@ -225,6 +225,10 @@ export class GraphVisualization {
         }
     }
 
+    private getEdge(source: string, target: string): EdgeSingular {
+        return this.cy.$(`edge[source = "${source}"][target = "${target}"]`)[0]
+    }
+
     save(): GraphData {
         return {
             nodes: this.cy.nodes().map(node => ({
@@ -258,12 +262,14 @@ export class GraphVisualization {
                 node.position(position).style('width', width).style('height', height)
             })
             savedData.edges.forEach(({source, target}) => {
-                this.cy.add({
-                    data: {
-                        source,
-                        target,
-                    },
-                })
+                if (!this.getEdge(source, target)) {
+                    this.cy.add({
+                        data: {
+                            source,
+                            target,
+                        },
+                    })
+                }
             })
         })
         // Stop viewport animations that may have started up after adding nodes
