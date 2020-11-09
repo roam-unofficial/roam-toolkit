@@ -152,9 +152,6 @@ export class GraphVisualization {
     }
 
     private renameNode(node: NodeSingular, name: string) {
-        if (this.cy.getElementById(name)) {
-            return
-        }
         // node ids are immutable. We have to create a new one
         const newNode = this.cy.add({
             data: {
