@@ -2,8 +2,8 @@ import {injectStyle} from 'src/core/common/css'
 import {Settings} from 'src/core/settings'
 import {Selectors} from 'src/core/roam/selectors'
 
-export const HINT_IDS = [0, 1, 2, 3, 4, 5]
-export const DEFAULT_HINT_KEYS = ['q', 'w', 'e', 'r', 't', 'f']
+export const HINT_IDS = [0, 1, 2, 3, 4, 5, 6]
+export const DEFAULT_HINT_KEYS = ['q', 'w', 'e', 'r', 't', 'f', 'b']
 
 const hintKey = async (n: number) =>
     Settings.get('block_navigation_mode', `blockNavigationMode_Click Hint ${n}`, DEFAULT_HINT_KEYS[n])
