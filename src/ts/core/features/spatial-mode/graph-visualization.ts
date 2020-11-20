@@ -213,7 +213,7 @@ export class GraphVisualization {
                 // @ts-ignore if maxSimulationTime is too low, the layout doesn't actually run
                 nodeSpacing: SpatialSettings.getNodeSpacing(),
             })
-            .run()
+            .run() // Cola doesn't work in Firefox: https://github.com/cytoscape/cytoscape.js-cola/issues/51
 
         return this.waitForLayout()
     }
