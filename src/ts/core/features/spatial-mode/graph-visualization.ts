@@ -190,7 +190,7 @@ export class GraphVisualization {
                 const panelElement = RoamPanel.getPanel(node.id())
                 if (panelElement) {
                     setStyleIfDifferentEnough(node, 'width', panelElement.offsetWidth + 10)
-                    setStyleIfDifferentEnough(node, 'height', panelElement.offsetHeight + 20)
+                    setStyleIfDifferentEnough(node, 'height', panelElement.offsetHeight + 25)
                 }
             })
         });

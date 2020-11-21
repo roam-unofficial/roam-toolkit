@@ -53,7 +53,7 @@ export class SpatialDomSynchronizer {
             const position = assumeExists(node.position())
             this.positionUpdates.set(panel, {
                 left: Math.round(position.x - panel.offsetWidth / 2),
-                top: Math.round(position.y - panel.offsetHeight / 2) + 5,
+                top: Math.round(position.y - panel.offsetHeight / 2) + 9,
             })
         }
     }
