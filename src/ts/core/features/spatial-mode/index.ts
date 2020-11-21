@@ -43,7 +43,7 @@ export const config: Feature = {
     name: 'Spatial Graph Sidebar',
     // Moving around in the graph view updates the style of the main body,
     // which makes elements reflow, due to [style*="..."] selectors applying again.
-    warning: "Lags if CSS theme uses [style=*]. Doesn't work in Firefox yet.",
+    warning: "Lags if CSS theme uses [style=*]. Auto Layout doesn't work in Firefox yet.",
     enabledByDefault: false,
     settings: [
         ...SpatialSettings.all,

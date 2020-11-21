@@ -196,24 +196,33 @@ export class GraphVisualization {
         });
 
         this.layout?.stop()
-        this.layout = this.cy
-            .layout({
-                name: 'cola',
-                fit: false,
-                // @ts-ignore randomize when laying out for the first time, to avoid seizures from all the nodes being jammed on the same space
-                randomize: firstRender,
-                // @ts-ignore
-                animate: SpatialSettings.getLayoutDuration() > 0,
-                // @ts-ignore don't actually shorten the simulation, otherwise it gets stuck prematurely
-                maxSimulationTime: 1000,
-                // @ts-ignore instead, we skip frames
-                refresh: 1000 / (SpatialSettings.getLayoutDuration() || 1),
-                // @ts-ignore don't actually shorten the simulation, otherwise it gets stuck prematurely
-                convergenceThreshold: SpatialSettings.getConvergenceThreshold(),
-                // @ts-ignore if maxSimulationTime is too low, the layout doesn't actually run
-                nodeSpacing: SpatialSettings.getNodeSpacing(),
-            })
-            .run() // Cola doesn't work in Firefox: https://github.com/cytoscape/cytoscape.js-cola/issues/51
+        if (SpatialSettings.getLayoutDuration() === 0) {
+            this.layout = this.cy
+                .layout({
+                    name: 'preset',
+                    fit: false,
+                })
+                .run()
+        } else {
+            this.layout = this.cy
+                .layout({
+                    name: 'cola',
+                    fit: false,
+                    // @ts-ignore randomize when laying out for the first time, to avoid seizures from all the nodes being jammed on the same space
+                    randomize: firstRender,
+                    // @ts-ignore
+                    animate: SpatialSettings.getLayoutDuration() > 0,
+                    // @ts-ignore don't actually shorten the simulation, otherwise it gets stuck prematurely
+                    maxSimulationTime: 1000,
+                    // @ts-ignore instead we skip frames
+                    refresh: 1000 / (SpatialSettings.getLayoutDuration() || 1),
+                    // @ts-ignore how tight the layout needs to be
+                    convergenceThreshold: SpatialSettings.getConvergenceThreshold(),
+                    // @ts-ignore
+                    nodeSpacing: SpatialSettings.getNodeSpacing(),
+                })
+                .run() // Cola doesn't work in Firefox: https://github.com/cytoscape/cytoscape.js-cola/issues/51
+        }
 
         return this.waitForLayout()
     }

@@ -51,7 +51,7 @@ For more details, see the [full video](https://youtu.be/ZxtT05CjOyo)
 
 ### Spatial Graph Sidebar
 
-You can layout your sidebar pages in mind map:
+You can layout sidebar pages in a mind map ([Full Video](https://youtu.be/Yc1T0micgzk)):
 
 ![](./media/spatial_mode.gif)
 
