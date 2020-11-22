@@ -136,6 +136,11 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
             }
         })
 
+        // Block the native drag and drop. It re-triggers layouts
+        document.querySelectorAll(`${PANEL_SELECTOR} [draggable="true"]`).forEach(dragHandle => {
+            dragHandle.setAttribute('draggable', 'false');
+        });
+
         // Avoid having identical sidebar pages open
         const redundantPanels = Array.from(document.getElementsByClassName('roam-toolkit--panel-dupe')).filter(
             panelElement => !panelElement.classList.contains('roam-toolkit--panel-dupe-main')
