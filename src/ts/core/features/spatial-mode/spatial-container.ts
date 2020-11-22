@@ -87,6 +87,8 @@ export const getCytoscapeContainer = () => {
             background: white;
             overflow-y: scroll !important;
             margin: 0 !important;
+            /* For some reason, the text sometimes gets blurry without this */
+            transform: translateZ(0);
         }
         ${Selectors.topBar} {
             position: fixed !important;
