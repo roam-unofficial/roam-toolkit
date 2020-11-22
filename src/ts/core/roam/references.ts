@@ -36,7 +36,7 @@ export const openParentPage = (shiftKey: boolean = false) => {
         return
     }
 
-    Mouse.leftClick(parentLink, shiftKey)
+    Mouse.leftClick(parentLink, { shiftKey })
 }
 
 const getMentionsButton = (blockElement: BlockElement | null): HTMLElement | null => {
@@ -54,6 +54,6 @@ const getMentionsButton = (blockElement: BlockElement | null): HTMLElement | nul
 export const openMentions = (shiftKey: boolean = false) => {
     const mentionsButton = getMentionsButton(RoamBlock.selected().element)
     if (mentionsButton) {
-        Mouse.leftClick(mentionsButton, shiftKey)
+        Mouse.leftClick(mentionsButton, { shiftKey })
     }
 }

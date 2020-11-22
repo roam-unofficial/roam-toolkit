@@ -1,11 +1,22 @@
 import {delay} from './async'
 
+type Modifiers = {
+    shiftKey?: boolean,
+    metaKey?: boolean,
+    ctrlKey?: boolean,
+}
+
 export const Mouse = {
     BASE_DELAY: 20,
-    simulateClick(buttons: number, element: HTMLElement, shiftKey: boolean = false, delayOverride: number = 0) {
+    simulateClick(
+        buttons: number,
+        element: HTMLElement,
+        modifiers: Modifiers = {},
+        delayOverride: number = 0,
+    ) {
         const mouseClickEvents = ['mousedown', 'click', 'mouseup']
         mouseClickEvents.forEach(mouseEventType => {
-            element.dispatchEvent(getMouseEvent(mouseEventType, buttons, shiftKey))
+            element.dispatchEvent(getMouseEvent(mouseEventType, buttons, modifiers))
         })
         return delay(delayOverride || this.BASE_DELAY)
     },
@@ -14,14 +25,24 @@ export const Mouse = {
         element.dispatchEvent(getMouseEvent('mousemove', 1))
         return delay(delayOverride || this.BASE_DELAY)
     },
-    leftClick(element: HTMLElement, shiftKey: boolean = false, additionalDelay: number = 0) {
-        return this.simulateClick(1, element, shiftKey, additionalDelay)
+    leftClick(
+        element: HTMLElement,
+        modifiers: Modifiers = {},
+        additionalDelay: number = 0,
+    ) {
+        return this.simulateClick(1, element, modifiers, additionalDelay)
     },
 }
 
-const getMouseEvent = (mouseEventType: string, buttons: number, shiftKey: boolean = false) =>
+const getMouseEvent = (
+    mouseEventType: string,
+    buttons: number,
+    modifiers: Modifiers = {},
+) =>
     new MouseEvent(mouseEventType, {
-        shiftKey,
+        shiftKey: modifiers.shiftKey || false,
+        metaKey: modifiers.metaKey || false,
+        ctrlKey: modifiers.ctrlKey || false,
         view: window,
         bubbles: true,
         cancelable: true,
