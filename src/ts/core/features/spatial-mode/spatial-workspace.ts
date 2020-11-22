@@ -8,8 +8,8 @@ import {RoamPanel} from 'src/core/roam/panel/roam-panel'
 
 export const saveWorkspace = (graph: GraphVisualization) => {
     const graphData = graph.save()
-    if (graphData.nodes.some(({id}) => id.includes('Mentions of') || id.includes('block-input-'))) {
-        window.alert("Saving block outline and mention panels isn't supported yet")
+    if (graphData.nodes.some(({id}) => id.includes('References to') || id.includes('block-input-'))) {
+        window.alert("Saving Block Outline and References panels isn't supported yet")
     }
     const bulletsForPages = graphData.nodes.map(({id}) => `    - [[${id}]]`).join('\n')
     const graphJsonCodeBlock = '    - ```' + JSON.stringify(graphData) + '```'
