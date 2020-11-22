@@ -97,10 +97,9 @@ export class GraphVisualization {
                 const fromNode = this.cy.getElementById(fromPanel)
                 node.position({
                     // Grow the graph towards the right
-                    x: fromNode.position().x + fromNode.width() + SpatialSettings.getNodeSpacing(),
-                    // Tiny random offset prevents nodes from getting jammed if it spawns
-                    // in the exact same location as another
-                    y: fromNode.position().y + Math.random() * 10,
+                    x: fromNode.position().x + fromNode.width() + SpatialSettings.getNodeSpacing() + 29,
+                    // Place the node in the top right, so they stack vertically
+                    y: fromNode.position().y - fromNode.height() / 2,
                 })
             } else {
                 node.position(this.cy.pan())

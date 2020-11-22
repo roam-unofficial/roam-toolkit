@@ -48,7 +48,7 @@ const openAllLinksInBlocks = async (blockContainer: Element) => {
     const outerLinks = links.filter(link => !link.parentElement?.closest(Selectors.link)) as HTMLElement[]
     const [mainLink, ...sidebarLinks] = outerLinks
     // Open sidebar pages
-    sidebarLinks.forEach(link => Mouse.leftClick(link, true))
+    sidebarLinks.forEach(link => Mouse.leftClick(link, {shiftKey: true}))
     // Open main page
     Mouse.leftClick(mainLink)
 
