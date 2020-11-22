@@ -88,6 +88,14 @@ export const getCytoscapeContainer = () => {
             overflow-y: scroll !important;
             margin: 0 !important;
         }
+        ${Selectors.topBar} {
+            position: fixed !important;
+        }
+        ${Selectors.sidebarScrollContainer} {
+            /* Otherwise the panels get cut off when using Roam42 */
+            overflow: visible !important;
+            position: initial !important;
+        }
         /* The innermost sidebar div plays best with custom themes */
         ${Selectors.sidebarContent} ${PANEL_SELECTOR} {
             padding: 0 16px !important;

@@ -18,6 +18,8 @@ export const Selectors = {
 
     leftPanel: '.roam-sidebar-container',
 
+    topBar: '.roam-topbar',
+
     foldButton: '.rm-caret',
     highlight: '.block-highlight-blue',
     button: '.bp3-button',
