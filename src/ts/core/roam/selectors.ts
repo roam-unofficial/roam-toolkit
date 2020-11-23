@@ -9,18 +9,22 @@ export const Selectors = {
 
     main: '.roam-main',
     mainContent: '.roam-article',
-    mainPanel: '.roam-body-main',
+    mainBody: '.roam-body-main',
 
-    sidebarContent: '#roam-right-sidebar-content',
-    sidebarPage: '#right-sidebar > div',
+    sidebarContent: '.sidebar-content',
+    sidebarPage: '.sidebar-content > div > div',
     sidebar: '#right-sidebar',
+    sidebarScrollContainer: '#roam-right-sidebar-content',
 
     leftPanel: '.roam-sidebar-container',
+
+    topBar: '.roam-topbar',
 
     foldButton: '.rm-caret',
     highlight: '.block-highlight-blue',
     button: '.bp3-button',
     closeButton: '.bp3-icon-cross',
+    dailyNotes: '#rm-log-container',
     viewMore: '.roam-log-preview',
     checkbox: '.check-container',
     externalLink: 'a',

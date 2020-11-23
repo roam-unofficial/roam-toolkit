@@ -1,5 +1,5 @@
 import {assumeExists} from 'src/core/common/assert'
-import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-panel'
+import {VimRoamPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {Roam} from 'src/core/roam/roam'
 
 export type BlockId = string
@@ -32,6 +32,6 @@ export class RoamBlock {
     }
 
     static selected(): RoamBlock {
-        return RoamPanel.selected().selectedBlock()
+        return VimRoamPanel.selected().selectedBlock()
     }
 }

@@ -11,6 +11,7 @@ const StyledTooltipContent = styled('div')`
     background-color: #111;
     color: white;
     padding: 10px;
+    z-index: 10;
 `
 function renderTooltipContent(tooltip: string) {
     return ({tooltipRef, getTooltipProps}: TooltipArg) => (

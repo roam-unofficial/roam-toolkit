@@ -49,6 +49,18 @@ Watch the video for more details:
 
 For more details, see the [full video](https://youtu.be/ZxtT05CjOyo)
 
+### Spatial Graph Sidebar
+
+You can layout sidebar pages in a mind map ([Full Video](https://youtu.be/Yc1T0micgzk)):
+
+![](./media/spatial_mode.gif)
+
+Use the keyboard to navigate. Also save and restore layouts with `Ctrl+Shift+s`/`Ctrl+Shift+o`:
+
+![](./media/spatial_save_and_restore.gif)
+
+[Firefox isn't supported yet](https://github.com/cytoscape/cytoscape.js-cola/issues/51)
+
 ### Other Features
 
 1. Block actions: Delete, Duplicate, Copy Block Reference

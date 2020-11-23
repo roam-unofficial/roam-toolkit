@@ -3,7 +3,7 @@ import {getActiveEditElement} from 'src/core/common/dom'
 import {Selectors} from 'src/core/roam/selectors'
 import {delay, repeatAsync} from 'src/core/common/async'
 import {Shortcut} from 'src/core/settings'
-import {RoamPanel} from 'src/core/features/vim-mode/roam/roam-panel'
+import {VimRoamPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {Keyboard} from 'src/core/common/keyboard'
 import {RoamHighlight} from 'src/core/features/vim-mode/roam/roam-highlight'
 
@@ -13,7 +13,7 @@ export enum Mode {
     NORMAL,
 }
 
-const getMode = () => {
+export const getMode = () => {
     if (getActiveEditElement()) {
         return Mode.INSERT
     }
@@ -57,13 +57,13 @@ export const RoamVim = {
     async jumpBlocksInFocusedPanel(blocksToJump: number) {
         const mode = getMode()
         if (mode === Mode.NORMAL) {
-            RoamPanel.selected().selectRelativeBlock(blocksToJump)
+            VimRoamPanel.selected().selectRelativeBlock(blocksToJump)
         }
         if (mode === Mode.VISUAL) {
             await repeatAsync(Math.abs(blocksToJump), () =>
                 Keyboard.simulateKey(blocksToJump > 0 ? Keyboard.DOWN_ARROW : Keyboard.UP_ARROW, 0, {shiftKey: true})
             )
-            RoamPanel.selected().scrollUntilBlockIsVisible(
+            VimRoamPanel.selected().scrollUntilBlockIsVisible(
                 blocksToJump > 0 ? RoamHighlight.last() : RoamHighlight.first()
             )
         }

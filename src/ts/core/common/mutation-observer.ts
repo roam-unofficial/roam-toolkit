@@ -2,13 +2,24 @@ import {assumeExists} from 'src/core/common/assert'
 
 export type DisconnectFn = () => void
 
-export const onSelectorChange = (selector: string, handleChange: (changedElement: HTMLElement) => void): DisconnectFn =>
-    observeElement(assumeExists(document.querySelector(selector)) as HTMLElement, handleChange)
+export const onSelectorChange = (
+    selector: string,
+    handleChange: (changedElement: HTMLElement) => void,
+    observeChildren: boolean = false,
+    observeAttributes: boolean = false
+): DisconnectFn =>
+    observeElement(
+        assumeExists(document.querySelector(selector)) as HTMLElement,
+        handleChange,
+        observeChildren,
+        observeAttributes
+    )
 
 const observeElement = (
     observeInside: HTMLElement,
     handleChange: (changedElement: HTMLElement) => void,
-    observeChildren: boolean = false
+    observeChildren: boolean = false,
+    observeAttributes: boolean = false
 ): DisconnectFn => {
     const waitForLoad = new MutationObserver(mutations => {
         handleChange(mutations[0].target as HTMLElement)
@@ -16,7 +27,7 @@ const observeElement = (
 
     waitForLoad.observe(observeInside, {
         childList: true,
-        attributes: true,
+        attributes: observeAttributes,
         subtree: observeChildren,
     })
 
@@ -29,10 +40,15 @@ const observeElement = (
 export const waitForSelectorToExist = (
     selector: string,
     observeInside: HTMLElement = document.body
+): Promise<HTMLElement> => waitForSelectionToExist(element => element.querySelector(selector), observeInside)
+
+export const waitForSelectionToExist = (
+    selectionFn: (element: HTMLElement) => HTMLElement | null,
+    observeInside = document.body
 ): Promise<HTMLElement> => {
     return new Promise(resolve => {
         const resolveIfElementExists = () => {
-            const element = observeInside.querySelector(selector) as HTMLElement
+            const element = selectionFn(observeInside)
             if (element) {
                 resolve(element)
                 return true
