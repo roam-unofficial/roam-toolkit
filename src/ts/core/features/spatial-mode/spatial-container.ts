@@ -35,7 +35,7 @@ export const getCytoscapeContainer = () => {
 
         /* REMOVE UI CRUFT */
         ${Selectors.sidebar}, ${Selectors.sidebar} > div {
-            background-color: transparent;
+            background-color: transparent !important;
         }
         ${Selectors.sidebar} > div:first-child, /* sidebar toggle */
         #buffer, /* help icon in the bottom right */
@@ -71,6 +71,7 @@ export const getCytoscapeContainer = () => {
             bottom: 0 !important;
             padding: 0 !important;
             margin: 0 !important;
+            background: transparent !important;
         }
         ${Selectors.mainBody} ${PANEL_SELECTOR} {
             /* cancel out margins that custom themes might add */
