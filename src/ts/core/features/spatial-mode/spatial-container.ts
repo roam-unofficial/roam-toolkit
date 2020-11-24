@@ -92,6 +92,9 @@ export const getCytoscapeContainer = () => {
         }
         ${Selectors.topBar} {
             position: fixed !important;
+            z-index: 2;
+            left: 0;
+            right: 0;
         }
         ${Selectors.sidebarScrollContainer} {
             /* Otherwise the panels get cut off when using Roam42 */
