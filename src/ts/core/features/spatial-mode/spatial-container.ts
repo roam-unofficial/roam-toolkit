@@ -98,6 +98,11 @@ export const getCytoscapeContainer = () => {
             overflow: visible !important;
             position: initial !important;
         }
+        ${Selectors.sidebar} > div {
+            /* Some themes set a background, like Leyendecker */
+            background-color: transparent !important;
+            border: none !important;
+        }
         /* The innermost sidebar div plays best with custom themes */
         ${Selectors.sidebarContent} ${PANEL_SELECTOR} {
             padding: 0 16px !important;
