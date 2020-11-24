@@ -137,7 +137,7 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
         })
 
         // Block the native drag and drop. It re-triggers layouts
-        document.querySelectorAll(`${PANEL_SELECTOR} [draggable="true"]`).forEach(dragHandle => {
+        document.querySelectorAll(`${PANEL_SELECTOR} [draggable="true"].window-headers`).forEach(dragHandle => {
             dragHandle.setAttribute('draggable', 'false');
         });
 
