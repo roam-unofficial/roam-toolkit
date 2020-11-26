@@ -1,7 +1,7 @@
-import {browser} from 'webextension-polyfill-ts'
 import {RoamDate} from '../roam/date'
 import {getDayName} from '../common/date'
 import {Feature, Settings} from '../settings'
+import {Browser} from 'src/core/common/browser'
 
 export const config: Feature = {
     id: 'day-title',
@@ -14,14 +14,14 @@ Settings.isActive(config.id).then(active => {
     }
 })
 
-browser.runtime.onMessage.addListener(async message => {
+Browser.addMessageListener(async message => {
     if (message?.featureId === config.id) {
         registerEventListener()
     }
 })
 
 const getDayFromDate = (name: string) => {
-    let re = /(.*) (\d+).{2}, (\d{4})/i
+    const re = /(.*) (\d+).{2}, (\d{4})/i
     const matches = name.match(re)
     if (matches && matches.length === 4) {
         const date = RoamDate.parse(name)

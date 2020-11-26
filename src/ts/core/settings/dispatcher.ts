@@ -1,6 +1,6 @@
-import {browser} from 'webextension-polyfill-ts'
 import {createDemo} from '../features/create-block-demo'
 import {updateShortcuts} from './shortcuts'
+import {Browser} from 'src/core/common/browser'
 
 /**
  * Be cautious to reference functions on the objects via anonymous functions (e.g. see Roam.deleteBlock)
@@ -11,4 +11,4 @@ const dispatchMap = new Map([
     ['settings-updated', updateShortcuts],
 ])
 
-browser.runtime.onMessage.addListener(command => dispatchMap.get(command)?.())
+Browser.addMessageListener(command => dispatchMap.get(command)?.())

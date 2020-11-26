@@ -2,7 +2,7 @@ import {browser} from 'webextension-polyfill-ts'
 
 // Breaks out of the content script context by injecting a specially
 // constructed script tag and injecting it into the page.
-export const runInPageContext = (method: Function, ...args: any[]) => {
+export const runInPageContext = (method: (...args: any[]) => any, ...args: any[]) => {
     // will be parsed as a function object.
     const stringifiedMethod = method.toString()
 
@@ -32,5 +32,9 @@ export const Browser = {
 
     sendMessageToActiveTab(message: any) {
         return this.getActiveTab().then(tab => browser.tabs.sendMessage(tab.id!, message))
+    },
+
+    addMessageListener(callback: (message: any) => Promise<void> | undefined) {
+        browser.runtime.onMessage.addListener(callback)
     },
 }

@@ -1,5 +1,3 @@
-import {browser} from 'webextension-polyfill-ts'
-
 import {startVimMode, stopVimMode} from 'src/core/features/vim-mode/vim-init'
 import {map, nmap, returnToNormalMode} from 'src/core/features/vim-mode/vim'
 import {Feature, Settings} from 'src/core/settings'
@@ -12,6 +10,7 @@ import {VisualCommands} from 'src/core/features/vim-mode/commands/visual-command
 import {BlockManipulationCommands} from 'src/core/features/vim-mode/commands/block-manipulation-commands'
 import {RoamBlock} from 'src/core/features/vim-mode/roam/roam-block'
 import {HintCommands} from 'src/core/features/vim-mode/commands/hint-commands'
+import {Browser} from 'src/core/common/browser'
 
 export const config: Feature = {
     id: 'block_navigation_mode',
@@ -42,7 +41,7 @@ const toggleVimDependingOnSetting = () => {
     })
 }
 
-browser.runtime.onMessage.addListener(async message => {
+Browser.addMessageListener(async message => {
     if (message === 'settings-updated') {
         toggleVimDependingOnSetting()
     }

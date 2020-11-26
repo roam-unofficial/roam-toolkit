@@ -1,9 +1,9 @@
 import {Feature, Settings} from '../settings'
 import {Navigation} from '../roam/navigation'
-import {browser} from 'webextension-polyfill-ts'
 import {createPopper, Instance} from '@popperjs/core'
 import {delay} from '../common/async'
 import {Selectors} from '../roam/selectors'
+import {Browser} from '../common/browser'
 
 export const config: Feature = {
     id: 'live_preview',
@@ -18,7 +18,7 @@ const checkSettingsAndSetupIframeToggle = () => {
 }
 checkSettingsAndSetupIframeToggle()
 
-browser.runtime.onMessage.addListener(async message => {
+Browser.addMessageListener(async message => {
     if (message === 'settings-updated') {
         checkSettingsAndSetupIframeToggle()
     }

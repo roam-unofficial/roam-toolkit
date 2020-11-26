@@ -1,5 +1,4 @@
 import * as chrono from 'chrono-node'
-import {browser} from 'webextension-polyfill-ts'
 import {afterClosingBrackets} from '../common/brackets'
 import {RoamDate} from '../roam/date'
 import {RoamNode, Selection} from '../roam/roam-node'
@@ -7,6 +6,7 @@ import {Roam} from '../roam/roam'
 import {NodeWithDate} from '../roam/date/withDate'
 
 import {Feature, Settings} from '../settings'
+import {Browser} from '../common/browser'
 
 export const config: Feature = {
     id: 'fuzzy-date',
@@ -21,7 +21,7 @@ const checkSettingsAndToggleFuzzyDate = () => {
 
 checkSettingsAndToggleFuzzyDate()
 
-browser.runtime.onMessage.addListener(async message => {
+Browser.addMessageListener(async message => {
     if (message === 'settings-updated') {
         checkSettingsAndToggleFuzzyDate()
     }
@@ -43,9 +43,9 @@ export function replaceFuzzyDate(guard: string) {
         })
         if (!date) return node
 
-        let replaceMode = dateStr.startsWith(';:')
+        const replaceMode = dateStr.startsWith(';:')
 
-        let replaceWith = replaceMode ? '' : RoamDate.formatPage(date)
+        const replaceWith = replaceMode ? '' : RoamDate.formatPage(date)
         const newText = node.text.replace(dateContainerExpr, replaceWith)
 
         const cursor = getCursor(node, newText, replaceMode ? 0 : node.selection.start)

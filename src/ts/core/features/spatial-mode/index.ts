@@ -1,4 +1,3 @@
-import {browser} from 'webextension-polyfill-ts'
 import {Feature, Settings, Shortcut} from 'src/core/settings'
 import {waitForSelectorToExist} from 'src/core/common/mutation-observer'
 import {assumeExists} from 'src/core/common/assert'
@@ -20,6 +19,7 @@ import {GraphData, GraphVisualization} from './graph-visualization'
 import {SpatialSettings} from './spatial-settings'
 import {SpatialViewport} from './spatial-viewport'
 import {restoreWorkspace, saveWorkspace} from 'src/core/features/spatial-mode/spatial-workspace'
+import {Browser} from 'src/core/common/browser'
 
 const spatialShortcut = (
     key: string,
@@ -100,7 +100,7 @@ const toggleSpatialGraphModeDependingOnSetting = () => {
     })
 }
 
-browser.runtime.onMessage.addListener(async message => {
+Browser.addMessageListener(async message => {
     if (message === 'settings-updated') {
         toggleSpatialGraphModeDependingOnSetting()
     }
@@ -138,8 +138,8 @@ const startSpatialGraphMode = async (previousGraphData?: GraphData) => {
 
         // Block the native drag and drop. It re-triggers layouts
         document.querySelectorAll(`${PANEL_SELECTOR} [draggable="true"].window-headers`).forEach(dragHandle => {
-            dragHandle.setAttribute('draggable', 'false');
-        });
+            dragHandle.setAttribute('draggable', 'false')
+        })
 
         // Avoid having identical sidebar pages open
         const redundantPanels = Array.from(document.getElementsByClassName('roam-toolkit--panel-dupe')).filter(
