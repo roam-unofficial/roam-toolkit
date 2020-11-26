@@ -192,7 +192,7 @@ export class GraphVisualization {
                     setStyleIfDifferentEnough(node, 'height', panelElement.offsetHeight + 25)
                 }
             })
-        });
+        })
 
         this.layout?.stop()
         if (SpatialSettings.getLayoutDuration() === 0) {
@@ -234,7 +234,7 @@ export class GraphVisualization {
     }
 
     private getEdge(source: string, target: string): EdgeSingular {
-        return this.cy.$(`edge[source = "${source}"][target = "${target}"]`)[0]
+        return this.cy.filter(ele => ele.isEdge() && ele.target().id() === target && ele.source().id() === source)[0]
     }
 
     save(): GraphData {
@@ -315,7 +315,6 @@ export class GraphVisualization {
         }
     }
 }
-
 
 /**
  * Ignore 1px changes, so the panels don't flicker when you enter/exit blocks
