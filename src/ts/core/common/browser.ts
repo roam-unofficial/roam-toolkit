@@ -1,4 +1,4 @@
-import {browser} from 'webextension-polyfill-ts'
+// import {browser} from 'webextension-polyfill-ts'
 
 // Breaks out of the content script context by injecting a specially
 // constructed script tag and injecting it into the page.
@@ -28,13 +28,15 @@ export const Browser = {
     getActiveTabUrl: () => new URL(window.location.href),
 
     // Does not work from content script
-    getActiveTab: () => browser.tabs.query({currentWindow: true, active: true}).then(tabs => tabs[0]),
+    // getActiveTab: () => browser.tabs.query({currentWindow: true, active: true}).then(tabs => tabs[0]),
 
     sendMessageToActiveTab(message: any) {
-        return this.getActiveTab().then(tab => browser.tabs.sendMessage(tab.id!, message))
+        console.log('not sending a message', message)
+        // return this.getActiveTab().then(tab => browser.tabs.sendMessage(tab.id!, message))
     },
 
     addMessageListener(callback: (message: any) => Promise<void> | undefined) {
-        browser.runtime.onMessage.addListener(callback)
+        console.log('not adding a callback', callback)
+        // browser.runtime.onMessage.addListener(callback)
     },
 }

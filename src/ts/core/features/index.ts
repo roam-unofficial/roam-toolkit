@@ -16,6 +16,10 @@ import {config as randomPage} from './random-page'
 import {filterAsync, mapAsync} from '../common/async'
 import {Handler} from 'src/core/react-hotkeys/key-handler'
 import {KeySequenceString} from 'src/core/react-hotkeys/key-sequence'
+import {combineReducers, createStore, Store} from 'redux';
+import {IAppState} from 'src/background/store';
+import settings from 'src/background/store/settings/reducer';
+import {getStateFromStorage, saveStateToStorage} from 'src/core/common/storage';
 
 export const Features = {
     all: prepareSettings([
@@ -64,3 +68,12 @@ export const getAllShortcuts = (features: Feature[]): Shortcut[] =>
         .flatMap(it => it.settings)
         .filter(it => it!.type === 'shortcut')
         .map(it => it as Shortcut)
+
+export const reducers = combineReducers<IAppState>({
+    ...Features.all.map((f: any) => ({[f.id]: f.reducer})).reduce((r: any, c: any) => Object.assign(r, c), {}),
+    settings,
+})
+
+const store: Store<IAppState> = createStore(reducers, getStateFromStorage())
+store.subscribe(() => saveStateToStorage(store.getState()))
+store.dispatch({type: 'load_defaults_dummy'})
