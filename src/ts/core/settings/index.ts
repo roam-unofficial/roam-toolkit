@@ -41,7 +41,8 @@ export interface Shortcut extends Setting {
 export const Settings = {
     get: async (featureId: string, settingId: string, defaultValue?: string) =>
         getStateFromStorage()?.[featureId]?.[settingId] || defaultValue,
-    isActive: async (featureId: string) => getStateFromStorage()?.[featureId]?.active || true, // todo default
+    isActive: async (featureId: string, defaultValue: boolean = true) =>
+        getStateFromStorage()?.[featureId]?.active || defaultValue,
 }
 const initDefaultState = (feature: Feature): {active: boolean} => {
     return {

@@ -85,7 +85,7 @@ export const config: Feature = {
 }
 
 const toggleSpatialGraphModeDependingOnSetting = () => {
-    Settings.isActive('spatial_mode').then(active => {
+    Settings.isActive('spatial_mode', config.enabledByDefault).then(active => {
         if (active) {
             // Re-initialize if a setting changed
             let graphData

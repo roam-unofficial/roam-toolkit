@@ -51,7 +51,6 @@ export function getFirstTopLevelBlock() {
 export function getInputEvent() {
     return new Event('input', {
         bubbles: true,
-        cancelable: true,
     })
 }
 

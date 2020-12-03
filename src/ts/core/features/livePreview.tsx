@@ -12,7 +12,7 @@ export const config: Feature = {
     enabledByDefault: false,
 }
 const checkSettingsAndSetupIframeToggle = () => {
-    Settings.isActive('live_preview').then(active => {
+    Settings.isActive('live_preview', config.enabledByDefault).then(active => {
         toggleIframe(active)
     })
 }
