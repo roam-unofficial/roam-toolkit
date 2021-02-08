@@ -56,7 +56,7 @@ export const getCytoscapeContainer = () => {
             pointer-events: none;
         }
         /* But make the actual content itself clickable */
-        ${Selectors.leftPanel}, .roam-topbar, ${PANEL_SELECTOR} {
+        ${Selectors.leftPanel}, ${Selectors.topBar}, ${PANEL_SELECTOR} {
             pointer-events: auto;
         }
 
