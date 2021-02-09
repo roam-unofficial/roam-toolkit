@@ -18,7 +18,7 @@ export const Selectors = {
 
     leftPanel: '.roam-sidebar-container',
 
-    topBar: '.roam-topbar',
+    topBar: '.rm-topbar',
 
     foldButton: '.rm-caret',
     highlight: '.block-highlight-blue',
