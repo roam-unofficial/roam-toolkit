@@ -46,6 +46,10 @@ export const getCytoscapeContainer = () => {
         .sidebar-content > div > div {
             border: none !important;
         }
+        /* these divs prevent blocks on the main panel from taking up the whole horizontal space */
+        ${Selectors.mainBody} .rm-block-separator {
+            display: none;
+        }
         /* hide sidebar toggle icon */
         ${Selectors.sidebar} .bp3-icon-menu-open {
             display: none;
