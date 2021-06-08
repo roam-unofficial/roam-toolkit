@@ -6,6 +6,11 @@
 
 Browser extension designed to improve your experience of using Roam Research
 
+---
+The development is supported by <a href="https://roam.garden/"> <img src="https://roam.garden/static/logo-2740b191a74245dc48ee30c68d5192aa.svg" height="50" /></a> - a service that allows you to publish your Roam notes as a beautiful static website (digital garden)
+
+---
+
 ## WalkThrough
 
 [![Watch the video](https://img.youtube.com/vi/llP-3AqFGL8/maxresdefault.jpg)](https://youtu.be/llP-3AqFGL8)
