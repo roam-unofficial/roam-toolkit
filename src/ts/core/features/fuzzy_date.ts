@@ -34,24 +34,31 @@ export function replaceFuzzyDate(guard: string) {
     const dateContainerExpr = new RegExp(`${guard}\(\.\{3,\}\?\)${guard}`, 'gm')
 
     Roam.applyToCurrent(node => {
-        const match = node.text.match(dateContainerExpr)
-        if (!match) return node
+        const oddMatches = node.text.match(dateContainerExpr)
+        const firstGuardIndex = node.text.indexOf(guard)
+        const evenMatches = node.text.slice(firstGuardIndex + 1).match(dateContainerExpr)
+        if (!oddMatches) return node
 
-        const dateStr = match[0]
-        const date = chrono.parseDate(dateStr, new Date(), {
-            forwardDate: true,
-        })
-        if (!date) return node
-
-        const replaceMode = dateStr.startsWith(';:')
-
-        const replaceWith = replaceMode ? '' : RoamDate.formatPage(date)
-        const newText = node.text.replace(dateContainerExpr, replaceWith)
-
-        const cursor = getCursor(node, newText, replaceMode ? 0 : node.selection.start)
-        const newNode = new NodeWithDate(newText, new Selection(cursor, cursor))
-
-        return replaceMode ? newNode.withDate(date) : newNode
+        const allMatches = evenMatches ? oddMatches.concat(evenMatches) : oddMatches
+        for (let i = 0; i < allMatches.length; i++) {
+            let dateStr = allMatches[i]
+            const date = chrono.parseDate(dateStr, new Date(), {
+                forwardDate: true,
+            })
+            if (date) {
+                const fuzzy_date_text = chrono.parse(dateStr)[0].text.trim()
+                const replaceMode = dateStr.startsWith(';:')
+                const validFuzzyDate = replaceMode || dateStr === `${guard}${fuzzy_date_text}${guard}`
+                if (validFuzzyDate) {
+                    const replaceWith = replaceMode ? '' : RoamDate.formatPage(date)
+                    const newText = node.text.replace(dateStr, replaceWith)
+                    const cursor = getCursor(node, newText, replaceMode ? 0 : node.selection.start)
+                    const newNode = new NodeWithDate(newText, new Selection(cursor, cursor))
+                    return replaceMode ? newNode.withDate(date) : newNode
+                }
+            }
+        }
+        return node
     })
 }
 
