@@ -1,7 +1,7 @@
 import {SM2Node} from './SM2Node'
 import {Scheduler, SRSSignal} from './scheduler'
 import {randomFromInterval} from '../common/random'
-import {addDays} from '../common/date';
+import {addDays} from '../common/date'
 
 /**
  * Again (1)
@@ -40,12 +40,11 @@ export class AnkiScheduler implements Scheduler {
         const newParams = this.getNewParameters(node, signal)
 
         const currentDate = new Date()
-        return (
-            node
-                .withInterval(newParams.interval)
-                .withFactor(newParams.factor)
-                .withDate(addDays(currentDate, Math.ceil(newParams.interval)))
-        )
+        return node
+            .withInterval(newParams.interval)
+            .withFactor(newParams.factor)
+            .withDate(addDays(currentDate, Math.ceil(newParams.interval)))
+            .withCursorAtTheEnd()
     }
 
     getNewParameters(node: SM2Node, signal: SRSSignal) {
@@ -93,6 +92,5 @@ export class AnkiScheduler implements Scheduler {
 }
 
 class SM2Params {
-    constructor(readonly interval: number, readonly factor: number) {
-    }
+    constructor(readonly interval: number, readonly factor: number) {}
 }
