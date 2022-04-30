@@ -51,7 +51,7 @@ Promise.all(HINT_IDS.map(hintCss)).then(cssClasses => {
 export const updateVimHints = (block: HTMLElement) => {
     // button is for reference counts
     const links = block.querySelectorAll(
-        `${Selectors.link}, ${Selectors.externalLink}, ${Selectors.checkbox}, ${Selectors.button}, ${Selectors.blockReference}`
+        `${Selectors.link}, ${Selectors.externalLink}, ${Selectors.embedPageTitle}, ${Selectors.checkbox}, ${Selectors.button}, ${Selectors.blockReference}`
     )
     links.forEach((link, i) => {
         link.classList.add(HINT_CSS_CLASS, hintCssClass(i))
