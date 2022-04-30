@@ -23,7 +23,7 @@
         "cytoscape-cola": "^2.4.0",
         "dateformat": "^3.0.3",
         "immutable": "^4.0.0-rc.12",
-        "lodash": "^4.17.19",
+        "lodash": "^4.17.21",
         "react": "^16.12.0",
         "react-dom": "^16.12.0",
         "react-hotkeys": "^2.0.0",

@@ -8,7 +8,7 @@ import {Feature} from '../../../core/settings'
 import {Checkbox} from '../../Checkbox'
 import {WarningIcon} from '../../WarningIcon'
 
-type HomeProps = { features: Feature[] }
+type HomeProps = {features: Feature[]}
 export const Home = ({features}: HomeProps) => {
     const dispatch = useDispatch()
 
@@ -42,6 +42,13 @@ export const Home = ({features}: HomeProps) => {
         <HomeContainer>
             <Header>
                 <img src={`../../../assets/logo-${theme}.png`} />
+                <SupportedByContainer>
+                    {' '}
+                    Publish your Roam notes with
+                    <a href={'https://roam.garden'} target={'_blank'}>
+                        <InlineLogo src={`../../../assets/roam-garden.svg`} />
+                    </a>
+                </SupportedByContainer>
             </Header>
             <FeaturesList>
                 {features.map((feature: Feature) => (
@@ -59,8 +66,23 @@ export const Home = ({features}: HomeProps) => {
 
 const HomeContainer = styled('div')``
 
+const InlineLogo = styled.img`
+    display: inline;
+    height: 30px;
+    margin-left: 0.5em;
+`
+
+const SupportedByContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`
+
 const Header = styled('div')`
-    padding: 20px 0 20px 24px;
+    padding-top: 20px;
+    padding-right: 0;
+    padding-left: 24px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #989898;
 `
 
@@ -96,6 +118,7 @@ const FeatureListElement = styled('li')`
         color: #828282;
         transform: translateY(-50%);
     }
+
     &:hover {
         &::after {
             color: #111111;
@@ -121,6 +144,7 @@ const FeatureNameContainer = styled('div')`
 
     &:hover {
         cursor: pointer;
+
         ${FeatureName} {
             text-decoration: underline;
         }
