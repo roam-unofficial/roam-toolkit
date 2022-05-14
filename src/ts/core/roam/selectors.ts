@@ -28,7 +28,7 @@ export const Selectors = {
     dailyNotes: '#rm-log-container',
     viewMore: '.roam-log-preview',
     checkbox: '.check-container',
-    externalLink: 'a[target="_blank"]',
+    externalLink: 'a.rm-alias',
     embedPageTitle: '.rm-embed--page a span.rm-page__title',
     referenceItem: '.rm-reference-item',
     breadcrumbsContainer: '.zoom-mentions-view',
