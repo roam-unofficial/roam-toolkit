@@ -29,6 +29,7 @@ export const Selectors = {
     viewMore: '.roam-log-preview',
     checkbox: '.check-container',
     externalLink: 'a.rm-alias',
+    linkInBlockRef: '.rm-block-ref a[target="_blank"]',
     embedPageTitle: '.rm-embed--page a span.rm-page__title',
     referenceItem: '.rm-reference-item',
     breadcrumbsContainer: '.zoom-mentions-view',
