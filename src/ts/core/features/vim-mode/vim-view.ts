@@ -16,7 +16,8 @@ const SELECTED_BLOCK_CSS_CLASS = 'roam-toolkit-block-mode--highlight'
 injectStyle(
     `
     .${SELECTED_BLOCK_CSS_CLASS} {
-        background-color: wheat;
+        border-radius: 5px;
+        background-color: #FFF3E2;
     }
     `,
     'roam-toolkit-block-mode'
