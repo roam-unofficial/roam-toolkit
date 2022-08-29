@@ -28,9 +28,9 @@ You can create dates using [**natural language**](https://github.com/wanasit/chr
 
 ![](./media/fuzzy_date.gif)
 
-Replace mode: 
+Replace mode:
 
-![](.media/fuzzy_date_replace.gif)
+![](./media/fuzzy_date_replace.gif)
 
 You can also **increment or decrement dates**:
 
