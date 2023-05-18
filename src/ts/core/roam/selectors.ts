@@ -31,6 +31,7 @@ export const Selectors = {
     externalLink: 'a.rm-alias, a[target="_blank"]',
     linkInBlockRef: '.rm-block-ref a[target="_blank"]',
     embedPageTitle: '.rm-embed--page a span.rm-page__title',
+    functionalRef: '.rm-video-timestamp, button',
     referenceItem: '.rm-reference-item',
     breadcrumbsContainer: '.zoom-mentions-view',
     pageReferenceItem: '.rm-ref-page-view',
