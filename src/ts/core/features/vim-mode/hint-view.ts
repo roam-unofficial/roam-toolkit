@@ -54,6 +54,7 @@ export const updateVimHints = (block: HTMLElement) => {
         Selectors.link,
         Selectors.externalLink,
         Selectors.linkInBlockRef,
+        Selectors.functionalRef,
         Selectors.embedPageTitle,
         Selectors.checkbox,
         Selectors.button,
