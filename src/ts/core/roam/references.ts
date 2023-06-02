@@ -31,7 +31,9 @@ export const expandLastBreadcrumb = () => {
 }
 
 export const closePageReferenceView = () => {
-    const referenceItem = RoamBlock.selected().element?.closest(Selectors.pageReferenceItem)
+    const referenceItem = RoamBlock.selected().element?.closest(
+        Selectors.pageReferenceItem + ',' + Selectors.inlineReference
+    )
     const foldButton = referenceItem?.querySelector(Selectors.foldButton)
 
     if (foldButton) Mouse.leftClick(foldButton as HTMLElement)
