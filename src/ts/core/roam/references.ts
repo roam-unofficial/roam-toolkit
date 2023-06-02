@@ -2,11 +2,32 @@ import {Selectors} from './selectors'
 import {Mouse} from '../common/mouse'
 import {BlockElement, RoamBlock} from '../features/vim-mode/roam/roam-block'
 
-export const expandLastBreadcrumb = () => {
-    const referenceItem = RoamBlock.selected().element?.closest(Selectors.referenceItem)
-    const breadcrumbs = referenceItem?.querySelector(Selectors.breadcrumbsContainer)
+function expandReference(
+    wrapperSelector: string,
+    breadcrumbSelector: string,
+    getClickElement: (parent: HTMLElement) => HTMLElement | null
+) {
+    const referenceItem = RoamBlock.selected().element?.closest(wrapperSelector + ',' + Selectors.inlineReference)
+    const breadcrumbs = referenceItem?.querySelector(breadcrumbSelector + ',' + Selectors.zoomPath)
 
-    if (breadcrumbs?.lastElementChild) Mouse.leftClick(breadcrumbs.lastElementChild as HTMLElement)
+    const clickElement = getClickElement(breadcrumbs as HTMLElement)
+    if (!clickElement) return false
+
+    Mouse.leftClick(clickElement)
+    return true
+}
+
+export const expandLastBreadcrumb = () => {
+    expandReference(
+        Selectors.referenceItem,
+        Selectors.breadcrumbsContainer,
+        breadcrumbs => breadcrumbs.lastElementChild as HTMLElement
+    )
+
+    expandReference(Selectors.inlineReference, Selectors.zoomPath, breadcrumbs => {
+        const nodes = breadcrumbs.querySelectorAll(Selectors.zoomItemContent)
+        return nodes[nodes.length - 1] as HTMLElement
+    })
 }
 
 export const closePageReferenceView = () => {
@@ -36,7 +57,7 @@ export const openParentPage = (shiftKey: boolean = false) => {
         return
     }
 
-    Mouse.leftClick(parentLink, { shiftKey })
+    Mouse.leftClick(parentLink, {shiftKey})
 }
 
 const getMentionsButton = (blockElement: BlockElement | null): HTMLElement | null => {
@@ -54,6 +75,6 @@ const getMentionsButton = (blockElement: BlockElement | null): HTMLElement | nul
 export const openMentions = (shiftKey: boolean = false) => {
     const mentionsButton = getMentionsButton(RoamBlock.selected().element)
     if (mentionsButton) {
-        Mouse.leftClick(mentionsButton, { shiftKey })
+        Mouse.leftClick(mentionsButton, {shiftKey})
     }
 }
