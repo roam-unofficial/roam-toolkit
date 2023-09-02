@@ -26,12 +26,12 @@ export class RoamNode {
         return RoamNode.getInlinePropertyMatcher(name).exec(this.text)?.[1]
     }
 
-    withInlineProperty(name: string, value: string) {
+    withInlineProperty(name: string, value: string, newline: boolean = false) {
         const currentValue = this.getInlineProperty(name)
         const property = RoamNode.createInlineProperty(name, value)
         const newText = currentValue
             ? this.text.replace(RoamNode.getInlinePropertyMatcher(name), property)
-            : this.text + ' ' + property
+            : this.text + (newline ? '\n' : ' ') + property
         // @ts-ignore
         return new this.constructor(newText, this.selection)
     }
