@@ -1,13 +1,13 @@
 {
     "name": "Roam Toolkit",
     "author": "roam-unofficial",
-    "version": "0.5.0",
+    "version": "0.5.4",
     "description": "Roam force multiplier",
     "icons": {
         "128": "assets/icon-128.png"
     },
     "content_security_policy": "script-src 'self'; object-src 'self'",
-    "permissions": ["activeTab", "storage", "tabs", "clipboardRead", "clipboardWrite", "*://roamresearch.com/*"],
+    "permissions": ["activeTab", "storage", "clipboardRead", "clipboardWrite", "*://roamresearch.com/*"],
     "manifest_version": 2,
     "background": {
         "scripts": ["background.js"],

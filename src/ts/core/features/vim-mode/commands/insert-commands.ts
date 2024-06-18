@@ -27,6 +27,7 @@ const insertBlockBefore = async () => {
 export const InsertCommands = [
     nmap('i', 'Click Selection', editBlock),
     nmap('a', 'Click Selection and Go-to End of Line', editBlockFromEnd),
+    nmap('shift+a', 'Click Selection and Go-to End of Line', editBlockFromEnd),
     nmap('shift+o', 'Insert Block Before', insertBlockBefore),
     nmap('o', 'Insert Block After', insertBlockAfter),
 ]

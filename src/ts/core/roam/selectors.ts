@@ -1,5 +1,6 @@
 export const Selectors = {
     link: '.rm-page-ref',
+    hiddenSection: '.rm-block__part--equals',
     block: '.roam-block',
     blockInput: '.rm-block-input',
     blockContainer: '.roam-block-container',
@@ -18,7 +19,7 @@ export const Selectors = {
 
     leftPanel: '.roam-sidebar-container',
 
-    topBar: '.roam-topbar',
+    topBar: '.rm-topbar',
 
     foldButton: '.rm-caret',
     highlight: '.block-highlight-blue',
@@ -29,6 +30,9 @@ export const Selectors = {
     checkbox: '.check-container',
     externalLink: 'a',
     referenceItem: '.rm-reference-item',
+    inlineReference: '.rm-inline-reference',
+    zoomPath: '.rm-zoom-path',
+    zoomItemContent: '.rm-zoom-item-content',
     breadcrumbsContainer: '.zoom-mentions-view',
     pageReferenceItem: '.rm-ref-page-view',
     pageReferenceLink: '.rm-ref-page-view-title a span',
