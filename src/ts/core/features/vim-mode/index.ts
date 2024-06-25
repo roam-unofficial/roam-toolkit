@@ -11,6 +11,7 @@ import {BlockManipulationCommands} from 'src/core/features/vim-mode/commands/blo
 import {RoamBlock} from 'src/core/features/vim-mode/roam/roam-block'
 import {HintCommands} from 'src/core/features/vim-mode/commands/hint-commands'
 import {Browser} from 'src/core/common/browser'
+import {EditCommands} from 'src/core/features/vim-mode/commands/edit-commands'
 
 export const config: Feature = {
     id: 'block_navigation_mode',
@@ -28,6 +29,7 @@ export const config: Feature = {
         ...VisualCommands,
         ...BlockManipulationCommands,
         ...HintCommands,
+        ...EditCommands,
     ],
 }
 
