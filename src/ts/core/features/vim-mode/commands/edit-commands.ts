@@ -25,10 +25,19 @@ const rescheduleSelectedNote = (signal: SRSSignal) => {
     RoamDb.updateBlockText(uid, new AnkiScheduler().schedule(new SM2Node(originalText), signal).text)
 }
 
-const markDone = () => {
+const toggleDone = () => {
     const uid = selectedUid()
     const originalText = getBlockText(uid)
-    RoamDb.updateBlockText(uid, '{{[[DONE]]}} ' + originalText)
+    let newText = originalText
+    if (originalText.startsWith('{{[[DONE]]}} ')) {
+        newText = originalText.replace('{{[[DONE]]}} ', '')
+    } else if (originalText.startsWith('{{[[TODO]]}} ')) {
+        newText = originalText.replace('{{[[TODO]]}} ', '{{[[DONE]]}} ')
+    } else {
+        newText = '{{[[DONE]]}} ' + originalText
+    }
+
+    RoamDb.updateBlockText(uid, newText)
 }
 
 const modifyBlockDate = (modifier: (input: number) => number) => {
@@ -48,7 +57,7 @@ const modifyBlockDate = (modifier: (input: number) => number) => {
 }
 
 export const EditCommands = [
-    nmap('cmd+enter', 'Mark done', markDone),
+    nmap('cmd+enter', 'Toggle done', toggleDone),
     ...SRSSignals.map(it =>
         nmap(`ctrl+shift+${it}`, `Reschedule Current Note (${SRSSignal[it]})`, () => rescheduleSelectedNote(it))
     ),
