@@ -34,6 +34,11 @@ export const RoamDb = {
         return this.queryFirst('[:find ?e :in $ ?a :where [?e :block/uid ?a]]', uid)
     },
 
+    updateBlockText(uid: string, newText: string) {
+        // @ts-ignore
+        runInPageContext((...args: any[]) => window.roamAlphaAPI.updateBlock(...args), {block: {uid, string: newText}})
+    },
+
     getAllPages(): RoamPage[] {
         return this.query(
             '[:find ?uid ?title :where [?page :node/title ?title] [?page :block/uid ?uid]]'
