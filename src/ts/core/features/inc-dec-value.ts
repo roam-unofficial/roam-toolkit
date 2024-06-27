@@ -3,7 +3,7 @@ import {RoamDate} from '../roam/date'
 import {Roam} from '../roam/roam'
 import {RoamNode, Selection} from '../roam/roam-node'
 
-const createModifier = (change: number) => (num: number) => num + change
+export const createModifier = (change: number) => (num: number) => num + change
 
 export const config: Feature = {
     id: 'incDec',
@@ -62,7 +62,7 @@ const nameInsideBrackets = (text: string, cursor: number): string =>
 
 const nameIsDate = (pageName: string): boolean => pageName.match(RoamDate.regex) !== null
 
-const modifyDate = (date: Date, modifier: (input: number) => number): Date => {
+export const modifyDate = (date: Date, modifier: (input: number) => number): Date => {
     const newDate = new Date(date)
     newDate.setDate(modifier(date.getDate()))
     return newDate
@@ -92,9 +92,11 @@ export const modify = (modifier: (input: number) => number) => {
         const numberStr = left + right
         const numberStartedAt = node.text.substring(0, cursor)?.match(/[0-9]*$/)?.index!
 
-        let number = modifier(parseInt(numberStr))
+        const newNumber = modifier(parseInt(numberStr, 10))
         newValue =
-            node.text.substring(0, numberStartedAt) + number + node.text.substring(numberStartedAt + numberStr.length)
+            node.text.substring(0, numberStartedAt) +
+            newNumber +
+            node.text.substring(numberStartedAt + numberStr.length)
     } else if (datesInContent && datesInContent.length === 1) {
         // e.g. Lor|em ipsum [[January 3rd, 2020]] 123
         newValue = node.text.replace(
