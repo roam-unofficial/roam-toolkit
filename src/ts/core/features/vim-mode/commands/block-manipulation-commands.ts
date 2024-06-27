@@ -13,6 +13,6 @@ const moveBlockDown = async () => {
 }
 
 export const BlockManipulationCommands = [
-    nimap('command+shift+k', 'Move Block Up', moveBlockUp),
-    nimap('command+shift+j', 'Move Block Down', moveBlockDown),
+    nimap('command+shift+h', 'Move Block Up', moveBlockUp),
+    nimap('command+shift+k', 'Move Block Down', moveBlockDown),
 ]

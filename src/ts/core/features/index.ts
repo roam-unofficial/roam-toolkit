@@ -2,38 +2,38 @@ import {Dictionary} from 'lodash'
 
 import {Feature, prepareSettings, Settings, Shortcut} from '../settings'
 
-import {config as incDec} from './inc-dec-value'
-import {config as srs} from '../srs/srs'
+// import {config as incDec} from './inc-dec-value'
+// import {config as srs} from '../srs/srs'
 import {config as blockManipulation} from './block-manipulation'
 import {config as vimMode} from './vim-mode'
-import {config as spatialMode} from './spatial-mode'
-import {config as estimate} from './estimates'
+// import {config as spatialMode} from './spatial-mode'
+// import {config as estimate} from './estimates'
 import {config as navigation} from './navigation'
-import {config as livePreview} from './livePreview'
+// import {config as livePreview} from './livePreview'
 import {config as dateTitle} from './day-title'
-import {config as fuzzyDate} from './fuzzy_date'
-import {config as randomPage} from './random-page'
+// import {config as fuzzyDate} from './fuzzy_date'
+// import {config as randomPage} from './random-page'
 import {filterAsync, mapAsync} from '../common/async'
 import {Handler} from 'src/core/react-hotkeys/key-handler'
 import {KeySequenceString} from 'src/core/react-hotkeys/key-sequence'
-import {combineReducers, createStore, Store} from 'redux';
-import {IAppState} from 'src/background/store';
-import settings from 'src/background/store/settings/reducer';
-import {getStateFromStorage, saveStateToStorage} from 'src/core/common/storage';
+import {combineReducers, createStore, Store} from 'redux'
+import {IAppState} from 'src/background/store'
+import settings from 'src/background/store/settings/reducer'
+import {getStateFromStorage, saveStateToStorage} from 'src/core/common/storage'
 
 export const Features = {
     all: prepareSettings([
-        incDec, // prettier
-        srs,
+        //    incDec, // prettier
+        //    srs,
         blockManipulation,
         vimMode,
-        spatialMode,
-        estimate,
+        //    spatialMode,
+        //    estimate,
         navigation,
         dateTitle,
-        fuzzyDate,
-        livePreview,
-        randomPage,
+        //    fuzzyDate,
+        //    livePreview,
+        //    randomPage,
     ]),
 
     isActive: Settings.isActive,
