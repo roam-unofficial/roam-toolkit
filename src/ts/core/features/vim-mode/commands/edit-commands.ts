@@ -22,7 +22,7 @@ const rescheduleSelectedNote = (signal: SRSSignal) => {
     console.log('rescheduleSelectedNote', signal)
     const uid = selectedUid()
     const originalText = getBlockText(uid)
-    RoamDb.updateBlockText(uid, new AnkiScheduler().schedule(new SM2Node(originalText), signal).text)
+    RoamDb.updateBlockText(uid, new AnkiScheduler().schedule(new SM2Node(originalText), signal).text + ' *')
 }
 
 const toggleDone = () => {
