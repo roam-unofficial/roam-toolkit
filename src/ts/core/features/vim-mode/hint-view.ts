@@ -53,13 +53,15 @@ export const updateVimHints = (block: HTMLElement) => {
     const clickableSelectors = [
         Selectors.link,
         Selectors.externalLink,
+        Selectors.linkInBlockRef,
+        Selectors.functionalRef,
+        Selectors.embedPageTitle,
         Selectors.checkbox,
         Selectors.button,
         Selectors.blockReference,
         Selectors.hiddenSection,
     ]
     const links = block.querySelectorAll(clickableSelectors.join(', '))
-
     links.forEach((link, i) => {
         link.classList.add(HINT_CSS_CLASS, hintCssClass(i))
     })
