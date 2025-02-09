@@ -1,0 +1,530 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2DED3745251D56A70044CE8D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DED3744251D56A70044CE8D /* AppDelegate.swift */; };
+		2DED3748251D56A70044CE8D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2DED3746251D56A70044CE8D /* Main.storyboard */; };
+		2DED374A251D56A70044CE8D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DED3749251D56A70044CE8D /* ViewController.swift */; };
+		2DED374C251D56A90044CE8D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2DED374B251D56A90044CE8D /* Assets.xcassets */; };
+		2DED3753251D56A90044CE8D /* Roam Toolkit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 2DED3752251D56A90044CE8D /* Roam Toolkit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		2DED3758251D56A90044CE8D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DED3757251D56A90044CE8D /* Cocoa.framework */; };
+		2DED375B251D56A90044CE8D /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DED375A251D56A90044CE8D /* SafariWebExtensionHandler.swift */; };
+		2DED3770251D56AA0044CE8D /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = 2DED3768251D56AA0044CE8D /* popup.js */; };
+		2DED3771251D56AA0044CE8D /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 2DED3769251D56AA0044CE8D /* background.js */; };
+		2DED3772251D56AA0044CE8D /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 2DED376A251D56AA0044CE8D /* popup.html */; };
+		2DED3773251D56AB0044CE8D /* options.js in Resources */ = {isa = PBXBuildFile; fileRef = 2DED376B251D56AA0044CE8D /* options.js */; };
+		2DED3774251D56AB0044CE8D /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 2DED376C251D56AA0044CE8D /* manifest.json */; };
+		2DED3775251D56AB0044CE8D /* options.html in Resources */ = {isa = PBXBuildFile; fileRef = 2DED376D251D56AA0044CE8D /* options.html */; };
+		2DED3776251D56AB0044CE8D /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 2DED376E251D56AA0044CE8D /* assets */; };
+		2DED3777251D56AB0044CE8D /* entry.js in Resources */ = {isa = PBXBuildFile; fileRef = 2DED376F251D56AA0044CE8D /* entry.js */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2DED3754251D56A90044CE8D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DED3738251D56A70044CE8D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DED3751251D56A90044CE8D;
+			remoteInfo = "Roam Toolkit Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2DED3763251D56A90044CE8D /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				2DED3753251D56A90044CE8D /* Roam Toolkit Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		2DED3740251D56A70044CE8D /* Roam Toolkit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Roam Toolkit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DED3743251D56A70044CE8D /* Roam_Toolkit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Roam_Toolkit.entitlements; sourceTree = "<group>"; };
+		2DED3744251D56A70044CE8D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		2DED3747251D56A70044CE8D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		2DED3749251D56A70044CE8D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		2DED374B251D56A90044CE8D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2DED374D251D56A90044CE8D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2DED3752251D56A90044CE8D /* Roam Toolkit Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Roam Toolkit Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DED3757251D56A90044CE8D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		2DED375A251D56A90044CE8D /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		2DED375C251D56A90044CE8D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2DED375D251D56A90044CE8D /* Roam_Toolkit_Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Roam_Toolkit_Extension.entitlements; sourceTree = "<group>"; };
+		2DED3768251D56AA0044CE8D /* popup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = popup.js; path = ../../../dist/popup.js; sourceTree = "<group>"; };
+		2DED3769251D56AA0044CE8D /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = ../../../dist/background.js; sourceTree = "<group>"; };
+		2DED376A251D56AA0044CE8D /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = ../../../dist/popup.html; sourceTree = "<group>"; };
+		2DED376B251D56AA0044CE8D /* options.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = options.js; path = ../../../dist/options.js; sourceTree = "<group>"; };
+		2DED376C251D56AA0044CE8D /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../../dist/manifest.json; sourceTree = "<group>"; };
+		2DED376D251D56AA0044CE8D /* options.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = options.html; path = ../../../dist/options.html; sourceTree = "<group>"; };
+		2DED376E251D56AA0044CE8D /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../../../dist/assets; sourceTree = "<group>"; };
+		2DED376F251D56AA0044CE8D /* entry.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = entry.js; path = ../../../dist/entry.js; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2DED373D251D56A70044CE8D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DED374F251D56A90044CE8D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DED3758251D56A90044CE8D /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2DED3737251D56A70044CE8D = {
+			isa = PBXGroup;
+			children = (
+				2DED3742251D56A70044CE8D /* Roam Toolkit */,
+				2DED3759251D56A90044CE8D /* Roam Toolkit Extension */,
+				2DED3756251D56A90044CE8D /* Frameworks */,
+				2DED3741251D56A70044CE8D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2DED3741251D56A70044CE8D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2DED3740251D56A70044CE8D /* Roam Toolkit.app */,
+				2DED3752251D56A90044CE8D /* Roam Toolkit Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2DED3742251D56A70044CE8D /* Roam Toolkit */ = {
+			isa = PBXGroup;
+			children = (
+				2DED3743251D56A70044CE8D /* Roam_Toolkit.entitlements */,
+				2DED3744251D56A70044CE8D /* AppDelegate.swift */,
+				2DED3746251D56A70044CE8D /* Main.storyboard */,
+				2DED3749251D56A70044CE8D /* ViewController.swift */,
+				2DED374B251D56A90044CE8D /* Assets.xcassets */,
+				2DED374D251D56A90044CE8D /* Info.plist */,
+			);
+			path = "Roam Toolkit";
+			sourceTree = "<group>";
+		};
+		2DED3756251D56A90044CE8D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2DED3757251D56A90044CE8D /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2DED3759251D56A90044CE8D /* Roam Toolkit Extension */ = {
+			isa = PBXGroup;
+			children = (
+				2DED3767251D56AA0044CE8D /* Resources */,
+				2DED375A251D56A90044CE8D /* SafariWebExtensionHandler.swift */,
+				2DED375C251D56A90044CE8D /* Info.plist */,
+				2DED375D251D56A90044CE8D /* Roam_Toolkit_Extension.entitlements */,
+			);
+			path = "Roam Toolkit Extension";
+			sourceTree = "<group>";
+		};
+		2DED3767251D56AA0044CE8D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2DED3768251D56AA0044CE8D /* popup.js */,
+				2DED3769251D56AA0044CE8D /* background.js */,
+				2DED376A251D56AA0044CE8D /* popup.html */,
+				2DED376B251D56AA0044CE8D /* options.js */,
+				2DED376C251D56AA0044CE8D /* manifest.json */,
+				2DED376D251D56AA0044CE8D /* options.html */,
+				2DED376E251D56AA0044CE8D /* assets */,
+				2DED376F251D56AA0044CE8D /* entry.js */,
+			);
+			name = Resources;
+			path = "Roam Toolkit Extension";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2DED373F251D56A70044CE8D /* Roam Toolkit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DED3764251D56A90044CE8D /* Build configuration list for PBXNativeTarget "Roam Toolkit" */;
+			buildPhases = (
+				2DED373C251D56A70044CE8D /* Sources */,
+				2DED373D251D56A70044CE8D /* Frameworks */,
+				2DED373E251D56A70044CE8D /* Resources */,
+				2DED3763251D56A90044CE8D /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2DED3755251D56A90044CE8D /* PBXTargetDependency */,
+			);
+			name = "Roam Toolkit";
+			productName = "Roam Toolkit";
+			productReference = 2DED3740251D56A70044CE8D /* Roam Toolkit.app */;
+			productType = "com.apple.product-type.application";
+		};
+		2DED3751251D56A90044CE8D /* Roam Toolkit Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DED3760251D56A90044CE8D /* Build configuration list for PBXNativeTarget "Roam Toolkit Extension" */;
+			buildPhases = (
+				2DED374E251D56A90044CE8D /* Sources */,
+				2DED374F251D56A90044CE8D /* Frameworks */,
+				2DED3750251D56A90044CE8D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Roam Toolkit Extension";
+			productName = "Roam Toolkit Extension";
+			productReference = 2DED3752251D56A90044CE8D /* Roam Toolkit Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2DED3738251D56A70044CE8D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1200;
+				LastUpgradeCheck = 1200;
+				TargetAttributes = {
+					2DED373F251D56A70044CE8D = {
+						CreatedOnToolsVersion = 12.0;
+					};
+					2DED3751251D56A90044CE8D = {
+						CreatedOnToolsVersion = 12.0;
+					};
+				};
+			};
+			buildConfigurationList = 2DED373B251D56A70044CE8D /* Build configuration list for PBXProject "Roam Toolkit" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2DED3737251D56A70044CE8D;
+			productRefGroup = 2DED3741251D56A70044CE8D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2DED373F251D56A70044CE8D /* Roam Toolkit */,
+				2DED3751251D56A90044CE8D /* Roam Toolkit Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2DED373E251D56A70044CE8D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DED374C251D56A90044CE8D /* Assets.xcassets in Resources */,
+				2DED3748251D56A70044CE8D /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DED3750251D56A90044CE8D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DED3771251D56AA0044CE8D /* background.js in Resources */,
+				2DED3773251D56AB0044CE8D /* options.js in Resources */,
+				2DED3776251D56AB0044CE8D /* assets in Resources */,
+				2DED3774251D56AB0044CE8D /* manifest.json in Resources */,
+				2DED3772251D56AA0044CE8D /* popup.html in Resources */,
+				2DED3777251D56AB0044CE8D /* entry.js in Resources */,
+				2DED3770251D56AA0044CE8D /* popup.js in Resources */,
+				2DED3775251D56AB0044CE8D /* options.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2DED373C251D56A70044CE8D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DED374A251D56A70044CE8D /* ViewController.swift in Sources */,
+				2DED3745251D56A70044CE8D /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DED374E251D56A90044CE8D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DED375B251D56A90044CE8D /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2DED3755251D56A90044CE8D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DED3751251D56A90044CE8D /* Roam Toolkit Extension */;
+			targetProxy = 2DED3754251D56A90044CE8D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		2DED3746251D56A70044CE8D /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2DED3747251D56A70044CE8D /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		2DED375E251D56A90044CE8D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		2DED375F251D56A90044CE8D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		2DED3761251D56A90044CE8D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Roam Toolkit Extension/Roam_Toolkit_Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Roam Toolkit Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roam-unofficial.Roam-Toolkit-Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		2DED3762251D56A90044CE8D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Roam Toolkit Extension/Roam_Toolkit_Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Roam Toolkit Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roam-unofficial.Roam-Toolkit-Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		2DED3765251D56A90044CE8D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Roam Toolkit/Roam_Toolkit.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Roam Toolkit/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roam-unofficial.Roam-Toolkit";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		2DED3766251D56A90044CE8D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Roam Toolkit/Roam_Toolkit.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Roam Toolkit/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roam-unofficial.Roam-Toolkit";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2DED373B251D56A70044CE8D /* Build configuration list for PBXProject "Roam Toolkit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DED375E251D56A90044CE8D /* Debug */,
+				2DED375F251D56A90044CE8D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DED3760251D56A90044CE8D /* Build configuration list for PBXNativeTarget "Roam Toolkit Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DED3761251D56A90044CE8D /* Debug */,
+				2DED3762251D56A90044CE8D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DED3764251D56A90044CE8D /* Build configuration list for PBXNativeTarget "Roam Toolkit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DED3765251D56A90044CE8D /* Debug */,
+				2DED3766251D56A90044CE8D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2DED3738251D56A70044CE8D /* Project object */;
+}
