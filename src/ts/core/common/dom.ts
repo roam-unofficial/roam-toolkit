@@ -61,3 +61,27 @@ export const isElementVisible = (element: Element | null): boolean => {
     const {x, y} = element.getBoundingClientRect()
     return x >= 0 && y >= 0 && x <= window.innerWidth && y <= window.innerHeight
 }
+
+export const findNextNode = (afterNode: Element, selector: string): Node | null => {
+    // Create a TreeWalker to iterate through all elements in document order
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, {
+        acceptNode: (node: Element) => {
+            // Only accept reference items
+            if (node.matches(selector)) {
+                return NodeFilter.FILTER_ACCEPT
+            }
+            return NodeFilter.FILTER_SKIP
+        },
+    })
+
+    // Position walker at our current item
+    let currentNode: Node | null = walker.currentNode
+    while (currentNode) {
+        if (currentNode === afterNode) {
+            return walker.nextNode()
+        }
+        currentNode = walker.nextNode()
+    }
+
+    return null
+}

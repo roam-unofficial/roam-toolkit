@@ -1,6 +1,21 @@
 import {nimap, nmap, nvmap, RoamVim} from 'src/core/features/vim-mode/vim'
 import {VimRoamPanel} from 'src/core/features/vim-mode/roam/roam-vim-panel'
 import {closePageReferenceView, expandLastBreadcrumb, openMentions, openParentPage} from 'src/core/roam/references'
+import {RoamBlock} from 'src/core/features/vim-mode/roam/roam-block'
+import {Selectors} from 'src/core/roam/selectors'
+import {findNextNode} from 'src/core/common/dom'
+
+const collapseReferenceView = () => {
+    const referenceItem = RoamBlock.selected().element?.closest(Selectors.referenceItem)
+    const nextItem = referenceItem ? (findNextNode(referenceItem, Selectors.referenceItem) as Element) : undefined
+    const nextBlockId = nextItem?.querySelector(`${Selectors.block}, ${Selectors.blockInput}`)?.id
+
+    closePageReferenceView()
+
+    if (nextBlockId) {
+        VimRoamPanel.selected().selectBlock(nextBlockId)
+    }
+}
 
 export const NavigationCommands = [
     nvmap('h', 'Select Block Up', () => RoamVim.jumpBlocksInFocusedPanel(-1)),
@@ -15,7 +30,7 @@ export const NavigationCommands = [
     // Avoid insert mode, to allow native ctrl-e to go to end of line
     nvmap('ctrl+e', 'Scroll Down', () => VimRoamPanel.selected().scrollAndReselectBlockToStayVisible(50)),
     nimap('alt+z', 'Expand Last Reference Breadcrumb', expandLastBreadcrumb),
-    nmap('shift+z', 'Collapse the view for the page in references (or query) section', closePageReferenceView),
+    nmap('shift+z', 'Collapse the view for the page in references (or query) section', collapseReferenceView),
     nmap('1', 'Open parent page', () => openParentPage()),
     nmap('shift+1', 'Open parent page in sidebar', () => openParentPage(true)),
     nmap('2', 'Open mentions', () => openMentions()),
