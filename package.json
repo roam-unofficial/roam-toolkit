@@ -18,7 +18,7 @@
     "license": "MIT",
     "dependencies": {
         "@popperjs/core": "^2.4.0",
-        "chrono-node": "^1.4.2",
+        "chrono-node": "^2.2.4",
         "cytoscape": "^3.16.1",
         "cytoscape-cola": "^2.4.0",
         "dateformat": "^3.0.3",
