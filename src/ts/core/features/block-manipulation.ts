@@ -43,7 +43,7 @@ export const config: Feature = {
             type: 'shortcut',
             id: 'collapseBlockIntoParent',
             label: 'Collapse block into parent',
-            initValue: 'Meta+shift+up',
+            initValue: 'shift+ctrl+z',
             onPress: () => collapseBlockIntoParent(),
         } as Shortcut,
     ],
